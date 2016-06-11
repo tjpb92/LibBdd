@@ -3,27 +3,90 @@ package bdd;
 import java.sql.*;
 
 /**
- * Fagency is a class that describes an agency.
- * @version May 2016.
- * @author Thierry Baribaud.
+ * Fagency est une classe décrivant une agence.
+ * @version Juin 2016
+ * @author Thierry Baribaud
  */
 public class Fagency {
 
+  /**
+   * Identifiant de l'agence. 
+   */
   private int a6num;
+
+  /**
+   * Identifiant du client (furgent). 
+   */
   private int a6unum;
+
+  /**
+   * Appelation externe de l'agence (vu côté client). 
+   */
   private String A6extname;
+
+  /**
+   * Nom de l'agence (vu côté Anstel). 
+   */
   private String A6name;
+
+  /**
+   * Nom abrégé de l'agence. 
+   */
   private String A6abbname;
+
+  /**
+   * Email de l'agence. 
+   */
   private String A6email;
+
+  /**
+   * Adresse de l'agence. 
+   */
   private String A6daddress;
+
+  /**
+   * Complément d'adresse de l'agence. 
+   */
   private String A6daddress2;
+
+  /**
+   * Code postal. 
+   */
   private String A6dposcode;
+
+  /**
+   * Ville. 
+   */
   private String A6dcity;
+
+  /**
+   * Numéro de téléphone de l'agence. 
+   */
   private String A6teloff;
+
+  /**
+   * Ligne directe de l'agence. 
+   */
   private String A6teldir;
+
+  /**
+   * Télécopieur de l'agence. 
+   */
   private String A6telfax;
+
+  /**
+   * Code d'activité de l'agence. 
+   */
   private int a6active;
+
+  /**
+   * Date de début d'activité de l'agence. 
+   */
   private Timestamp A6begactive;
+
+  /**
+   * Date de fin d'activité de l'agence. 
+   */
   private Timestamp A6endactive;
 
   public int getA6num() {

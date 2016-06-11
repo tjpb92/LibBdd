@@ -3,35 +3,126 @@ package bdd;
 import java.sql.*;
 
 /**
- * Fcomplmt is a class that describes a call complement.
+ * Fcomplmt est une classe décrivant un complément d'appel.
  *
- * @version May 2016.
- * @author Thierry Baribaud.
+ * @version Juin 2016
+ * @author Thierry Baribaud
  */
 public class Fcomplmt {
 
+  /**
+   * Identifiant du complément d'appel. 
+   */
     private int c6num;
+
+  /**
+   * ... 
+   */
     private int c6int2;
+
+  /**
+   * ... 
+   */
     private String C6alpha1;
+
+  /**
+   * ... 
+   */
     private String C6alpha2;
+
+  /**
+   * Nom de la personne à rappeler. 
+   */
     private String C6name;
+
+  /**
+   * Accès du lieu d'intervention. 
+   */
     private String C6access;
+
+  /**
+   * Ville du lieu d'intervention. 
+   */
     private String C6city;
+
+  /**
+   * Téléphone de la personne à rappeler. 
+   */
     private String C6tel;
+
+  /**
+   * ... 
+   */
     private String C6alpha3;
+
+  /**
+   * ... 
+   */
     private String C6alpha4;
+
+  /**
+   * ... 
+   */
     private String C6alpha5;
+
+  /**
+   * ... 
+   */
     private String C6alpha6;
+
+  /**
+   * ... 
+   */
     private String C6alpha7;
+
+  /**
+   * ... 
+   */
     private int c6int1;
+
+  /**
+   * ... 
+   */
     private Timestamp C6date;
+
+  /**
+   * ... 
+   */
     private Timestamp C6date1;
+
+  /**
+   * ... 
+   */
     private int c6int3;
+
+  /**
+   * ... 
+   */
     private int c6int4;
+
+  /**
+   * Identifiant de l'opérateur (foperat). 
+   */
     private int c6onum;
+
+  /**
+   * Raison sociale du lieu d'intervention. 
+   */
     private String C6corp;
+
+  /**
+   * Adresse du lieu d'intervention. 
+   */
     private String C6address;
+
+  /**
+   * Complément d'adresse du lieu d'intervention. 
+   */
     private String C6address2;
+
+  /**
+   * Code postal du lieu d'intervention. 
+   */
     private String C6poscode;
 
     public int getC6num() {
@@ -190,28 +281,28 @@ public class Fcomplmt {
     public String toString() {
         return this.getClass().getName()
                 + " : {c6num=" + c6num
+                + ", C6name=" + C6name
+                + ", C6tel=" + C6tel
                 + ", c6int2=" + c6int2
                 + ", C6alpha1=" + C6alpha1
-                + ", C6alpha2=" + C6alpha2
-                + ", C6name=" + C6name
-                + ", C6access=" + C6access
-                + ", C6city=" + C6city
-                + ", C6tel=" + C6tel
-                + ", C6alpha3=" + C6alpha3
-                + ", C6alpha4=" + C6alpha4
-                + ", C6alpha5=" + C6alpha5
-                + ", C6alpha6=" + C6alpha6
-                + ", C6alpha7=" + C6alpha7
-                + ", c6int1=" + c6int1
-                + ", C6date=" + C6date
-                + ", C6date1=" + C6date1
-                + ", c6int3=" + c6int3
-                + ", c6int4=" + c6int4
-                + ", c6onum=" + c6onum
-                + ", C6corp=" + C6corp
-                + ", C6address=" + C6address
-                + ", C6address2=" + C6address2
-                + ", C6poscode=" + C6poscode
+//                + ", C6alpha2=" + C6alpha2
+//                + ", C6access=" + C6access
+//                + ", C6city=" + C6city
+//                + ", C6alpha3=" + C6alpha3
+//                + ", C6alpha4=" + C6alpha4
+//                + ", C6alpha5=" + C6alpha5
+//                + ", C6alpha6=" + C6alpha6
+//                + ", C6alpha7=" + C6alpha7
+//                + ", c6int1=" + c6int1
+//                + ", C6date=" + C6date
+//                + ", C6date1=" + C6date1
+//                + ", c6int3=" + c6int3
+//                + ", c6int4=" + c6int4
+//                + ", c6onum=" + c6onum
+//                + ", C6corp=" + C6corp
+//                + ", C6address=" + C6address
+//                + ", C6address2=" + C6address2
+//                + ", C6poscode=" + C6poscode
                 + "}";
     }
 
@@ -230,7 +321,7 @@ public class Fcomplmt {
     }
 
     /**
-     * @return C6address retourne l'adresse secondaire.
+     * @return C6address l'adresse secondaire.
      */
     public String getC6address() {
         return C6address;
@@ -244,7 +335,7 @@ public class Fcomplmt {
     }
 
     /**
-     * @return C6address2 retourne le complément d'adresse secondaire.
+     * @return C6address2 le complément d'adresse secondaire.
      */
     public String getC6address2() {
         return C6address2;
@@ -258,7 +349,7 @@ public class Fcomplmt {
     }
 
     /**
-     * @return C6poscode retourne le code postal de l'adresse secondaire.
+     * @return C6poscode le code postal de l'adresse secondaire.
      */
     public String getC6poscode() {
         return C6poscode;

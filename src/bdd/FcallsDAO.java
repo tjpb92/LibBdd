@@ -6,8 +6,8 @@ import java.sql.*;
  * Classe qui décrit les méthodes pour accéder aux tables fcalls ou f99calls au
  * travers de JDBC.
  *
- * @author Thierry Baribaud.
- * @version Mai 2016.
+ * @author Thierry Baribaud
+ * @version Juin 2016
  */
 public class FcallsDAO extends PaternDAO {
 
@@ -26,14 +26,14 @@ public class FcallsDAO extends PaternDAO {
      * @throws ClassNotFoundException en cas de classse non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public FcallsDAO(Connection MyConnection, int cnum, int cunum, 
+    public FcallsDAO(Connection MyConnection, int cnum, int cunum,
             Timestamp BegDate, Timestamp EndDate, EtatTicket MyEtatTicket)
             throws ClassNotFoundException, SQLException {
 
         StringBuffer Stmt;
 
-        MyTable = EtatTicket.EN_COURS.equals(MyEtatTicket)?"fcalls":"f99calls";
-        
+        MyTable = EtatTicket.EN_COURS.equals(MyEtatTicket) ? "fcalls" : "f99calls";
+
         int idxBegDate = 0;
         int idxEndDate = 0;
         int idx = 0;
@@ -44,7 +44,10 @@ public class FcallsDAO extends PaternDAO {
                 + " caccess, cposcode, city, csympt,"
                 + " cnumber4, cc6num, cdate, ctime, cdate2, ctime2,"
                 + " corp, cnumber5, cseqno, cquery1, cquery2, czone, cage, ctype,"
-                + " ctnum, cnote"
+                + " ctnum, cnote,"
+                + " cdelay1, cdelay2, cduration, conum, ccallertype,"
+                + " cnumber6, cnumber7, cnumber8, cnumber9, cnumber10,"
+                + " csector1, csector2, cextnum"
                 + " from " + MyTable
                 + " where (cinternal = 0 or cinternal is null)"
                 + " and (ctest = 0 or ctest is null)");
@@ -81,7 +84,10 @@ public class FcallsDAO extends PaternDAO {
                 + " caccess=?, cposcode=?, city=?, csympt=?,"
                 + " cnumber4=?, cc6num=?, cdate=?, ctime=?, cdate2=?, ctime2=?,"
                 + " corp=?, cnumber5=?, cseqno=?, cquery1=?, cquery2=?,"
-                + " czone=?, cage=?, ctype=?, ctnum=?, cnote=?"
+                + " czone=?, cage=?, ctype=?, ctnum=?, cnote=?,"
+                + " cdelay1=?, cdelay2=?, cduration=?, conum=?, ccallertype=?,"
+                + " cnumber6=?, cnumber7=?, cnumber8=?, cnumber9=?, cnumber10=?,"
+                + " csector1=?, csector2=?, cextnum=?"
                 + " where cnum=?;");
         setUpdatePreparedStatement();
 
@@ -90,9 +96,13 @@ public class FcallsDAO extends PaternDAO {
                 + " caccess, cposcode, city, csympt,"
                 + " cnumber4, cc6num, cdate, ctime, cdate2, ctime2,"
                 + " corp, cnumber5, cseqno, cquery1, cquery2, czone,"
-                + " cage, ctype, ctnum, cnote)"
+                + " cage, ctype, ctnum, cnote,"
+                + " cdelay1, cdelay2, cduration, conum, ccallertype,"
+                + " cnumber6, cnumber7, cnumber8, cnumber9, cnumber10,"
+                + " csector1, csector2, cextnum"
+                + ")"
                 + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-                + " ?,?,?,?,?,?,?,?,?,?);");
+                + " ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
         setInsertPreparedStatement();
 
         setDeleteStatement("delete from " + MyTable + " where cnum=?;");
@@ -137,6 +147,19 @@ public class FcallsDAO extends PaternDAO {
                 MyFcalls.setCtype(ReadResultSet.getInt("ctype"));
                 MyFcalls.setCtnum(ReadResultSet.getInt("ctnum"));
                 MyFcalls.setCnote(ReadResultSet.getInt("cnote"));
+                MyFcalls.setCnote(ReadResultSet.getInt("cdelay1"));
+                MyFcalls.setCnote(ReadResultSet.getInt("cdelay2"));
+                MyFcalls.setCnote(ReadResultSet.getInt("cduration"));
+                MyFcalls.setCnote(ReadResultSet.getInt("conum"));
+                MyFcalls.setCnote(ReadResultSet.getInt("ccallertype"));
+                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber6"));
+                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber7"));
+                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber8"));
+                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber9"));
+                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber10"));
+                MyFcalls.setCnumber5(ReadResultSet.getString("csector1"));
+                MyFcalls.setCnumber5(ReadResultSet.getString("csector2"));
+                MyFcalls.setCnumber5(ReadResultSet.getString("cextnum"));
             } else {
                 System.out.println("Lecture de " + MyTable + " terminée");
             }
@@ -179,7 +202,20 @@ public class FcallsDAO extends PaternDAO {
             UpdatePreparedStatement.setInt(23, MyFcalls.getCtype());
             UpdatePreparedStatement.setInt(24, MyFcalls.getCtnum());
             UpdatePreparedStatement.setInt(25, MyFcalls.getCnote());
-            UpdatePreparedStatement.setInt(26, MyFcalls.getCnum());
+            UpdatePreparedStatement.setInt(26, MyFcalls.getCdelay1());
+            UpdatePreparedStatement.setInt(27, MyFcalls.getCdelay2());
+            UpdatePreparedStatement.setInt(28, MyFcalls.getCduration());
+            UpdatePreparedStatement.setInt(29, MyFcalls.getConum());
+            UpdatePreparedStatement.setInt(30, MyFcalls.getCcallertype());
+            UpdatePreparedStatement.setString(31, MyFcalls.getCnumber6());
+            UpdatePreparedStatement.setString(32, MyFcalls.getCnumber7());
+            UpdatePreparedStatement.setString(33, MyFcalls.getCnumber8());
+            UpdatePreparedStatement.setString(34, MyFcalls.getCnumber9());
+            UpdatePreparedStatement.setString(35, MyFcalls.getCnumber10());
+            UpdatePreparedStatement.setString(36, MyFcalls.getCsector1());
+            UpdatePreparedStatement.setString(37, MyFcalls.getCsector2());
+            UpdatePreparedStatement.setString(38, MyFcalls.getCextnum());
+            UpdatePreparedStatement.setInt(39, MyFcalls.getCnum());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour " + MyTable);
@@ -244,6 +280,19 @@ public class FcallsDAO extends PaternDAO {
             InsertPreparedStatement.setInt(23, MyFcalls.getCtype());
             InsertPreparedStatement.setInt(24, MyFcalls.getCtnum());
             InsertPreparedStatement.setInt(25, MyFcalls.getCnote());
+            InsertPreparedStatement.setInt(26, MyFcalls.getCdelay1());
+            InsertPreparedStatement.setInt(27, MyFcalls.getCdelay2());
+            InsertPreparedStatement.setInt(28, MyFcalls.getCduration());
+            InsertPreparedStatement.setInt(29, MyFcalls.getConum());
+            InsertPreparedStatement.setInt(30, MyFcalls.getCcallertype());
+            InsertPreparedStatement.setString(31, MyFcalls.getCnumber6());
+            InsertPreparedStatement.setString(32, MyFcalls.getCnumber7());
+            InsertPreparedStatement.setString(33, MyFcalls.getCnumber8());
+            InsertPreparedStatement.setString(34, MyFcalls.getCnumber9());
+            InsertPreparedStatement.setString(35, MyFcalls.getCnumber10());
+            InsertPreparedStatement.setString(36, MyFcalls.getCsector1());
+            InsertPreparedStatement.setString(37, MyFcalls.getCsector2());
+            InsertPreparedStatement.setString(38, MyFcalls.getCextnum());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un appel dans " + MyTable);

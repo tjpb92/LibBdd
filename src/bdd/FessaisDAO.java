@@ -7,7 +7,7 @@ import java.sql.*;
  * au travers de JDBC.
  *
  * @author Thierry Baribaud.
- * @version Mai 2015.
+ * @version Juin 2015.
  */
 public class FessaisDAO extends PaternDAO {
 
@@ -118,27 +118,49 @@ public class FessaisDAO extends PaternDAO {
 
         // Récupère la première transmission
         if (ecnum > 0) {
-            setFirstTransmissionStatement("select a.* from " + MyTable + " a"
-                    + " where a.enumabs = (select min(b.enumabs) from "
-                    + MyTable + " b where b.ecnum = " + ecnum
-                    + " and b.eresult = 1);");
+// A rétablir lorsque le bug touchant enumabs sera corrigé
+//            setFirstTransmissionStatement("select a.* from " + MyTable + " a"
+//                    + " where a.enumabs = (select min(b.enumabs) from "
+//                    + MyTable + " b where b.ecnum = " + ecnum
+//                    + " and b.eresult = 1);");
+            setFirstTransmissionStatement("select enumabs, "
+                    + " ecnum, eptr, eunum, edate, etime,"
+                    + " emessage, etnum, eonum, eresult, eduration,"
+                    + " etest, einternal, em3num, egid"
+                    + " from " + MyTable 
+                    + " where ecnum = " + ecnum
+                    + " and eresult = 1"
+                    + " order by edate, etime;");
             setFirstTransmissionPreparedStatement();
             setFirstTransmissionResultSet();
         }
 
         // Récupère la dernière transmission
         if (ecnum > 0) {
-            setLastTransmissionStatement("select a.* from " + MyTable + " a"
-                    + " where a.enumabs = (select max(b.enumabs) from "
-                    + MyTable + " b where b.ecnum = " + ecnum
-                    + " and b.eresult = 1);");
+// A rétablir lorsque le bug touchant enumabs sera corrigé
+//            setLastTransmissionStatement("select a.* from " + MyTable + " a"
+//                    + " where a.enumabs = (select max(b.enumabs) from "
+//                    + MyTable + " b where b.ecnum = " + ecnum
+//                    + " and b.eresult = 1);");
+            setLastTransmissionStatement("select enumabs, "
+                    + " ecnum, eptr, eunum, edate, etime,"
+                    + " emessage, etnum, eonum, eresult, eduration,"
+                    + " etest, einternal, em3num, egid"
+                    + " from " + MyTable 
+                    + " where ecnum = " + ecnum
+                    + " and eresult = 1"
+                    + " order by edate desc, etime desc;");
             setLastTransmissionPreparedStatement();
             setLastTransmissionResultSet();
         }
         
         // Récupère un élément de clôture d'appel
         if (ecnum > 0) {
-            setPartOfEOMStatement("select a.* from " + MyTable + " a"
+            setPartOfEOMStatement("select a.enumabs, "
+                    + " a.ecnum, a.eptr, a.eunum, a.edate, a.etime,"
+                    + " a.emessage, a.etnum, a.eonum, a.eresult, a.eduration,"
+                    + " a.etest, a.einternal, a.em3num, a.egid"
+                    + " from " + MyTable + " a"
                     + " where a.enumabs = (select max(b.enumabs) from "
                     + MyTable + " b where b.ecnum = " + ecnum
                     + " and b.eresult in (69,70,71,72,73,93));");

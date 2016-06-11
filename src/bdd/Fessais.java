@@ -4,25 +4,84 @@ import java.sql.Timestamp;
 
 /**
  * Fessais est une classe décrivant un essais du journal d'un ticket.
- * @version Mai 2016.
- * @author Thierry Baribaud.
+ * @version Juin 2016
+ * @author Thierry Baribaud
  */
 public class Fessais {
     
+  /**
+   * Identifiant de l'essai au journal. 
+   */
     private int enumabs;
+    
+  /**
+   * Identifiant de l'appel (fcalls/f99calls). 
+   */
     private int ecnum;
+    
+  /**
+   * Date de l'essai au journal. 
+   */
     private Timestamp Edate;
+    
+  /**
+   * Heure de l'essai au journal. 
+   */
     private String Etime;
+    
+  /**
+   * Identifiant du client (furgent). 
+   */
     private int eunum;
+    
+  /**
+   * Identifiant de l'intervenant (ftoubib). 
+   */
     private int etnum;
+    
+  /**
+   * Identifiant de l'opérateur (foperat). 
+   */
     private int eonum;
+    
+  /**
+   * Code de l'essai au journal. 
+   */
     private int eresult;
+    
+  /**
+   * Durée de l'essai au journal exprimée en seconde. 
+   */
     private int eduration;
+    
+  /**
+   * Essai de test OUI=1, NON=0. 
+   */
     private int etest;
+    
+  /**
+   * Essai interne. 
+   */
     private int einternal;
+    
+  /**
+   * Ancienne référence à la table des message (fmessage). 
+   */
     private int em3num;
+    
+  /**
+   * Identifiant d'un groupe d'essais (fegid). 
+   */
     private int egid;
+    
+  /**
+   * Message sur l'essai. 
+   */
     private String Emessage;
+    
+  /**
+   * Variable temporaire. 
+   */
     private int eptr;
 
     /**

@@ -3,40 +3,208 @@ package bdd;
 import java.sql.*;
 
 /**
- * Fcalls is a class that describes an active calls.
- * @version May 2016.
- * @author Thierry Baribaud.
+ * Fcalls est une classe décrivant un appel.
+ * @version Juin 2016
+ * @author Thierry Baribaud
  */
 public class Fcalls {
 
+  /**
+   * Identifiant de l'appel. 
+   */
   private int cnum;
+
+  /**
+   * Identifiant du client (furgent). 
+   */
   private int cunum;
+
+  /**
+   * Nom de l'appelant. 
+   */
   private String Cname;
+
+  /**
+   * Téléphone de l'appelant. 
+   */
   private String Ctel;
+
+  /**
+   * Adresse de l'appelant. 
+   */
   private String Caddress;
+
+  /**
+   * Complément d'adresse de l'appelant. 
+   */
   private String Caddress2;
+
+  /**
+   * Accès à l'adresse. 
+   */
   private String Caccess;
+
+  /**
+   * Code postal. 
+   */
   private String Cposcode;
+
+  /**
+   * Ville. 
+   */
   private String City;
+
+  /**
+   * Description de l'appel. 
+   */
   private String Csympt;
+
+  /**
+   * ... 
+   */
   private String Cnumber4;
+
+  /**
+   * Identifiant du complément d'appel (fcomplmt). 
+   */
   private int cc6num;
+
+  /**
+   * Date de saisie d'appel. 
+   */
   private Timestamp Cdate;
+
+  /**
+   * Heure de saisie d'appel. 
+   */
   private String Ctime;
+
+  /**
+   * Date de la dernière modification de l'appel. 
+   */
   private Timestamp Cdate2;
+
+  /**
+   * Heure de la dernière modification de l'appel. 
+   */
   private String Ctime2;
+
+  /**
+   * Raison sociale de l'appelant. 
+   */
   private String Corp;
+
+  /**
+   * ... 
+   */
   private String Cnumber5;
+
+  /**
+   * Numéro de ticket/appel. 
+   */
   private int cseqno;
 
+  /**
+   * ... 
+   */
   private int cquery1;
+
+  /**
+   * ... 
+   */
   private int cquery2;
+
+  /**
+   * Zone d'astreinte ou identifiant de l'agence (fagency). 
+   */
   private int czone;
+
+  /**
+   * Age du patient. 
+   */
   private int cage;
+
+  /**
+   * Identifiant ou indice du type d'appel (ftype). 
+   */
   private int ctype;
+
+  /**
+   * Identifiant de l'intervenant (ftoubib). 
+   */
   private int ctnum;
+
+  /**
+   * Appel clôturé 1=OUI, 0=NON. 
+   */
   private int cnote;
 
+  /**
+   * Délai d'intervention exprimé en minute. 
+   */
+  private int cdelay1;
+
+  /**
+   * Délai de remise en état exprimé en minute. 
+   */
+  private int cdelay2;
+
+  /**
+   * Durée de l'appel exprimée en seconde. 
+   */
+  private int cduration;
+
+  /**
+   * Identifiant de l'opérateur (foperat). 
+   */
+  private int conum;
+
+  /**
+   * ... 
+   */
+  private int ccallertype;
+
+  /**
+   * ... 
+   */
+  private String Cnumber6;
+
+  /**
+   * ... 
+   */
+  private String Cnumber7;
+
+  /**
+   * ... 
+   */
+  private String Cnumber8;
+
+  /**
+   * ... 
+   */
+  private String Cnumber9;
+
+  /**
+   * ... 
+   */
+  private String Cnumber10;
+
+  /**
+   * Code secteur astreinte jour. 
+   */
+  private String Csector1;
+
+  /**
+   * Code secteur astreinte nuit. 
+   */
+  private String Csector2;
+
+  /**
+   * Numéro de ticket/appel chez le client. 
+   */
+  private String Cextnum;
+  
+  
   public int getCnum() {
     return cnum;
     }
@@ -185,31 +353,31 @@ public class Fcalls {
   public String toString() {
     return this.getClass().getName() +
            " : {cnum=" + cnum + 
+           ", cseqno=" + cseqno +
            ", cunum=" + cunum + 
-           ", Cname=" + Cname +
-           ", Ctel=" + Ctel +
-           ", Caddress=" + Caddress +
-           ", Caddress2=" + Caddress2 + 
-           ", Caccess=" + Caccess + 
-           ", Cposcode=" + Cposcode + 
-           ", City=" + City + 
-           ", Csympt=" + Csympt + 
-           ", Cnumber4=" + Cnumber4 + 
-           ", cc6num=" + cc6num +
            ", Cdate=" + Cdate +
            ", Ctime=" + Ctime + 
-           ", Cdate2=" + Cdate2 +
-           ", Ctime2=" + Ctime2 + 
-           ", Corp=" + Corp + 
-           ", Cnumber5=" + Cnumber5 + 
-           ", cseqno=" + cseqno +
-           ", cquery1=" + cseqno +
-           ", cquery2=" + cseqno +
-           ", czone=" + cseqno +
-           ", cage=" + cseqno +
-           ", ctype=" + cseqno +
-           ", ctnum=" + cseqno +
-           ", cnote=" + cseqno +
+           ", Cname=" + Cname +
+           ", Ctel=" + Ctel +
+           ", Csympt=" + Csympt + 
+           ", cc6num=" + cc6num +
+//           ", Caddress=" + Caddress +
+//           ", Caddress2=" + Caddress2 + 
+//           ", Caccess=" + Caccess + 
+//           ", Cposcode=" + Cposcode + 
+//           ", City=" + City + 
+//           ", Cnumber4=" + Cnumber4 + 
+//           ", Cdate2=" + Cdate2 +
+//           ", Ctime2=" + Ctime2 + 
+//           ", Corp=" + Corp + 
+//           ", Cnumber5=" + Cnumber5 + 
+//           ", cquery1=" + cseqno +
+//           ", cquery2=" + cseqno +
+//           ", czone=" + cseqno +
+//           ", cage=" + cseqno +
+//           ", ctype=" + cseqno +
+//           ", ctnum=" + cseqno +
+//           ", cnote=" + cseqno +
            "}";
   }
 
@@ -228,7 +396,7 @@ public class Fcalls {
     }
 
     /**
-     * @return cquery1 retourne le résultat de la première question paramétrable.
+     * @return cquery1 le résultat de la première question paramétrable.
      */
     public int getCquery1() {
         return cquery1;
@@ -242,7 +410,7 @@ public class Fcalls {
     }
 
     /**
-     * @return cquery2 retourne le résultat de la seconde question paramétrable.
+     * @return cquery2 le résultat de la seconde question paramétrable.
      */
     public int getCquery2() {
         return cquery2;
@@ -256,7 +424,7 @@ public class Fcalls {
     }
 
     /**
-     * @return czone retourne la zone ou la référence à l'agence.
+     * @return czone la zone ou la référence à l'agence.
      */
     public int getCzone() {
         return czone;
@@ -270,7 +438,7 @@ public class Fcalls {
     }
 
     /**
-     * @return cage retourne l'age du patient.
+     * @return cage l'age du patient.
      */
     public int getCage() {
         return cage;
@@ -284,7 +452,7 @@ public class Fcalls {
     }
 
     /**
-     * @return ctype retourne la raison d'appel.
+     * @return ctype la raison d'appel.
      */
     public int getCtype() {
         return ctype;
@@ -298,7 +466,7 @@ public class Fcalls {
     }
 
     /**
-     * @return ctnum retourne la référence à l'intervenant courant.
+     * @return ctnum la référence à l'intervenant courant.
      */
     public int getCtnum() {
         return ctnum;
@@ -312,7 +480,7 @@ public class Fcalls {
     }
 
     /**
-     * @return cnote retourne l'état de clôture de l'appel (0=Non, 1=Oui).
+     * @return cnote l'état de clôture de l'appel (0=Non, 1=Oui).
      */
     public int getCnote() {
         return cnote;
@@ -323,5 +491,187 @@ public class Fcalls {
      */
     public void setCnote(int cnote) {
         this.cnote = cnote;
+    }
+
+    /**
+     * @return the cdelay1
+     */
+    public int getCdelay1() {
+        return cdelay1;
+    }
+
+    /**
+     * @param cdelay1 the cdelay1 to set
+     */
+    public void setCdelay1(int cdelay1) {
+        this.cdelay1 = cdelay1;
+    }
+
+    /**
+     * @return the cdelay2
+     */
+    public int getCdelay2() {
+        return cdelay2;
+    }
+
+    /**
+     * @param cdelay2 the cdelay2 to set
+     */
+    public void setCdelay2(int cdelay2) {
+        this.cdelay2 = cdelay2;
+    }
+
+    /**
+     * @return the cduration
+     */
+    public int getCduration() {
+        return cduration;
+    }
+
+    /**
+     * @param cduration the cduration to set
+     */
+    public void setCduration(int cduration) {
+        this.cduration = cduration;
+    }
+
+    /**
+     * @return the conum
+     */
+    public int getConum() {
+        return conum;
+    }
+
+    /**
+     * @param conum the conum to set
+     */
+    public void setConum(int conum) {
+        this.conum = conum;
+    }
+
+    /**
+     * @return the ccallertype
+     */
+    public int getCcallertype() {
+        return ccallertype;
+    }
+
+    /**
+     * @param ccallertype the ccallertype to set
+     */
+    public void setCcallertype(int ccallertype) {
+        this.ccallertype = ccallertype;
+    }
+
+    /**
+     * @return the Cnumber6
+     */
+    public String getCnumber6() {
+        return Cnumber6;
+    }
+
+    /**
+     * @param Cnumber6 the Cnumber6 to set
+     */
+    public void setCnumber6(String Cnumber6) {
+        this.Cnumber6 = (Cnumber6 != null)?Cnumber6.trim():null;
+    }
+
+    /**
+     * @return the Cnumber7
+     */
+    public String getCnumber7() {
+        return Cnumber7;
+    }
+
+    /**
+     * @param Cnumber7 the Cnumber7 to set
+     */
+    public void setCnumber7(String Cnumber7) {
+        this.Cnumber7 = (Cnumber7 != null)?Cnumber7.trim():null;
+    }
+
+    /**
+     * @return the Cnumber8
+     */
+    public String getCnumber8() {
+        return Cnumber8;
+    }
+
+    /**
+     * @param Cnumber8 the Cnumber8 to set
+     */
+    public void setCnumber8(String Cnumber8) {
+        this.Cnumber8 = (Cnumber8 != null)?Cnumber8.trim():null;
+    }
+
+    /**
+     * @return the Cnumber9
+     */
+    public String getCnumber9() {
+        return Cnumber9;
+    }
+
+    /**
+     * @param Cnumber9 the Cnumber9 to set
+     */
+    public void setCnumber9(String Cnumber9) {
+        this.Cnumber9 = (Cnumber9 != null)?Cnumber9.trim():null;
+    }
+
+    /**
+     * @return the Cnumber10
+     */
+    public String getCnumber10() {
+        return Cnumber10;
+    }
+
+    /**
+     * @param Cnumber10 the Cnumber10 to set
+     */
+    public void setCnumber10(String Cnumber10) {
+        this.Cnumber10 = (Cnumber10 != null)?Cnumber10.trim():null;
+    }
+
+    /**
+     * @return the Csector1
+     */
+    public String getCsector1() {
+        return Csector1;
+    }
+
+    /**
+     * @param Csector1 the Csector1 to set
+     */
+    public void setCsector1(String Csector1) {
+        this.Csector1 = (Csector1 != null)?Csector1.trim():null;
+    }
+
+    /**
+     * @return the Csector2
+     */
+    public String getCsector2() {
+        return Csector2;
+    }
+
+    /**
+     * @param Csector2 the Csector2 to set
+     */
+    public void setCsector2(String Csector2) {
+        this.Csector2 = (Csector2 != null)?Csector2.trim():null;
+    }
+
+    /**
+     * @return the Cextnum
+     */
+    public String getCextnum() {
+        return Cextnum;
+    }
+
+    /**
+     * @param Cextnum the Cextnum to set
+     */
+    public void setCextnum(String Cextnum) {
+        this.Cextnum = (Cextnum != null)?Cextnum.trim():null;
     }
 }

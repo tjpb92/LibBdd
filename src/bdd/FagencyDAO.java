@@ -20,8 +20,8 @@ public class FagencyDAO extends PaternDAO {
      *
      * @param MyConnection an active connection to a database.
      * @param myA6num agency's ID,
-     * @throws ClassNotFoundException, SQLException.
-     * @throws java.sql.SQLException
+     * @throws ClassNotFoundException en cas de classe non trouvée.
+     * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public FagencyDAO(Connection MyConnection, int myA6num)
             throws ClassNotFoundException, SQLException {
@@ -36,8 +36,8 @@ public class FagencyDAO extends PaternDAO {
      * @param MyA6unum customer's ID,
      * @param MyA6name optional parameter that enable filtering on agency's
      * name.
-     * @throws ClassNotFoundException, SQLException.
-     * @throws java.sql.SQLException
+     * @throws ClassNotFoundException en cas de classe non trouvée.
+     * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public FagencyDAO(Connection MyConnection, int MyA6unum, String MyA6name)
             throws ClassNotFoundException, SQLException {
@@ -53,8 +53,8 @@ public class FagencyDAO extends PaternDAO {
      * @param MyA6unum customer's ID,
      * @param MyA6name optional parameter that enable filtering on agency's
      * name.
-     * @throws ClassNotFoundException, SQLException.
-     * @throws java.sql.SQLException
+     * @throws ClassNotFoundException en cas de classe non trouvée.
+     * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public FagencyDAO(Connection MyConnection, int myA6num, int MyA6unum, String MyA6name)
             throws ClassNotFoundException, SQLException {

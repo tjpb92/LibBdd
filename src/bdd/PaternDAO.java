@@ -3,9 +3,9 @@ package bdd;
 import java.sql.*;
 
 /**
- * Class that describes DAO patern to access database.
- * @author Thierry Baribaud.
- * @version October 2015.
+ * Classe qui décrit le patern DAO peremttant l'accès aux bases de données.
+ * @author Thierry Baribaud
+ * @version Juin 2016
  */
 public abstract class PaternDAO {
 
@@ -136,7 +136,7 @@ public abstract class PaternDAO {
 
   /** 
    * Prepare resource to select data for a given SQL statement.
-   * @throws java.sql.SQLException
+   * @throws java.sql.SQLException en cas d'erreur SQL.
    */
   public void setReadPreparedStatement() throws SQLException {
     ReadPreparedStatement = MyConnection.prepareStatement(getReadStatement());
@@ -144,7 +144,7 @@ public abstract class PaternDAO {
 
   /** 
    * Prepare resource to update data with a given SQL statement.
-   * @throws java.sql.SQLException
+   * @throws java.sql.SQLException en cas d'erreur SQL.
    */
   public void setUpdatePreparedStatement() throws SQLException {
     UpdatePreparedStatement = MyConnection.prepareStatement(getUpdateStatement());
@@ -152,7 +152,7 @@ public abstract class PaternDAO {
 
   /** 
    * Prepare resource to insert data with a given SQL statement.
-   * @throws java.sql.SQLException
+   * @throws java.sql.SQLException en cas d'erreur SQL.
    */
   public void setInsertPreparedStatement() throws SQLException {
     InsertPreparedStatement = MyConnection.prepareStatement(getInsertStatement());
@@ -164,7 +164,7 @@ public abstract class PaternDAO {
   
   /** 
    * Prepare resource to delete data with a given SQL statement.
-   * @throws java.sql.SQLException
+   * @throws java.sql.SQLException en cas d'erreur SQL.
    */
   public void setDeletePreparedStatement() throws SQLException {
     DeletePreparedStatement = MyConnection.prepareStatement(getDeleteStatement());
@@ -172,7 +172,7 @@ public abstract class PaternDAO {
 
   /**
    * Associate the result of the request to a ResultSet.
-   * @throws java.sql.SQLException
+   * @throws java.sql.SQLException en cas d'erreur SQL.
    */
   public void setReadResultSet() throws SQLException {
     ReadResultSet = ReadPreparedStatement.executeQuery();
@@ -205,7 +205,7 @@ public abstract class PaternDAO {
 
   /**
    * Method that closes all active resources except database connection.
-   * @throws java.sql.SQLException
+   * @throws java.sql.SQLException en cas d'erreur SQL.
    */
   public void close() throws SQLException {
 
