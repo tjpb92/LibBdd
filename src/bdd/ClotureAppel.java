@@ -6,8 +6,8 @@ import java.sql.Timestamp;
  * ClotureAppel est une classe qui décrit une clôture d'appel standard. Les
  * clôtures d'appel spécifique hériteront de cette classe.
  *
- * @version Juin 2016.
- * @author Thierry Baribaud.
+ * @version Juin 2016
+ * @author Thierry Baribaud
  */
 public class ClotureAppel {
 
@@ -32,7 +32,7 @@ public class ClotureAppel {
      * <LI> 98 : "Cloture admin - appel hors périmètre",</LI>
      * <LI> 99 : "Cloture infructueuse malgré relances ANSTEL".</LI></UL>
      */
-    private String Resultat;
+    private String Resultat = "#N/A";
 
     /**
      * Nature de l'intervention.
@@ -42,12 +42,12 @@ public class ClotureAppel {
      * <LI>2 : "Vandalisme",</LI>
      * <LI>3 : "Autre". </LI></UL>
      */
-    private String Nature;
+    private String Nature = "#N/A";
 
     /**
      * Rapport d'intervention.
      */
-    private String Rapport;
+    private String Rapport = "#N/A";
 
     /**
      * Le technicien est-il encore sur site ?
@@ -57,7 +57,7 @@ public class ClotureAppel {
      * <LI>2 : "Non",  </LI>
      * <LI>3 : "Ne sait pas". </LI></UL>
      */
-    private String OnSite;
+    private String OnSite = "#N/A";
 
     /**
      * @return BegDate la date de début d'intervention.
@@ -145,5 +145,22 @@ public class ClotureAppel {
      */
     public void setOnSite(String OnSite) {
         this.OnSite = OnSite;
+    }
+
+    /**
+     * Renvoie la clôture d'appel sous forme de texte.
+     *
+     * @return la clôture d'appel sous forme de texte.
+     */
+    @Override
+    public String toString() {
+        return (this.getClass().getName()
+                + ":{début=" + getBegDate()
+                + ", fin=" + getEndDate()
+                + ", nature=" + getNature()
+                + ", résultat=" + getResultat()
+                + ", rapport=" + getRapport()
+                + ", tech/site=" + getOnSite()
+                + "}");
     }
 }

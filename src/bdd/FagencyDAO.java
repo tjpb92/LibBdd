@@ -8,18 +8,19 @@ import utils.DBServer;
 import utils.DBServerException;
 
 /**
- * Class that describes the ways to access table fagency through JDBC.
+ * Classe qui décrit les méthodes pour accéder à la table fagency au travers de
+ * JDBC.
  *
- * @author Thierry Baribaud.
- * @version Mai 2015.
+ * @author Thierry Baribaud
+ * @version Juin 2015
  */
 public class FagencyDAO extends PaternDAO {
 
     /**
-     * Class constructor #1.
+     * Constructeur principal de la classe Fagency.
      *
-     * @param MyConnection an active connection to a database.
-     * @param myA6num agency's ID,
+     * @param MyConnection une connexion à la base de données courante.
+     * @param myA6num identifiant de l'agence.
      * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
@@ -30,12 +31,11 @@ public class FagencyDAO extends PaternDAO {
     }
 
     /**
-     * Class constructor #2.
+     * Constructeur secondaire de la classe Fagency.
      *
-     * @param MyConnection an active connection to a database.
-     * @param MyA6unum customer's ID,
-     * @param MyA6name optional parameter that enable filtering on agency's
-     * name.
+     * @param MyConnection une connexion à la base de données courante.
+     * @param MyA6unum identifiant du client.
+     * @param MyA6name nom de l'agence permettant un filtrage.
      * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
@@ -46,13 +46,12 @@ public class FagencyDAO extends PaternDAO {
     }
 
     /**
-     * Class constructor #3.
+     * Constructeur tertiaire de la classe Fagency.
      *
-     * @param MyConnection an active connection to a database.
-     * @param myA6num agency's ID,
-     * @param MyA6unum customer's ID,
-     * @param MyA6name optional parameter that enable filtering on agency's
-     * name.
+     * @param MyConnection une connexion à la base de données courante.
+     * @param myA6num identifiant de l'agence.
+     * @param MyA6unum identifiant du client.
+     * @param MyA6name nom de l'agence permettant un filtrage.
      * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
@@ -107,9 +106,9 @@ public class FagencyDAO extends PaternDAO {
     }
 
     /**
-     * Select a record.
+     * Sélectionne une agence.
      *
-     * @return the agency selected
+     * @return l'agence sélectionnée.
      */
     @Override
     public Fagency select() {
@@ -135,19 +134,19 @@ public class FagencyDAO extends PaternDAO {
                 MyFagency.setA6begactive(ReadResultSet.getTimestamp("a6begactive"));
                 MyFagency.setA6endactive(ReadResultSet.getTimestamp("a6endactive"));
             } else {
-                System.out.println("No more record in fagency");
+                System.out.println("Lecture de fagency terminée");
             }
         } catch (SQLException MyException) {
-            System.out.println("Problem reading fagency record "
+            System.out.println("Erreur en lecture de fagency "
                     + MyException.getMessage());
         }
         return MyFagency;
     }
 
     /**
-     * Update a record.
+     * Met à jour une agence.
      *
-     * @param MyFagency agency to update
+     * @param MyFagency agence à mettre à jour.
      */
     public void update(Fagency MyFagency) {
         try {
@@ -169,18 +168,18 @@ public class FagencyDAO extends PaternDAO {
             UpdatePreparedStatement.setInt(16, MyFagency.getA6num());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
-                System.out.println("Failed to update data into fagency");
+                System.out.println("Impossible de mettre à jour fagency");
             }
         } catch (SQLException MyException) {
-            System.out.println("Problem reading fagency record "
+            System.out.println("Erreur lors de la mise à jour de fagency "
                     + MyException.getMessage());
         }
     }
 
     /**
-     * Delete a record.
+     * Supprime définitivement une agence.
      *
-     * @param a6num agency identifier
+     * @param a6num identifiant de l'agence à supprimer.
      */
     @Override
     public void delete(int a6num) {
@@ -188,18 +187,18 @@ public class FagencyDAO extends PaternDAO {
             DeletePreparedStatement.setInt(1, a6num);
             setNbAffectedRow(DeletePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
-                System.out.println("Failed to delete data from fagency");
+                System.out.println("Impossible de détruire une agence dans fagency");
             }
         } catch (SQLException e) {
-            System.out.println("Problem deleting fagency record "
+            System.out.println("Erreur lors de la suppression d'une agence dans fagency "
                     + e.getMessage());
         }
     }
 
     /**
-     * Insert a record.
+     * Ajoute une agence.
      *
-     * @param MyFagency agency to insert in database
+     * @param MyFagency agence à ajouter.
      */
     public void insert(Fagency MyFagency) {
         ResultSet MyKeyResultSet = null;
@@ -223,7 +222,7 @@ public class FagencyDAO extends PaternDAO {
             InsertPreparedStatement.setTimestamp(15, MyFagency.getA6endactive());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
-                System.out.println("Failed to insert data into fagency");
+                System.out.println("Impossible d'ajouter une agence dans fagency");
             } else {
                 MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
                 if (MyKeyResultSet.next()) {
@@ -232,7 +231,7 @@ public class FagencyDAO extends PaternDAO {
             }
             MyKeyResultSet.close();
         } catch (SQLException MyException) {
-            System.out.println("Problem inserting fagency record "
+            System.out.println("Erreur lors de l'insertion d'une agence dans fagency "
                     + MyException.getMessage());
         }
     }
