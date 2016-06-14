@@ -67,7 +67,7 @@ public class FcallsDAO extends PaternDAO {
             idx++;
             idxEndDate = idx;
         }
-        Stmt.append(" order by cnum;");
+        Stmt.append(" order by cdate, ctime;");
 //        System.out.println(Stmt);
         setReadStatement(Stmt.toString());
         setReadPreparedStatement();
@@ -147,19 +147,19 @@ public class FcallsDAO extends PaternDAO {
                 MyFcalls.setCtype(ReadResultSet.getInt("ctype"));
                 MyFcalls.setCtnum(ReadResultSet.getInt("ctnum"));
                 MyFcalls.setCnote(ReadResultSet.getInt("cnote"));
-                MyFcalls.setCnote(ReadResultSet.getInt("cdelay1"));
-                MyFcalls.setCnote(ReadResultSet.getInt("cdelay2"));
-                MyFcalls.setCnote(ReadResultSet.getInt("cduration"));
-                MyFcalls.setCnote(ReadResultSet.getInt("conum"));
-                MyFcalls.setCnote(ReadResultSet.getInt("ccallertype"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber6"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber7"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber8"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber9"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber10"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("csector1"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("csector2"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("cextnum"));
+                MyFcalls.setCdelay1(ReadResultSet.getInt("cdelay1"));
+                MyFcalls.setCdelay2(ReadResultSet.getInt("cdelay2"));
+                MyFcalls.setCduration(ReadResultSet.getInt("cduration"));
+                MyFcalls.setConum(ReadResultSet.getInt("conum"));
+                MyFcalls.setCcallertype(ReadResultSet.getInt("ccallertype"));
+                MyFcalls.setCnumber6(ReadResultSet.getString("cnumber6"));
+                MyFcalls.setCnumber7(ReadResultSet.getString("cnumber7"));
+                MyFcalls.setCnumber8(ReadResultSet.getString("cnumber8"));
+                MyFcalls.setCnumber9(ReadResultSet.getString("cnumber9"));
+                MyFcalls.setCnumber10(ReadResultSet.getString("cnumber10"));
+                MyFcalls.setCsector1(ReadResultSet.getString("csector1"));
+                MyFcalls.setCsector2(ReadResultSet.getString("csector2"));
+                MyFcalls.setCextnum(ReadResultSet.getString("cextnum"));
             } else {
                 System.out.println("Lecture de " + MyTable + " terminée");
             }
