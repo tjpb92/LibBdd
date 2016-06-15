@@ -1,6 +1,5 @@
 package bdd;
 
-import bdd.PaternDAO;
 import java.io.IOException;
 import java.sql.*;
 import utils.ApplicationProperties;
@@ -38,8 +37,10 @@ public class FurgentDAO extends PaternDAO {
             Stmt.append(" where unum = ").append(myUnum);
         } else {
             Stmt.append(" where unum >0");
+            Stmt.append(" order by unum");
         }
-        Stmt.append(" order by unum;");
+        Stmt.append(";");
+        
         setReadStatement(Stmt.toString());
         setReadPreparedStatement();
         setReadResultSet();

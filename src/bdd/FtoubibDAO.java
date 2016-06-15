@@ -29,36 +29,40 @@ public class FtoubibDAO extends PaternDAO {
 
         this.MyConnection = MyConnection;
 
-        Stmt = new StringBuffer("select tnum, tunum, ta6num,"
+        Stmt = new StringBuffer("select tnum, tunum, ta6num, ta4num,"
                 + " tlname, tfname, tabbname, tel,"
                 + " tel2, telper, tel4, tel5, tel6,"
                 + " telfax, temail, taddress, taddress2, tcomment"
                 + " from ftoubib"
                 + " where tnum > 0");
-        if (tnum > 0) {
-            Stmt.append(" and tnum = ").append(tnum);
-        }
         if (tunum > 0) {
             Stmt.append(" and tunum = ").append(tunum);
         }
-        Stmt.append(" order by tnum;");
+        if (tnum > 0) {
+            Stmt.append(" and tnum = ").append(tnum);
+        } else {
+            Stmt.append(" order by tnum");
+        }
+        Stmt.append(";");
+        
 //        System.out.println(Stmt);
         setReadStatement(Stmt.toString());
         setReadPreparedStatement();
         setReadResultSet();
 
         setUpdateStatement("update ftoubib"
-                + " set tunum=?, ta6num=?, tlname=?, tfname=?, tabbname=?, tel=?,"
+                + " set tunum=?, ta6num=?, ta4num=?, tlname=?, tfname=?,"
+                + " tabbname=?, tel=?,"
                 + " tel2=?, telper=?, tel4=?, tel5=?, tel6=?,"
                 + " telfax=?, temail=?, taddress=?, taddress2=?, tcomment=?"
                 + " where tnum=?;");
         setUpdatePreparedStatement();
 
         setInsertStatement("insert into ftoubib"
-                + " (tunum, ta6num, tlname, tfname, tabbname, tel,"
+                + " (tunum, ta6num, ta4num, tlname, tfname, tabbname, tel,"
                 + " tel2, telper, tel4, tel5, tel6,"
                 + " telfax, temail, taddress, taddress2, tcomment)"
-                + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
         setInsertPreparedStatement();
 
         setDeleteStatement("delete from ftoubib where tnum=?;");
@@ -80,6 +84,7 @@ public class FtoubibDAO extends PaternDAO {
                 MyFtoubib.setTnum(ReadResultSet.getInt("tnum"));
                 MyFtoubib.setTunum(ReadResultSet.getInt("tunum"));
                 MyFtoubib.setTa6num(ReadResultSet.getInt("ta6num"));
+                MyFtoubib.setTa4num(ReadResultSet.getInt("ta4num"));
                 MyFtoubib.setTlname(ReadResultSet.getString("tlname"));
                 MyFtoubib.setTfname(ReadResultSet.getString("tfname"));
                 MyFtoubib.setTabbname(ReadResultSet.getString("tabbname"));
@@ -113,21 +118,22 @@ public class FtoubibDAO extends PaternDAO {
         try {
             UpdatePreparedStatement.setInt(1, MyFtoubib.getTunum());
             UpdatePreparedStatement.setInt(2, MyFtoubib.getTa6num());
-            UpdatePreparedStatement.setString(3, MyFtoubib.getTlname());
-            UpdatePreparedStatement.setString(4, MyFtoubib.getTfname());
-            UpdatePreparedStatement.setString(5, MyFtoubib.getTabbname());
-            UpdatePreparedStatement.setString(6, MyFtoubib.getTel());
-            UpdatePreparedStatement.setString(7, MyFtoubib.getTel2());
-            UpdatePreparedStatement.setString(8, MyFtoubib.getTelper());
-            UpdatePreparedStatement.setString(9, MyFtoubib.getTel4());
-            UpdatePreparedStatement.setString(10, MyFtoubib.getTel5());
-            UpdatePreparedStatement.setString(11, MyFtoubib.getTel6());
-            UpdatePreparedStatement.setString(12, MyFtoubib.getTelfax());
-            UpdatePreparedStatement.setString(13, MyFtoubib.getTemail());
-            UpdatePreparedStatement.setString(14, MyFtoubib.getTaddress());
-            UpdatePreparedStatement.setString(15, MyFtoubib.getTaddress2());
-            UpdatePreparedStatement.setString(16, MyFtoubib.getTcomment());
-            UpdatePreparedStatement.setInt(17, MyFtoubib.getTnum());
+            UpdatePreparedStatement.setInt(3, MyFtoubib.getTa4num());
+            UpdatePreparedStatement.setString(4, MyFtoubib.getTlname());
+            UpdatePreparedStatement.setString(5, MyFtoubib.getTfname());
+            UpdatePreparedStatement.setString(6, MyFtoubib.getTabbname());
+            UpdatePreparedStatement.setString(7, MyFtoubib.getTel());
+            UpdatePreparedStatement.setString(8, MyFtoubib.getTel2());
+            UpdatePreparedStatement.setString(9, MyFtoubib.getTelper());
+            UpdatePreparedStatement.setString(10, MyFtoubib.getTel4());
+            UpdatePreparedStatement.setString(11, MyFtoubib.getTel5());
+            UpdatePreparedStatement.setString(12, MyFtoubib.getTel6());
+            UpdatePreparedStatement.setString(13, MyFtoubib.getTelfax());
+            UpdatePreparedStatement.setString(14, MyFtoubib.getTemail());
+            UpdatePreparedStatement.setString(15, MyFtoubib.getTaddress());
+            UpdatePreparedStatement.setString(16, MyFtoubib.getTaddress2());
+            UpdatePreparedStatement.setString(17, MyFtoubib.getTcomment());
+            UpdatePreparedStatement.setInt(18, MyFtoubib.getTnum());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour ftoubib");
@@ -169,20 +175,21 @@ public class FtoubibDAO extends PaternDAO {
             System.out.println("tlname=" + MyFtoubib.getTlname());
             InsertPreparedStatement.setInt(1, MyFtoubib.getTunum());
             InsertPreparedStatement.setInt(2, MyFtoubib.getTa6num());
-            InsertPreparedStatement.setString(3, MyFtoubib.getTlname());
-            InsertPreparedStatement.setString(4, MyFtoubib.getTfname());
-            InsertPreparedStatement.setString(5, MyFtoubib.getTabbname());
-            InsertPreparedStatement.setString(6, MyFtoubib.getTel());
-            InsertPreparedStatement.setString(7, MyFtoubib.getTel2());
+            InsertPreparedStatement.setInt(3, MyFtoubib.getTa4num());
+            InsertPreparedStatement.setString(4, MyFtoubib.getTlname());
+            InsertPreparedStatement.setString(5, MyFtoubib.getTfname());
+            InsertPreparedStatement.setString(6, MyFtoubib.getTabbname());
+            InsertPreparedStatement.setString(7, MyFtoubib.getTel());
+            InsertPreparedStatement.setString(8, MyFtoubib.getTel2());
             InsertPreparedStatement.setString(8, MyFtoubib.getTelper());
-            InsertPreparedStatement.setString(9, MyFtoubib.getTel4());
-            InsertPreparedStatement.setString(10, MyFtoubib.getTel5());
-            InsertPreparedStatement.setString(11, MyFtoubib.getTel6());
-            InsertPreparedStatement.setString(12, MyFtoubib.getTelfax());
-            InsertPreparedStatement.setString(13, MyFtoubib.getTemail());
-            InsertPreparedStatement.setString(14, MyFtoubib.getTaddress());
-            InsertPreparedStatement.setString(15, MyFtoubib.getTaddress2());
-            InsertPreparedStatement.setString(16, MyFtoubib.getTcomment());
+            InsertPreparedStatement.setString(10, MyFtoubib.getTel4());
+            InsertPreparedStatement.setString(11, MyFtoubib.getTel5());
+            InsertPreparedStatement.setString(12, MyFtoubib.getTel6());
+            InsertPreparedStatement.setString(13, MyFtoubib.getTelfax());
+            InsertPreparedStatement.setString(14, MyFtoubib.getTemail());
+            InsertPreparedStatement.setString(15, MyFtoubib.getTaddress());
+            InsertPreparedStatement.setString(16, MyFtoubib.getTaddress2());
+            InsertPreparedStatement.setString(17, MyFtoubib.getTcomment());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un intervenant dans ftoubib");
@@ -198,7 +205,6 @@ public class FtoubibDAO extends PaternDAO {
                     + "ftoubib " + MyException.getMessage());
         }
     }
-
 
     @Override
     public void update(Object MyObject) {
