@@ -67,7 +67,7 @@ public class FessaisDAO extends PaternDAO {
      * @param egid identifiant d'un groupe d'essais,
      * @param MyEtatTicket indique si l'on travaille sur les tickets en cours ou
      * archivés.
-     * @throws ClassNotFoundException en cas de classse non trouvée.
+     * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public FessaisDAO(Connection MyConnection, int enumabs, int ecnum, int egid, EtatTicket MyEtatTicket)
@@ -264,7 +264,7 @@ public class FessaisDAO extends PaternDAO {
      * @param MyFessais essai à ajouter à la table fessais ou f99essais.
      */
     public void insert(Fessais MyFessais) {
-        ResultSet MyKeyResultSet = null;
+        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("enumabs=" + MyFessais.getEnumabs());
@@ -290,8 +290,8 @@ public class FessaisDAO extends PaternDAO {
                 if (MyKeyResultSet.next()) {
                     MyFessais.setEnumabs((int) MyKeyResultSet.getInt(1));
                 }
+                MyKeyResultSet.close();
             }
-            MyKeyResultSet.close();
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un essai dans "
                     + MyTable + " " + MyException.getMessage());

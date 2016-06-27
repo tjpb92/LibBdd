@@ -19,7 +19,7 @@ public class FtoubibDAO extends PaternDAO {
      * @param MyConnection connexion à la base de données courante.
      * @param tnum identifiant de l'intervenant,
      * @param tunum identifiant du service d'urgence,
-     * @throws ClassNotFoundException en cas de classse non trouvée.
+     * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public FtoubibDAO(Connection MyConnection, int tnum, int tunum)
@@ -169,7 +169,7 @@ public class FtoubibDAO extends PaternDAO {
      * @param MyFtoubib intervenant à ajouter à la table ftoubib.
      */
     public void insert(Ftoubib MyFtoubib) {
-        ResultSet MyKeyResultSet = null;
+        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("tlname=" + MyFtoubib.getTlname());
@@ -198,8 +198,8 @@ public class FtoubibDAO extends PaternDAO {
                 if (MyKeyResultSet.next()) {
                     MyFtoubib.setTnum((int) MyKeyResultSet.getInt(1));
                 }
+                MyKeyResultSet.close();
             }
-            MyKeyResultSet.close();
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un intervenant dans "
                     + "ftoubib " + MyException.getMessage());

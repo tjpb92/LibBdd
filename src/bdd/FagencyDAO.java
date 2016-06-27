@@ -201,7 +201,7 @@ public class FagencyDAO extends PaternDAO {
      * @param MyFagency agence à ajouter.
      */
     public void insert(Fagency MyFagency) {
-        ResultSet MyKeyResultSet = null;
+        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("a6name=" + MyFagency.getA6name());
@@ -228,8 +228,8 @@ public class FagencyDAO extends PaternDAO {
                 if (MyKeyResultSet.next()) {
                     MyFagency.setA6num((int) MyKeyResultSet.getInt(1));
                 }
+                MyKeyResultSet.close();
             }
-            MyKeyResultSet.close();
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'une agence dans fagency "
                     + MyException.getMessage());

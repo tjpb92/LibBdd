@@ -23,7 +23,7 @@ public class FcallsDAO extends PaternDAO {
      * @param EndDate date de fin d'extraction,
      * @param MyEtatTicket indique si l'on travaille sur les tickets en cours ou
      * archivés.
-     * @throws ClassNotFoundException en cas de classse non trouvée.
+     * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public FcallsDAO(Connection MyConnection, int cnum, int cunum,
@@ -251,7 +251,7 @@ public class FcallsDAO extends PaternDAO {
      * @param MyFcalls appel à ajouter à la table fcalls ou f99calls.
      */
     public void insert(Fcalls MyFcalls) {
-        ResultSet MyKeyResultSet = null;
+        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("cname=" + MyFcalls.getCname());
@@ -301,8 +301,8 @@ public class FcallsDAO extends PaternDAO {
                 if (MyKeyResultSet.next()) {
                     MyFcalls.setCnum((int) MyKeyResultSet.getInt(1));
                 }
+                MyKeyResultSet.close();
             }
-            MyKeyResultSet.close();
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un appel dans "
                     + MyTable + " " + MyException.getMessage());

@@ -15,7 +15,7 @@ public class FactivityDAO extends PaternDAO {
      *
      * @param MyConnection connexion à la base de données courante.
      * @param myA4num identifiant interne d'une activité,
-     * @throws ClassNotFoundException en cas de classse non trouvée.
+     * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public FactivityDAO(Connection MyConnection, int myA4num)
@@ -125,7 +125,7 @@ public class FactivityDAO extends PaternDAO {
      * @param MyFactivity activité à ajouter à la table factivity.
      */
     public void insert(Factivity MyFactivity) {
-        ResultSet MyKeyResultSet = null;
+        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("a4name=" + MyFactivity.getA4name());
@@ -139,8 +139,8 @@ public class FactivityDAO extends PaternDAO {
                 if (MyKeyResultSet.next()) {
                     MyFactivity.setA4num((int) MyKeyResultSet.getInt(1));
                 }
+                MyKeyResultSet.close();
             }
-            MyKeyResultSet.close();
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'une activité dans factivity "
                     + MyException.getMessage());

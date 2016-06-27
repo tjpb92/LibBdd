@@ -1,6 +1,5 @@
 package bdd;
 
-import bdd.PaternDAO;
 import java.io.IOException;
 import java.sql.*;
 import utils.ApplicationProperties;
@@ -21,7 +20,7 @@ public class FmenuitDAO extends PaternDAO {
      *
      * @param MyConnection connexion à la base de données courante.
      * @param myM6num identifiant interne de l'item du menu,
-     * @throws ClassNotFoundException en cas de classse non trouvée.
+     * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public FmenuitDAO(Connection MyConnection, int myM6num)
@@ -129,7 +128,7 @@ public class FmenuitDAO extends PaternDAO {
      * @param MyFmenuit item à ajouter à la table fmenuit.
      */
     public void insert(Fmenuit MyFmenuit) {
-        ResultSet MyKeyResultSet = null;
+        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("m6name=" + MyFmenuit.getM6name());
@@ -143,8 +142,8 @@ public class FmenuitDAO extends PaternDAO {
                 if (MyKeyResultSet.next()) {
                     MyFmenuit.setM6num((int) MyKeyResultSet.getInt(1));
                 }
+                MyKeyResultSet.close();
             }
-            MyKeyResultSet.close();
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un item dans fmenuit "
                     + MyException.getMessage());

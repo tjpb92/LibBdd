@@ -1,6 +1,5 @@
 package bdd;
 
-import bdd.PaternDAO;
 import java.io.IOException;
 import java.sql.*;
 import utils.ApplicationProperties;
@@ -179,7 +178,7 @@ public class FcomplmtDAO extends PaternDAO {
      * @param MyFcomplmt complément d'appel à ajouter à la table fcomplmt.
      */
     public void insert(Fcomplmt MyFcomplmt) {
-        ResultSet MyKeyResultSet = null;
+        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("c6alpha2=" + MyFcomplmt.getC6alpha2());
@@ -213,8 +212,8 @@ public class FcomplmtDAO extends PaternDAO {
                 if (MyKeyResultSet.next()) {
                     MyFcomplmt.setC6num((int) MyKeyResultSet.getInt(1));
                 }
+                MyKeyResultSet.close();
             }
-            MyKeyResultSet.close();
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un complément d'appel dans fcomplmt " + MyException.getMessage());
         }

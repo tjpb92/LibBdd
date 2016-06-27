@@ -4,6 +4,8 @@ import java.sql.*;
 
 /**
  * Classe qui décrit le patern DAO peremttant l'accès aux bases de données.
+ * Elle sera progressivement remplacée par la classe PatternDAO plus performante.
+ * 
  * @author Thierry Baribaud
  * @version Juin 2016
  */

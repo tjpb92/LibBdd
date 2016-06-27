@@ -3,14 +3,35 @@ package bdd;
 /**
  * Furgent est une classe décrivant un service d'urgence.
  *
- * @version Mai 2016.
- * @author Thierry Baribaud.
+ * @version Juin 2016
+ * @author Thierry Baribaud
  */
 public class Furgent {
 
+    /**
+     * Identifiant unique du service d'urgence.
+     */
     private int unum;
+    
+    /**
+     * Nom du service d'urgence.
+     */
     private String Uname;
+    
+    /**
+     * Nom abrégé du service d'urgence.
+     */
     private String Uabbname;
+    
+    /**
+     * Modèle de service d'urgence.
+     * <ul>
+     * <li>0 : ancien service d'urgence à partir de 1990 (utilisant fmatrix),</li>
+     * <li>1 : nouveau service d'urgence à partir de 1991 (utilisant fsched),</li>
+     * <li>5 : bailleur social à partir de 1995 (utilisant fsched).
+     * </ul>
+     */
+    private int unewurg;
 
     /**
      * @return unum l'identifiant du service d'urgence.
@@ -54,4 +75,27 @@ public class Furgent {
         this.Uabbname = (Uabbname != null) ? Uabbname.trim() : null;
     }
 
+    /**
+     * @return unewurg le modèle du service d'urgence.
+     */
+    public int getUnewurg() {
+        return unewurg;
+    }
+
+    /**
+     * @param unewurg définit le modèle du service d'urgence.
+     */
+    public void setUnewurg(int unewurg) {
+        this.unewurg = unewurg;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getName()
+                + " : {unum=" + unum
+                + ", Uname=" + Uname
+                + ", Uabbname=" + Uabbname
+                + ", unewurg=" + unewurg
+                + "}";
+    }
 }

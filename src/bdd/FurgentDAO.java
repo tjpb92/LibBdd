@@ -1,63 +1,41 @@
 package bdd;
 
-import java.io.IOException;
+import com.informix.jdbc.IfmxStatement;
 import java.sql.*;
-import utils.ApplicationProperties;
-import utils.DBManager;
-import utils.DBServer;
-import utils.DBServerException;
 
 /**
  * Classe qui décrit les méthodes pour accéder à la table furgent avec JDBC.
  *
- * @author Thierry Baribaud.
- * @version Mai 2015.
+ * @author Thierry Baribaud
+ * @version Juin 2016
  */
-public class FurgentDAO extends PaternDAO {
+public class FurgentDAO extends PatternDAO {
 
     /**
      * Constructeur de la classe FurgentDAO.
      *
      * @param MyConnection connexion à la base de données courante.
-     * @param myUnum identifiant interne du service d'urgence,
-     * @throws ClassNotFoundException en cas de classse non trouvée.
+     * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public FurgentDAO(Connection MyConnection, int myUnum)
+    public FurgentDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
-
-        StringBuffer Stmt;
 
         this.MyConnection = MyConnection;
 
-        Stmt = new StringBuffer("select unum, uabbname, uname"
+        setInvariableSelectStatement("select unum, uabbname, uname, unewurg"
                 + " from furgent");
 
-        if (myUnum > 0) {
-            Stmt.append(" where unum = ").append(myUnum);
-        } else {
-            Stmt.append(" where unum >0");
-            Stmt.append(" order by unum");
-        }
-        Stmt.append(";");
-        
-        setReadStatement(Stmt.toString());
-        setReadPreparedStatement();
-        setReadResultSet();
-
         setUpdateStatement("update furgent"
-                + " set uabbname=?, uname=?"
+                + " set uabbname=?, uname=?, unewurg=?"
                 + " where unum=?;");
-        setUpdatePreparedStatement();
 
         setInsertStatement("insert into furgent"
-                + " (uabbname, uname)"
-                + " values(?, ?);");
-        setInsertPreparedStatement();
+                + " (uabbname, uname, unewurg)"
+                + " values(?, ?, ?);");
 
         setDeleteStatement("delete from furgent"
                 + " where unum=?;");
-        setDeletePreparedStatement();
     }
 
     /**
@@ -70,11 +48,12 @@ public class FurgentDAO extends PaternDAO {
         Furgent MyFurgent = null;
 
         try {
-            if (ReadResultSet.next()) {
+            if (SelectResultSet.next()) {
                 MyFurgent = new Furgent();
-                MyFurgent.setUnum(ReadResultSet.getInt("unum"));
-                MyFurgent.setUabbname(ReadResultSet.getString("uabbname"));
-                MyFurgent.setUname(ReadResultSet.getString("uname"));
+                MyFurgent.setUnum(SelectResultSet.getInt("unum"));
+                MyFurgent.setUabbname(SelectResultSet.getString("uabbname"));
+                MyFurgent.setUname(SelectResultSet.getString("uname"));
+                MyFurgent.setUnewurg(SelectResultSet.getInt("unewurg"));
             } else {
                 System.out.println("Lecture de furgent terminée");
             }
@@ -94,7 +73,8 @@ public class FurgentDAO extends PaternDAO {
         try {
             UpdatePreparedStatement.setString(1, MyFurgent.getUabbname());
             UpdatePreparedStatement.setString(2, MyFurgent.getUname());
-            UpdatePreparedStatement.setInt(3, MyFurgent.getUnum());
+            UpdatePreparedStatement.setInt(3, MyFurgent.getUnewurg());
+            UpdatePreparedStatement.setInt(4, MyFurgent.getUnum());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour furgent");
@@ -130,22 +110,26 @@ public class FurgentDAO extends PaternDAO {
      * @param MyFurgent service d'urgence à ajouter à la table furgent.
      */
     public void insert(Furgent MyFurgent) {
-        ResultSet MyKeyResultSet = null;
+//        ResultSet MyKeyResultSet = null;
 
         try {
             System.out.println("uname=" + MyFurgent.getUname());
             InsertPreparedStatement.setString(1, MyFurgent.getUabbname());
             InsertPreparedStatement.setString(2, MyFurgent.getUname());
+            InsertPreparedStatement.setInt(3, MyFurgent.getUnewurg());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un service d'urgence dans furgent");
             } else {
-                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
-                if (MyKeyResultSet.next()) {
-                    MyFurgent.setUnum((int) MyKeyResultSet.getInt(1));
-                }
+//                Does not work with Informix IDS2000
+//                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
+//                if (MyKeyResultSet.next()) {
+//                    MyFurgent.setUnum((int) MyKeyResultSet.getInt(1));
+//                MyKeyResultSet.close();
+                MyFurgent.setUnum(
+                        ((IfmxStatement) InsertPreparedStatement).getSerial()
+                );
             }
-            MyKeyResultSet.close();
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un service d'urgence dans furgent "
                     + MyException.getMessage());
@@ -153,80 +137,59 @@ public class FurgentDAO extends PaternDAO {
     }
 
     /**
-     * <p>
-     * Programme principal pour tester la classe FurgentDAO.</p>
-     * <ul><li>Le premier paramètre désigne le serveur de base de données auquel
-     * se connecter : dev/pre-prod/prod (obligatoire). </li>
-     * <li>Le second paramètre est le nom du fichier des propriétés à charger
-     * (obligatoire).</li></ul>
+     * Méthode pour filter les résultats par identifiant.
      *
-     * @param Args paramètres en ligne de commande.
+     * @param id l'identifiant à utiliser pour le filtrage.
      */
-    public static void main(String[] Args) {
-        ApplicationProperties MyApplicationProperties;
-        DBServer MyDBServer;
-        DBManager MyDBManager;
-        FurgentDAO MyFurgentDAO;
-        Furgent MyFurgent1;
-        Furgent MyFurgent;
-        long i;
-        int myUnum = 552;
-
-        if (Args.length != 2) {
-            System.out.println("Usage : java FurgentDAO server-type filename");
-            System.exit(0);
-        }
-
-        try {
-            MyApplicationProperties = new ApplicationProperties(Args[1]);
-
-            MyDBServer = new DBServer(Args[0], MyApplicationProperties);
-            MyDBManager = new DBManager(MyDBServer);
-
-// Essai insertion
-            MyFurgentDAO = new FurgentDAO(MyDBManager.getConnection(), myUnum);
-            MyFurgent1 = new Furgent();
-            MyFurgent1.setUabbname("NEXITY");
-            MyFurgent1.setUname("nexity");
-            System.out.println("Furgent(avant insertion)=" + MyFurgent1);
-            MyFurgentDAO.insert(MyFurgent1);
-            System.out.println("Furgent(après insertion)=" + MyFurgent1);
-            System.out.println("Rangée(s) affectée(s)=" + MyFurgentDAO.getNbAffectedRow());
-
-// Essai mise à jour
-            MyFurgent1.setUname(MyFurgent1.getUname() + " tertiaire");
-            MyFurgentDAO.update(MyFurgent1);
-            System.out.println("Furgent(après mise à jour)=" + MyFurgent1);
-            System.out.println("Rangée(s) affectée(s)=" + MyFurgentDAO.getNbAffectedRow());
-            MyFurgentDAO.close();
-
-// Essai lecture
-            MyFurgentDAO = new FurgentDAO(MyDBManager.getConnection(), myUnum);
-            i = 0;
-            while ((MyFurgent = MyFurgentDAO.select()) != null) {
-                i++;
-                System.out.println("Furgent(" + i + ")=" + MyFurgent);
-                System.out.println("  getUnum()=" + MyFurgent.getUnum());
-                System.out.println("  getUabbname()=" + MyFurgent.getUabbname());
-                System.out.println("  getUname()=" + MyFurgent.getUname());
-            }
-
-// Essai suppression
-            System.out.println("Suppression de : " + MyFurgent1);
-            MyFurgentDAO.delete(MyFurgent1.getUnum());
-            System.out.println("Rangée(s) affectée(s)=" + MyFurgentDAO.getNbAffectedRow());
-
-        } catch (IOException MyException) {
-            System.out.println("Erreur en lecture du fichier des propriétés " + MyException);
-        } catch (DBServerException MyException) {
-            System.out.println("Erreur avec le serveur de base de données " + MyException);
-        } catch (ClassNotFoundException MyException) {
-            System.out.println("Erreur classe non trouvée " + MyException);
-        } catch (SQLException MyException) {
-            System.out.println("Erreur SQL rencontrée " + MyException);
-        }
+    @Override
+    public void filterById(int id){
+        StringBuffer Stmt;
+        
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where unum = ").append(id).append(";");
+        setSelectStatement(Stmt.toString());
     }
 
+    /**
+     * Méthode pour filter les résultats par code.
+     *
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(String Code){
+        StringBuffer Stmt;
+        
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where uabbname = '").append(Code).append("';");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant et par code.
+     *
+     * @param id l'identifiant à utiliser pour le filtrage.
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(int id, String Code){
+        throw new UnsupportedOperationException("Non supporté actuellement"); 
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant et par nom.
+     *
+     * @param id l'identifiant à utiliser pour le filtrage.
+     * @param Name à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByName(int id, String Name) {
+        StringBuffer Stmt;
+        
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where uname like '").append(Name).append("%';");
+        setSelectStatement(Stmt.toString());
+    }
+    
     @Override
     public void update(Object MyObject) {
         throw new UnsupportedOperationException("Non supporté actuellement"); //To change body of generated methods, choose Tools | Templates.
