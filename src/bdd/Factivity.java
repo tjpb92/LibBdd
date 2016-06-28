@@ -8,8 +8,19 @@ package bdd;
  */
 public class Factivity {
 
+    /**
+     * Identifiant d'une activité.
+     */
     private int a4num;
+    
+    /**
+     * Nom d'une activité.
+     */
     private String A4name;
+    
+    /**
+     * Nom abrégé d'une activité.
+     */
     private String A4abbname;
 
     /**
@@ -54,4 +65,12 @@ public class Factivity {
         this.A4abbname = (A4abbname != null) ? A4abbname.trim() : null;
     }
 
+    @Override
+    public String toString() {
+        return this.getClass().getName()
+                + " : {a4num=" + a4num
+                + ", A4abbname=" + A4abbname
+                + ", A4name=" + A4name
+                + "}";
+    }
 }

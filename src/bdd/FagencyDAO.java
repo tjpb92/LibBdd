@@ -191,8 +191,7 @@ public class FagencyDAO extends PatternDAO {
 //                }
 //                MyKeyResultSet.close();
                 MyFagency.setA6num(
-                        ((IfmxStatement) InsertPreparedStatement).getSerial()
-                );
+                        ((IfmxStatement) InsertPreparedStatement).getSerial());
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'une agence dans fagency "
@@ -215,44 +214,48 @@ public class FagencyDAO extends PatternDAO {
     }
 
     /**
-     * Méthode pour filter les résultats par code.
+     * Méthode pour filter les résultats par identifiant de groupe.
      *
-     * @param Code à utiliser pour le filtrage.
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
      */
     @Override
-    public void filterByCode(String Code) {
-        throw new UnsupportedOperationException("Non supporté actuellement");
-    }
-
-    /**
-     * Méthode pour filter les résultats par identifiant et par code.
-     *
-     * @param id l'identifiant à utiliser pour le filtrage.
-     * @param Code à utiliser pour le filtrage.
-     */
-    @Override
-    public void filterByCode(int id, String Code) {
+    public void filterByGid(int gid) {
         StringBuffer Stmt;
 
         Stmt = new StringBuffer(InvariableSelectStatement);
-        Stmt.append(" where a6unum = ").append(id);
+        Stmt.append(" where a6unum = ").append(gid).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(int gid, String Code) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where a6unum = ").append(gid);
         if (Code != null ) Stmt.append(" and a6abbname = '").append(Code.trim()).append("'");
         Stmt.append(" order by a6abbname;");
         setSelectStatement(Stmt.toString());
     }
 
     /**
-     * Méthode pour filter les résultats par identifiant et par nom.
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
      *
-     * @param id l'identifiant à utiliser pour le filtrage.
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
      * @param Name à utiliser pour le filtrage.
      */
     @Override
-    public void filterByName(int id, String Name) {
+    public void filterByName(int gid, String Name) {
         StringBuffer Stmt;
 
         Stmt = new StringBuffer(InvariableSelectStatement);
-        Stmt.append(" where a6unum = ").append(id);
+        Stmt.append(" where a6unum = ").append(gid);
         if (Name != null )Stmt.append(" and a6name like '").append(Name.trim()).append("%'");
         Stmt.append(" order by a6name;");
         setSelectStatement(Stmt.toString());

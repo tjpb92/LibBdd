@@ -8,23 +8,94 @@ package bdd;
  */
 public class Ftoubib {
 
+    /**
+     * Identifiant de l'intervenant.
+     */
     private int tnum;
+
+    /**
+     * Référence au service d'urgence (furgent).
+     */
     private int tunum;
+
+    /**
+     * Référence à l'agence (fagency).
+     */
     private int ta6num;
+
+    /**
+     * Référence à l'activité (factivity).
+     */
     private int ta4num;
+
+    /**
+     * Nom de l'intervenant.
+     */
     private String Tlname;
+
+    /**
+     * Prénom de l'intervenant.
+     */
     private String Tfname;
+
+    /**
+     * Matricule de l'intervenant.
+     */
     private String Tabbname;
+
+    /**
+     * Premier numéro de téléphone de l'intervenant.
+     */
     private String Tel;
+
+    /**
+     * Second numéro de téléphone de l'intervenant.
+     */
     private String Tel2;
+
+    /**
+     * Troisième numéro de téléphone de l'intervenant.
+     */
     private String Telper;
+
+    /**
+     * Quatrième numéro de téléphone de l'intervenant.
+     */
     private String tel4;
+
+    /**
+     * Coinquième numéro de téléphone de l'intervenant.
+     */
     private String Tel5;
+
+    /**
+     * Sixième numéro de téléphone de l'intervenant.
+     */
     private String Tel6;
+
+    /**
+     * Numéro de télécopieur de l'intervenant.
+     */
     private String Telfax;
+
+    /**
+     * Adresse électronique de l'intervenant.
+     */
     private String Temail;
+
+    /**
+     * Consigne fixe n°1 de l'intervenant.
+     */
     private String Taddress;
+
+    /**
+     * Consigne fixe n°2 de l'intervenant.
+     */
     private String Taddress2;
+
+    /**
+     * Consigne temporaire de l'intervenant.
+     */
     private String Tcomment;
 
     /**
@@ -279,4 +350,15 @@ public class Ftoubib {
         this.Tcomment = (Tcomment != null) ? Tcomment.trim() : null;
     }
 
+    @Override
+
+    public String toString() {
+        return this.getClass().getName()
+                + " : {tnum=" + tnum
+                + ", tunum=" + tunum
+                + ", Tlname=" + Tlname
+                + ", Tfname=" + Tfname
+                + ", Tabbname=" + Tabbname
+                + "}";
+    }
 }

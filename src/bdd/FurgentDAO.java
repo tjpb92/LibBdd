@@ -127,8 +127,7 @@ public class FurgentDAO extends PatternDAO {
 //                    MyFurgent.setUnum((int) MyKeyResultSet.getInt(1));
 //                MyKeyResultSet.close();
                 MyFurgent.setUnum(
-                        ((IfmxStatement) InsertPreparedStatement).getSerial()
-                );
+                        ((IfmxStatement) InsertPreparedStatement).getSerial());
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un service d'urgence dans furgent "
@@ -151,11 +150,20 @@ public class FurgentDAO extends PatternDAO {
     }
 
     /**
+     * Méthode pour filter les résultats par identifiant de groupe.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByGid(int gid){
+        throw new UnsupportedOperationException("Non supporté actuellement"); 
+    }
+
+    /**
      * Méthode pour filter les résultats par code.
      *
      * @param Code à utiliser pour le filtrage.
      */
-    @Override
     public void filterByCode(String Code){
         StringBuffer Stmt;
         
@@ -165,24 +173,33 @@ public class FurgentDAO extends PatternDAO {
     }
 
     /**
-     * Méthode pour filter les résultats par identifiant et par code.
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
      *
-     * @param id l'identifiant à utiliser pour le filtrage.
+     * @param gid l'identifiant de groupe  à utiliser pour le filtrage.
      * @param Code à utiliser pour le filtrage.
      */
     @Override
-    public void filterByCode(int id, String Code){
+    public void filterByCode(int gid, String Code){
         throw new UnsupportedOperationException("Non supporté actuellement"); 
     }
 
     /**
-     * Méthode pour filter les résultats par identifiant et par nom.
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
      *
-     * @param id l'identifiant à utiliser pour le filtrage.
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
      * @param Name à utiliser pour le filtrage.
      */
     @Override
-    public void filterByName(int id, String Name) {
+    public void filterByName(int gid, String Name) {
+        throw new UnsupportedOperationException("Non supporté actuellement"); 
+    }
+    
+    /**
+     * Méthode pour filter les résultats par nom.
+     *
+     * @param Name à utiliser pour le filtrage.
+     */
+    public void filterByName(String Name) {
         StringBuffer Stmt;
         
         Stmt = new StringBuffer(InvariableSelectStatement);

@@ -306,25 +306,25 @@ public abstract class PatternDAO {
     public abstract void filterById(int id);
 
     /**
-     * Méthode pour filter les résultats par code.
+     * Méthode pour filter les résultats par identifiant de groupe.
      *
-     * @param Code à utiliser pour le filtrage.
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
      */
-    public abstract void filterByCode(String Code);
+    public abstract void filterByGid(int gid);
 
     /**
-     * Méthode pour filter les résultats par identifiant et par code.
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
      *
-     * @param id l'identifiant à utiliser pour le filtrage.
+     * @param gid l'identifiant du groupe à utiliser pour le filtrage.
      * @param Code à utiliser pour le filtrage.
      */
-    public abstract void filterByCode(int id, String Code);
+    public abstract void filterByCode(int gid, String Code);
 
     /**
-     * Méthode pour filter les résultats par identifiant et par nom.
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
      *
-     * @param id l'identifiant à utiliser pour le filtrage.
+     * @param gid l'identifiant du groupe à utiliser pour le filtrage.
      * @param Name à utiliser pour le filtrage.
      */
-    public abstract void filterByName(int id, String Name);
+    public abstract void filterByName(int gid, String Name);
 }

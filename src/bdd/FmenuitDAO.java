@@ -1,5 +1,6 @@
 package bdd;
 
+import com.informix.jdbc.IfmxStatement;
 import java.io.IOException;
 import java.sql.*;
 import utils.ApplicationProperties;
@@ -10,52 +11,49 @@ import utils.DBServerException;
 /**
  * Classe qui décrit les méthodes pour accéder à la table fmenuit avec JDBC.
  *
- * @author Thierry Baribaud.
- * @version Mai 2015.
+ * @author Thierry Baribaud
+ * @version Juin 2016
  */
-public class FmenuitDAO extends PaternDAO {
+public class FmenuitDAO extends PatternDAO {
 
     /**
      * Constructeur de la classe FmenuitDAO.
      *
      * @param MyConnection connexion à la base de données courante.
-     * @param myM6num identifiant interne de l'item du menu,
      * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public FmenuitDAO(Connection MyConnection, int myM6num)
+    public FmenuitDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
-
-        StringBuffer Stmt;
 
         this.MyConnection = MyConnection;
 
-        Stmt = new StringBuffer("select m6num, m6extname, m6name"
+        setInvariableSelectStatement("select m6num, m6extname, m6name"
                 + " from fmenuit");
 
-        if (myM6num > 0) {
-            Stmt.append(" where m6num = ").append(myM6num);
-        } else {
-            Stmt.append(" where m6num >0");
-        }
-        Stmt.append(" order by m6num;");
-        setReadStatement(Stmt.toString());
-        setReadPreparedStatement();
-        setReadResultSet();
+//        if (myM6num > 0) {
+//            Stmt.append(" where m6num = ").append(myM6num);
+//        } else {
+//            Stmt.append(" where m6num >0");
+//        }
+//        Stmt.append(" order by m6num;");
+//        setSelectStatement(Stmt.toString());
+//        setSelectPreparedStatement();
+//        setSelectResultSet();
 
         setUpdateStatement("update fmenuit"
                 + " set m6extname=?, m6name=?"
                 + " where m6num=?;");
-        setUpdatePreparedStatement();
+//        setUpdatePreparedStatement();
 
         setInsertStatement("insert into fmenuit"
                 + " (m6extname, m6name)"
                 + " values(?, ?);");
-        setInsertPreparedStatement();
+//        setInsertPreparedStatement();
 
         setDeleteStatement("delete from fmenuit"
                 + " where m6num=?;");
-        setDeletePreparedStatement();
+//        setDeletePreparedStatement();
     }
 
     /**
@@ -68,11 +66,11 @@ public class FmenuitDAO extends PaternDAO {
         Fmenuit MyFmenuit = null;
 
         try {
-            if (ReadResultSet.next()) {
+            if (SelectResultSet.next()) {
                 MyFmenuit = new Fmenuit();
-                MyFmenuit.setM6num(ReadResultSet.getInt("m6num"));
-                MyFmenuit.setM6extname(ReadResultSet.getString("m6extname"));
-                MyFmenuit.setM6name(ReadResultSet.getString("m6name"));
+                MyFmenuit.setM6num(SelectResultSet.getInt("m6num"));
+                MyFmenuit.setM6extname(SelectResultSet.getString("m6extname"));
+                MyFmenuit.setM6name(SelectResultSet.getString("m6name"));
             } else {
                 System.out.println("Lecture de fmenuit terminée");
             }
@@ -128,7 +126,7 @@ public class FmenuitDAO extends PaternDAO {
      * @param MyFmenuit item à ajouter à la table fmenuit.
      */
     public void insert(Fmenuit MyFmenuit) {
-        ResultSet MyKeyResultSet;
+//        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("m6name=" + MyFmenuit.getM6name());
@@ -138,11 +136,14 @@ public class FmenuitDAO extends PaternDAO {
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un item dans fmenuit");
             } else {
-                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
-                if (MyKeyResultSet.next()) {
-                    MyFmenuit.setM6num((int) MyKeyResultSet.getInt(1));
-                }
-                MyKeyResultSet.close();
+//                Does not work with Informix IDS2000
+//                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
+//                if (MyKeyResultSet.next()) {
+//                    MyFmenuit.setM6num((int) MyKeyResultSet.getInt(1));
+//                }
+//                MyKeyResultSet.close();
+                MyFmenuit.setM6num(
+                        ((IfmxStatement) InsertPreparedStatement).getSerial());
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un item dans fmenuit "
@@ -151,78 +152,49 @@ public class FmenuitDAO extends PaternDAO {
     }
 
     /**
-     * <p>
-     * Programme principal pour tester la classe FmenuitDAO.</p>
-     * <ul><li>Le premier paramètre désigne le serveur de base de données auquel
-     * se connecter : dev/pre-prod/prod (obligatoire). </li>
-     * <li>Le second paramètre est le nom du fichier des propriétés à charger
-     * (obligatoire).</li></ul>
+     * Méthode pour filter les résultats par identifiant.
      *
-     * @param Args paramètres en ligne de commande.
+     * @param id l'identifiant à utiliser pour le filtrage.
      */
-    public static void main(String[] Args) {
-        ApplicationProperties MyApplicationProperties;
-        DBServer MyDBServer;
-        DBManager MyDBManager;
-        FmenuitDAO MyFmenuitDAO;
-        Fmenuit MyFmenuit1;
-        Fmenuit MyFmenuit;
-        long i;
-        int myM6num = 552;
+    @Override
+    public void filterById(int id) {
+        StringBuffer Stmt;
 
-        if (Args.length != 2) {
-            System.out.println("Usage : java FmenuitDAO server-type filename");
-            System.exit(0);
-        }
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where m6num = ").append(id).append(";");
+        setSelectStatement(Stmt.toString());
+    }
 
-        try {
-            MyApplicationProperties = new ApplicationProperties(Args[1]);
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByGid(int gid) {
+        throw new UnsupportedOperationException("Non supporté actuellement"); 
+    }
 
-            MyDBServer = new DBServer(Args[0], MyApplicationProperties);
-            MyDBManager = new DBManager(MyDBServer);
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(int gid, String Code) {
+        throw new UnsupportedOperationException("Non supporté actuellement"); 
+    }
 
-// Essai insertion
-            MyFmenuitDAO = new FmenuitDAO(MyDBManager.getConnection(), myM6num);
-            MyFmenuit1 = new Fmenuit();
-            MyFmenuit1.setM6extname("message client");
-            MyFmenuit1.setM6name("message");
-            System.out.println("Fmenuit(avant insertion)=" + MyFmenuit1);
-            MyFmenuitDAO.insert(MyFmenuit1);
-            System.out.println("Fmenuit(après insertion)=" + MyFmenuit1);
-            System.out.println("Rangée(s) affectée(s)=" + MyFmenuitDAO.getNbAffectedRow());
-
-// Essai mise à jour
-            MyFmenuit1.setM6extname(MyFmenuit1.getM6extname() + " totolito");
-            MyFmenuitDAO.update(MyFmenuit1);
-            System.out.println("Fmenuit(après mise à jour)=" + MyFmenuit1);
-            System.out.println("Rangée(s) affectée(s)=" + MyFmenuitDAO.getNbAffectedRow());
-            MyFmenuitDAO.close();
-
-// Essai lecture
-            MyFmenuitDAO = new FmenuitDAO(MyDBManager.getConnection(), myM6num);
-            i = 0;
-            while ((MyFmenuit = MyFmenuitDAO.select()) != null) {
-                i++;
-                System.out.println("Fmenuit(" + i + ")=" + MyFmenuit);
-                System.out.println("  getM6num()=" + MyFmenuit.getM6num());
-                System.out.println("  getM6extname()=" + MyFmenuit.getM6extname());
-                System.out.println("  getM6name()=" + MyFmenuit.getM6name());
-            }
-
-// Essai suppression
-            System.out.println("Suppression de : " + MyFmenuit1);
-            MyFmenuitDAO.delete(MyFmenuit1.getM6num());
-            System.out.println("Rangée(s) affectée(s)=" + MyFmenuitDAO.getNbAffectedRow());
-
-        } catch (IOException MyException) {
-            System.out.println("Erreur en lecture du fichier des propriétés " + MyException);
-        } catch (DBServerException MyException) {
-            System.out.println("Erreur avec le serveur de base de données " + MyException);
-        } catch (ClassNotFoundException MyException) {
-            System.out.println("Erreur classe non trouvée " + MyException);
-        } catch (SQLException MyException) {
-            System.out.println("Erreur SQL rencontrée " + MyException);
-        }
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Name à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByName(int gid, String Name) {
+        throw new UnsupportedOperationException("Non supporté actuellement"); 
     }
 
     @Override

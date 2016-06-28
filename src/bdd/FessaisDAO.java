@@ -1,5 +1,6 @@
 package bdd;
 
+import com.informix.jdbc.IfmxStatement;
 import java.sql.*;
 
 /**
@@ -9,9 +10,17 @@ import java.sql.*;
  * @author Thierry Baribaud.
  * @version Juin 2015.
  */
-public class FessaisDAO extends PaternDAO {
+public class FessaisDAO extends PatternDAO {
 
+    /**
+     * Table à gérér : fessais ou f99essais.
+     */
     private String MyTable = "fessais";
+
+    /**
+     * Identifiant d'un appel.
+     */
+    private int cnum = 0;
 
     /**
      * Requête SQL pour récupérer un élement de clôture d'appel.
@@ -62,112 +71,100 @@ public class FessaisDAO extends PaternDAO {
      * Constructeur de la classe FessaisDAO.
      *
      * @param MyConnection connexion à la base de données courante.
-     * @param enumabs identifiant de l'essai,
-     * @param ecnum identifiant de l'appel,
-     * @param egid identifiant d'un groupe d'essais,
      * @param MyEtatTicket indique si l'on travaille sur les tickets en cours ou
      * archivés.
      * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public FessaisDAO(Connection MyConnection, int enumabs, int ecnum, int egid, EtatTicket MyEtatTicket)
+    public FessaisDAO(Connection MyConnection, EtatTicket MyEtatTicket)
             throws ClassNotFoundException, SQLException {
-
-        StringBuffer Stmt;
 
         MyTable = EtatTicket.EN_COURS.equals(MyEtatTicket) ? "fessais" : "f99essais";
 
         this.MyConnection = MyConnection;
 
-        Stmt = new StringBuffer("select enumabs, ecnum, eptr, eunum, edate, etime,"
+        setInvariableSelectStatement("select enumabs, ecnum, eptr, eunum, edate, etime,"
                 + " emessage, etnum, eonum, eresult, eduration, etest, einternal,"
                 + " em3num, egid"
-                + " from " + MyTable
-                + " where enumabs > 0");
-        if (enumabs > 0) {
-            Stmt.append(" and enumabs = ").append(enumabs);
-        }
-        if (ecnum > 0) {
-            Stmt.append(" and ecnum = ").append(ecnum);
-        }
-        if (egid > 0) {
-            Stmt.append(" and egid = ").append(egid);
-        }
-        Stmt.append(" order by enumabs;");
-//        System.out.println(Stmt);
-        setReadStatement(Stmt.toString());
-        setReadPreparedStatement();
-        setReadResultSet();
+                + " from " + MyTable);
+//        if (enumabs > 0) {
+//            Stmt.append(" and enumabs = ").append(enumabs);
+//        }
+//        if (ecnum > 0) {
+//            Stmt.append(" and ecnum = ").append(ecnum);
+//        }
+//        if (egid > 0) {
+//            Stmt.append(" and egid = ").append(egid);
+//        }
+//        Stmt.append(" order by enumabs;");
+////        System.out.println(Stmt);
+//        setSelectStatement(Stmt.toString());
+//        setSelectPreparedStatement();
+//        setSelectResultSet();
 
         setUpdateStatement("update " + MyTable
                 + " set ecnum=?, eptr=?, eunum=?, edate=?, etime=?,"
                 + " emessage=?, etnum=?, eonum=?, eresult=?,"
                 + " eduration=?, etest=?, einternal=?, em3num=?, egid=?"
                 + " where enumabs=?;");
-        setUpdatePreparedStatement();
+//        setUpdatePreparedStatement();
 
         setInsertStatement("insert into " + MyTable
                 + " (ecnum, eptr, eunum, edate, etime,"
                 + " emessage, etnum, eonum, eresult, eduration,"
                 + " etest, einternal, em3num, egid)"
                 + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
-        setInsertPreparedStatement();
+//        setInsertPreparedStatement();
 
         setDeleteStatement("delete from " + MyTable + " where enumabs=?;");
-        setDeletePreparedStatement();
+//        setDeletePreparedStatement();
 
-        // Récupère la première transmission
-        if (ecnum > 0) {
+        // Préparation pour la récupération de la première transmission.
 // A rétablir lorsque le bug touchant enumabs sera corrigé
 //            setFirstTransmissionStatement("select a.* from " + MyTable + " a"
 //                    + " where a.enumabs = (select min(b.enumabs) from "
 //                    + MyTable + " b where b.ecnum = " + ecnum
 //                    + " and b.eresult = 1);");
-            setFirstTransmissionStatement("select enumabs, "
-                    + " ecnum, eptr, eunum, edate, etime,"
-                    + " emessage, etnum, eonum, eresult, eduration,"
-                    + " etest, einternal, em3num, egid"
-                    + " from " + MyTable 
-                    + " where ecnum = " + ecnum
-                    + " and eresult = 1"
-                    + " order by edate, etime;");
-            setFirstTransmissionPreparedStatement();
-            setFirstTransmissionResultSet();
-        }
+        setFirstTransmissionStatement("select enumabs, "
+                + " ecnum, eptr, eunum, edate, etime,"
+                + " emessage, etnum, eonum, eresult, eduration,"
+                + " etest, einternal, em3num, egid"
+                + " from " + MyTable 
+                + " where ecnum = ?"
+                + " and eresult = 1"
+                + " order by edate, etime;");
+//            setFirstTransmissionPreparedStatement();
+//            setFirstTransmissionResultSet();
 
-        // Récupère la dernière transmission
-        if (ecnum > 0) {
+        // Préparation pour la récupération de la dernière transmission.
 // A rétablir lorsque le bug touchant enumabs sera corrigé
 //            setLastTransmissionStatement("select a.* from " + MyTable + " a"
 //                    + " where a.enumabs = (select max(b.enumabs) from "
 //                    + MyTable + " b where b.ecnum = " + ecnum
 //                    + " and b.eresult = 1);");
-            setLastTransmissionStatement("select enumabs, "
-                    + " ecnum, eptr, eunum, edate, etime,"
-                    + " emessage, etnum, eonum, eresult, eduration,"
-                    + " etest, einternal, em3num, egid"
-                    + " from " + MyTable 
-                    + " where ecnum = " + ecnum
-                    + " and eresult = 1"
-                    + " order by edate desc, etime desc;");
-            setLastTransmissionPreparedStatement();
-            setLastTransmissionResultSet();
-        }
+        setLastTransmissionStatement("select enumabs, "
+                + " ecnum, eptr, eunum, edate, etime,"
+                + " emessage, etnum, eonum, eresult, eduration,"
+                + " etest, einternal, em3num, egid"
+                + " from " + MyTable 
+                + " where ecnum = ?"
+                + " and eresult = 1"
+                + " order by edate desc, etime desc;");
+//            setLastTransmissionPreparedStatement();
+//            setLastTransmissionResultSet();
         
-        // Récupère un élément de clôture d'appel
-        if (ecnum > 0) {
-            setPartOfEOMStatement("select a.enumabs, "
-                    + " a.ecnum, a.eptr, a.eunum, a.edate, a.etime,"
-                    + " a.emessage, a.etnum, a.eonum, a.eresult, a.eduration,"
-                    + " a.etest, a.einternal, a.em3num, a.egid"
-                    + " from " + MyTable + " a"
-                    + " where a.enumabs = (select max(b.enumabs) from "
-                    + MyTable + " b where b.ecnum = " + ecnum
-                    + " and b.eresult in (69,70,71,72,73,93));");
+//        // Préparation pour la récupération d'un élément de clôture d'appel.
+        setPartOfEOMStatement("select a.enumabs, "
+                + " a.ecnum, a.eptr, a.eunum, a.edate, a.etime,"
+                + " a.emessage, a.etnum, a.eonum, a.eresult, a.eduration,"
+                + " a.etest, a.einternal, a.em3num, a.egid"
+                + " from " + MyTable + " a"
+                + " where a.enumabs = (select max(b.enumabs) from "
+                + MyTable + " b where b.ecnum = ?"
+                + " and b.eresult in (69,70,71,72,73,93));");
 //            System.out.println("  PartOfEOMStatement=" + getPartOfEOMStatement());
-            setPartOfEOMPreparedStatement();
-            setPartOfEOMResultSet();
-        }
+//            setPartOfEOMPreparedStatement();
+//            setPartOfEOMResultSet();
     }
 
     /**
@@ -180,23 +177,23 @@ public class FessaisDAO extends PaternDAO {
         Fessais MyFessais = null;
 
         try {
-            if (ReadResultSet.next()) {
+            if (SelectResultSet.next()) {
                 MyFessais = new Fessais();
-                MyFessais.setEnumabs(ReadResultSet.getInt("enumabs"));
-                MyFessais.setEcnum(ReadResultSet.getInt("ecnum"));
-                MyFessais.setEptr(ReadResultSet.getInt("eptr"));
-                MyFessais.setEunum(ReadResultSet.getInt("eunum"));
-                MyFessais.setEdate(ReadResultSet.getTimestamp("edate"));
-                MyFessais.setEtime(ReadResultSet.getString("etime"));
-                MyFessais.setEmessage(ReadResultSet.getString("emessage"));
-                MyFessais.setEtnum(ReadResultSet.getInt("etnum"));
-                MyFessais.setEonum(ReadResultSet.getInt("eonum"));
-                MyFessais.setEresult(ReadResultSet.getInt("eresult"));
-                MyFessais.setEduration(ReadResultSet.getInt("eduration"));
-                MyFessais.setEtest(ReadResultSet.getInt("etest"));
-                MyFessais.setEinternal(ReadResultSet.getInt("einternal"));
-                MyFessais.setEm3num(ReadResultSet.getInt("em3num"));
-                MyFessais.setEgid(ReadResultSet.getInt("egid"));
+                MyFessais.setEnumabs(SelectResultSet.getInt("enumabs"));
+                MyFessais.setEcnum(SelectResultSet.getInt("ecnum"));
+                MyFessais.setEptr(SelectResultSet.getInt("eptr"));
+                MyFessais.setEunum(SelectResultSet.getInt("eunum"));
+                MyFessais.setEdate(SelectResultSet.getTimestamp("edate"));
+                MyFessais.setEtime(SelectResultSet.getString("etime"));
+                MyFessais.setEmessage(SelectResultSet.getString("emessage"));
+                MyFessais.setEtnum(SelectResultSet.getInt("etnum"));
+                MyFessais.setEonum(SelectResultSet.getInt("eonum"));
+                MyFessais.setEresult(SelectResultSet.getInt("eresult"));
+                MyFessais.setEduration(SelectResultSet.getInt("eduration"));
+                MyFessais.setEtest(SelectResultSet.getInt("etest"));
+                MyFessais.setEinternal(SelectResultSet.getInt("einternal"));
+                MyFessais.setEm3num(SelectResultSet.getInt("em3num"));
+                MyFessais.setEgid(SelectResultSet.getInt("egid"));
             } else {
                 System.out.println("Lecture de " + MyTable + " terminée");
             }
@@ -264,7 +261,7 @@ public class FessaisDAO extends PaternDAO {
      * @param MyFessais essai à ajouter à la table fessais ou f99essais.
      */
     public void insert(Fessais MyFessais) {
-        ResultSet MyKeyResultSet;
+//        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("enumabs=" + MyFessais.getEnumabs());
@@ -286,11 +283,14 @@ public class FessaisDAO extends PaternDAO {
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un essai dans " + MyTable);
             } else {
-                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
-                if (MyKeyResultSet.next()) {
-                    MyFessais.setEnumabs((int) MyKeyResultSet.getInt(1));
-                }
-                MyKeyResultSet.close();
+//                Does not work with Informix IDS2000
+//                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
+//                if (MyKeyResultSet.next()) {
+//                    MyFessais.setEnumabs((int) MyKeyResultSet.getInt(1));
+//                }
+//                MyKeyResultSet.close();
+                MyFessais.setEnumabs(
+                        ((IfmxStatement) InsertPreparedStatement).getSerial());
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un essai dans "
@@ -322,10 +322,13 @@ public class FessaisDAO extends PaternDAO {
     /**
      * Prépare la requête SQL pour rechercher la première transmission.
      *
+     * @param cnum identifiant de l'appel courant.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public void setFirstTransmissionPreparedStatement() throws SQLException {
+    public void setFirstTransmissionPreparedStatement(int cnum) throws SQLException {
         FirstTransmissionPreparedStatement = MyConnection.prepareStatement(getFirstTransmissionStatement());
+        FirstTransmissionPreparedStatement.setInt(1, cnum);
+        setFirstTransmissionResultSet();
     }
 
     /**
@@ -402,19 +405,25 @@ public class FessaisDAO extends PaternDAO {
     /**
      * Prépare la requête SQL pour rechercher la première transmission.
      *
+     * @param cnum identifiant de l'appel courant.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public void setLastTransmissionPreparedStatement() throws SQLException {
+    public void setLastTransmissionPreparedStatement(int cnum) throws SQLException {
         LastTransmissionPreparedStatement = MyConnection.prepareStatement(getLastTransmissionStatement());
+        LastTransmissionPreparedStatement.setInt(1, cnum);
+        setLastTransmissionResultSet();
     }
 
     /**
-     * Prépare la requête SQL pour rechercher la première transmission.
+     * Prépare la requête SQL pour rechercher un élément de clôture d'appel.
      *
+     * @param cnum identifiant de l'appel courant.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public void setPartOfEOMPreparedStatement() throws SQLException {
+    public void setPartOfEOMPreparedStatement(int cnum) throws SQLException {
         PartOfEOMPreparedStatement = MyConnection.prepareStatement(getPartOfEOMStatement());
+        PartOfEOMPreparedStatement.setInt(1, cnum);
+        setPartOfEOMResultSet();
     }
 
     /**
@@ -517,19 +526,102 @@ public class FessaisDAO extends PaternDAO {
     }
 
     /**
-     * Méthode qui ferme toutes les ressources de bases de données.
+     * Méthode pour fermer les ressources associées à la requête de sélection
+     * de la première transmission.
      *
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    @Override
-    public void close() throws SQLException {
-
-        super.close();
+    public void closeFirstTransmissionPreparedStatement() throws SQLException {
+        FirstTransmissionResultSet.close();
         FirstTransmissionPreparedStatement.close();
+    }
+
+    /**
+     * Méthode pour fermer les ressources associées à la requête de sélection
+     * de la dernière transmission.
+     *
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void closeLastTransmissionPreparedStatement() throws SQLException {
+        LastTransmissionResultSet.close();
         LastTransmissionPreparedStatement.close();
+    }
+
+    /**
+     * Méthode pour fermer les ressources associées à la requête de sélection
+     * de la dernière transmission.
+     *
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void closePartOfEOMPreparedStatement() throws SQLException {
+        PartOfEOMResultSet.close();
         PartOfEOMPreparedStatement.close();
     }
 
+    /**
+     * Méthode pour filter les résultats par identifiant.
+     *
+     * @param id l'identifiant à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterById(int id) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where enumabs = ").append(id).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByGid(int gid) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where ecnum = ").append(gid).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par appel et groupe d'essais.
+     *
+     * @param cnum l'identifiant de l'appel à utiliser pour le filtrage.
+     * @param egid l'identifiant groupe d'essais à utiliser pour le filtrage.
+     */
+    public void filterByGid(int cnum, int egid) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where ecnum = ").append(cnum);
+        Stmt.append(" and egid = ").append(egid).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(int gid, String Code) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Name à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByName(int gid, String Name) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
     @Override
     public void update(Object MyObject) {
         throw new UnsupportedOperationException("Non supporté actuellement"); //To change body of generated methods, choose Tools | Templates.

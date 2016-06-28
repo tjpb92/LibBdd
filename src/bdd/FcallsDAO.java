@@ -1,5 +1,6 @@
 package bdd;
 
+import com.informix.jdbc.IfmxStatement;
 import java.sql.*;
 
 /**
@@ -9,38 +10,50 @@ import java.sql.*;
  * @author Thierry Baribaud
  * @version Juin 2016
  */
-public class FcallsDAO extends PaternDAO {
+public class FcallsDAO extends PatternDAO {
 
+    /**
+     * Table à gérér : fcalls ou f99calls.
+     */
     private String MyTable = "fcalls";
+
+    /**
+     * Indice de la date de début d'extraction.
+     */
+    private int idxBegDate = 0;
+
+    /**
+     * Indice de la date de fin d'extraction.
+     */
+    private int idxEndDate = 0;
+
+    /**
+     * Date de début d'extraction.
+     */
+    private Timestamp BegDate = null;
+
+    /**
+     * Date de fin d'extraction.
+     */
+    private Timestamp EndDate = null;
 
     /**
      * Constructeur de la classe FcallsDAO.
      *
      * @param MyConnection connexion à la base de données courante.
-     * @param cnum identifiant de l'appel,
-     * @param cunum identifiant du client,
-     * @param BegDate date de début d'extraction,
-     * @param EndDate date de fin d'extraction,
      * @param MyEtatTicket indique si l'on travaille sur les tickets en cours ou
      * archivés.
      * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public FcallsDAO(Connection MyConnection, int cnum, int cunum,
-            Timestamp BegDate, Timestamp EndDate, EtatTicket MyEtatTicket)
+    public FcallsDAO(Connection MyConnection, EtatTicket MyEtatTicket)
             throws ClassNotFoundException, SQLException {
-
-        StringBuffer Stmt;
 
         MyTable = EtatTicket.EN_COURS.equals(MyEtatTicket) ? "fcalls" : "f99calls";
 
-        int idxBegDate = 0;
-        int idxEndDate = 0;
-        int idx = 0;
-
         this.MyConnection = MyConnection;
 
-        Stmt = new StringBuffer("select cnum, cunum, cname, ctel, caddress, caddress2,"
+        setInvariableSelectStatement("select cnum, cunum, cname, ctel, caddress, caddress2,"
                 + " caccess, cposcode, city, csympt,"
                 + " cnumber4, cc6num, cdate, ctime, cdate2, ctime2,"
                 + " corp, cnumber5, cseqno, cquery1, cquery2, czone, cage, ctype,"
@@ -51,33 +64,33 @@ public class FcallsDAO extends PaternDAO {
                 + " from " + MyTable
                 + " where (cinternal = 0 or cinternal is null)"
                 + " and (ctest = 0 or ctest is null)");
-        if (cnum > 0) {
-            Stmt.append(" and cnum = ").append(cnum);
-        }
-        if (cunum > 0) {
-            Stmt.append(" and cunum = ").append(cunum);
-        }
-        if (BegDate != null) {
-            Stmt.append(" and cdate >= ?");
-            idx++;
-            idxBegDate = idx;
-        }
-        if (EndDate != null) {
-            Stmt.append(" and cdate < ?");
-            idx++;
-            idxEndDate = idx;
-        }
-        Stmt.append(" order by cdate, ctime;");
-//        System.out.println(Stmt);
-        setReadStatement(Stmt.toString());
-        setReadPreparedStatement();
-        if (idxBegDate > 0) {
-            ReadPreparedStatement.setTimestamp(idxBegDate, BegDate);
-        }
-        if (idxEndDate > 0) {
-            ReadPreparedStatement.setTimestamp(idxEndDate, EndDate);
-        }
-        setReadResultSet();
+//        if (cnum > 0) {
+//            Stmt.append(" and cnum = ").append(cnum);
+//        }
+//        if (cunum > 0) {
+//            Stmt.append(" and cunum = ").append(cunum);
+//        }
+//        if (BegDate != null) {
+//            Stmt.append(" and cdate >= ?");
+//            idx++;
+//            idxBegDate = idx;
+//        }
+//        if (EndDate != null) {
+//            Stmt.append(" and cdate < ?");
+//            idx++;
+//            idxEndDate = idx;
+//        }
+//        Stmt.append(" order by cdate, ctime;");
+////        System.out.println(Stmt);
+//        setSelectStatement(Stmt.toString());
+//        setSelectPreparedStatement();
+//        if (idxBegDate > 0) {
+//            SelectPreparedStatement.setTimestamp(idxBegDate, BegDate);
+//        }
+//        if (idxEndDate > 0) {
+//            SelectPreparedStatement.setTimestamp(idxEndDate, EndDate);
+//        }
+//        setSelectResultSet();
 
         setUpdateStatement("update " + MyTable
                 + " set cunum=?, cname=?, ctel=?, caddress=?, caddress2=?,"
@@ -89,7 +102,7 @@ public class FcallsDAO extends PaternDAO {
                 + " cnumber6=?, cnumber7=?, cnumber8=?, cnumber9=?, cnumber10=?,"
                 + " csector1=?, csector2=?, cextnum=?"
                 + " where cnum=?;");
-        setUpdatePreparedStatement();
+//        setUpdatePreparedStatement();
 
         setInsertStatement("insert into " + MyTable
                 + " (cunum, cname, ctel, caddress, caddress2,"
@@ -103,10 +116,10 @@ public class FcallsDAO extends PaternDAO {
                 + ")"
                 + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
                 + " ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
-        setInsertPreparedStatement();
+//        setInsertPreparedStatement();
 
         setDeleteStatement("delete from " + MyTable + " where cnum=?;");
-        setDeletePreparedStatement();
+//        setDeletePreparedStatement();
     }
 
     /**
@@ -119,47 +132,47 @@ public class FcallsDAO extends PaternDAO {
         Fcalls MyFcalls = null;
 
         try {
-            if (ReadResultSet.next()) {
+            if (SelectResultSet.next()) {
                 MyFcalls = new Fcalls();
-                MyFcalls.setCnum(ReadResultSet.getInt("cnum"));
-                MyFcalls.setCunum(ReadResultSet.getInt("cunum"));
-                MyFcalls.setCname(ReadResultSet.getString("cname"));
-                MyFcalls.setCtel(ReadResultSet.getString("ctel"));
-                MyFcalls.setCaddress(ReadResultSet.getString("caddress"));
-                MyFcalls.setCaddress2(ReadResultSet.getString("caddress2"));
-                MyFcalls.setCaccess(ReadResultSet.getString("caccess"));
-                MyFcalls.setCposcode(ReadResultSet.getString("cposcode"));
-                MyFcalls.setCity(ReadResultSet.getString("city"));
-                MyFcalls.setCsympt(ReadResultSet.getString("csympt"));
-                MyFcalls.setCnumber4(ReadResultSet.getString("cnumber4"));
-                MyFcalls.setCc6num(ReadResultSet.getInt("cc6num"));
-                MyFcalls.setCdate(ReadResultSet.getTimestamp("cdate"));
-                MyFcalls.setCtime(ReadResultSet.getString("ctime"));
-                MyFcalls.setCdate2(ReadResultSet.getTimestamp("cdate2"));
-                MyFcalls.setCtime2(ReadResultSet.getString("ctime2"));
-                MyFcalls.setCorp(ReadResultSet.getString("corp"));
-                MyFcalls.setCnumber5(ReadResultSet.getString("cnumber5"));
-                MyFcalls.setCseqno(ReadResultSet.getInt("cseqno"));
-                MyFcalls.setCquery1(ReadResultSet.getInt("cquery1"));
-                MyFcalls.setCquery2(ReadResultSet.getInt("cquery2"));
-                MyFcalls.setCzone(ReadResultSet.getInt("czone"));
-                MyFcalls.setCage(ReadResultSet.getInt("cage"));
-                MyFcalls.setCtype(ReadResultSet.getInt("ctype"));
-                MyFcalls.setCtnum(ReadResultSet.getInt("ctnum"));
-                MyFcalls.setCnote(ReadResultSet.getInt("cnote"));
-                MyFcalls.setCdelay1(ReadResultSet.getInt("cdelay1"));
-                MyFcalls.setCdelay2(ReadResultSet.getInt("cdelay2"));
-                MyFcalls.setCduration(ReadResultSet.getInt("cduration"));
-                MyFcalls.setConum(ReadResultSet.getInt("conum"));
-                MyFcalls.setCcallertype(ReadResultSet.getInt("ccallertype"));
-                MyFcalls.setCnumber6(ReadResultSet.getString("cnumber6"));
-                MyFcalls.setCnumber7(ReadResultSet.getString("cnumber7"));
-                MyFcalls.setCnumber8(ReadResultSet.getString("cnumber8"));
-                MyFcalls.setCnumber9(ReadResultSet.getString("cnumber9"));
-                MyFcalls.setCnumber10(ReadResultSet.getString("cnumber10"));
-                MyFcalls.setCsector1(ReadResultSet.getString("csector1"));
-                MyFcalls.setCsector2(ReadResultSet.getString("csector2"));
-                MyFcalls.setCextnum(ReadResultSet.getString("cextnum"));
+                MyFcalls.setCnum(SelectResultSet.getInt("cnum"));
+                MyFcalls.setCunum(SelectResultSet.getInt("cunum"));
+                MyFcalls.setCname(SelectResultSet.getString("cname"));
+                MyFcalls.setCtel(SelectResultSet.getString("ctel"));
+                MyFcalls.setCaddress(SelectResultSet.getString("caddress"));
+                MyFcalls.setCaddress2(SelectResultSet.getString("caddress2"));
+                MyFcalls.setCaccess(SelectResultSet.getString("caccess"));
+                MyFcalls.setCposcode(SelectResultSet.getString("cposcode"));
+                MyFcalls.setCity(SelectResultSet.getString("city"));
+                MyFcalls.setCsympt(SelectResultSet.getString("csympt"));
+                MyFcalls.setCnumber4(SelectResultSet.getString("cnumber4"));
+                MyFcalls.setCc6num(SelectResultSet.getInt("cc6num"));
+                MyFcalls.setCdate(SelectResultSet.getTimestamp("cdate"));
+                MyFcalls.setCtime(SelectResultSet.getString("ctime"));
+                MyFcalls.setCdate2(SelectResultSet.getTimestamp("cdate2"));
+                MyFcalls.setCtime2(SelectResultSet.getString("ctime2"));
+                MyFcalls.setCorp(SelectResultSet.getString("corp"));
+                MyFcalls.setCnumber5(SelectResultSet.getString("cnumber5"));
+                MyFcalls.setCseqno(SelectResultSet.getInt("cseqno"));
+                MyFcalls.setCquery1(SelectResultSet.getInt("cquery1"));
+                MyFcalls.setCquery2(SelectResultSet.getInt("cquery2"));
+                MyFcalls.setCzone(SelectResultSet.getInt("czone"));
+                MyFcalls.setCage(SelectResultSet.getInt("cage"));
+                MyFcalls.setCtype(SelectResultSet.getInt("ctype"));
+                MyFcalls.setCtnum(SelectResultSet.getInt("ctnum"));
+                MyFcalls.setCnote(SelectResultSet.getInt("cnote"));
+                MyFcalls.setCdelay1(SelectResultSet.getInt("cdelay1"));
+                MyFcalls.setCdelay2(SelectResultSet.getInt("cdelay2"));
+                MyFcalls.setCduration(SelectResultSet.getInt("cduration"));
+                MyFcalls.setConum(SelectResultSet.getInt("conum"));
+                MyFcalls.setCcallertype(SelectResultSet.getInt("ccallertype"));
+                MyFcalls.setCnumber6(SelectResultSet.getString("cnumber6"));
+                MyFcalls.setCnumber7(SelectResultSet.getString("cnumber7"));
+                MyFcalls.setCnumber8(SelectResultSet.getString("cnumber8"));
+                MyFcalls.setCnumber9(SelectResultSet.getString("cnumber9"));
+                MyFcalls.setCnumber10(SelectResultSet.getString("cnumber10"));
+                MyFcalls.setCsector1(SelectResultSet.getString("csector1"));
+                MyFcalls.setCsector2(SelectResultSet.getString("csector2"));
+                MyFcalls.setCextnum(SelectResultSet.getString("cextnum"));
             } else {
                 System.out.println("Lecture de " + MyTable + " terminée");
             }
@@ -187,11 +200,11 @@ public class FcallsDAO extends PaternDAO {
             UpdatePreparedStatement.setString(8, MyFcalls.getCity());
             UpdatePreparedStatement.setString(9, MyFcalls.getCsympt());
             UpdatePreparedStatement.setString(10, MyFcalls.getCnumber4());
-            UpdatePreparedStatement.setInt(13, MyFcalls.getCc6num());
-            UpdatePreparedStatement.setTimestamp(14, MyFcalls.getCdate());
-            UpdatePreparedStatement.setString(11, MyFcalls.getCtime());
-            UpdatePreparedStatement.setTimestamp(15, MyFcalls.getCdate2());
-            UpdatePreparedStatement.setString(12, MyFcalls.getCtime2());
+            UpdatePreparedStatement.setInt(11, MyFcalls.getCc6num());
+            UpdatePreparedStatement.setTimestamp(12, MyFcalls.getCdate());
+            UpdatePreparedStatement.setString(13, MyFcalls.getCtime());
+            UpdatePreparedStatement.setTimestamp(14, MyFcalls.getCdate2());
+            UpdatePreparedStatement.setString(15, MyFcalls.getCtime2());
             UpdatePreparedStatement.setString(16, MyFcalls.getCorp());
             UpdatePreparedStatement.setString(17, MyFcalls.getCnumber5());
             UpdatePreparedStatement.setInt(18, MyFcalls.getCseqno());
@@ -251,7 +264,7 @@ public class FcallsDAO extends PaternDAO {
      * @param MyFcalls appel à ajouter à la table fcalls ou f99calls.
      */
     public void insert(Fcalls MyFcalls) {
-        ResultSet MyKeyResultSet;
+//        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("cname=" + MyFcalls.getCname());
@@ -265,11 +278,11 @@ public class FcallsDAO extends PaternDAO {
             InsertPreparedStatement.setString(8, MyFcalls.getCity());
             InsertPreparedStatement.setString(9, MyFcalls.getCsympt());
             InsertPreparedStatement.setString(10, MyFcalls.getCnumber4());
-            InsertPreparedStatement.setInt(13, MyFcalls.getCc6num());
-            InsertPreparedStatement.setTimestamp(14, MyFcalls.getCdate());
-            InsertPreparedStatement.setString(11, MyFcalls.getCtime());
-            InsertPreparedStatement.setTimestamp(15, MyFcalls.getCdate2());
-            InsertPreparedStatement.setString(12, MyFcalls.getCtime2());
+            InsertPreparedStatement.setInt(11, MyFcalls.getCc6num());
+            InsertPreparedStatement.setTimestamp(12, MyFcalls.getCdate());
+            InsertPreparedStatement.setString(13, MyFcalls.getCtime());
+            InsertPreparedStatement.setTimestamp(14, MyFcalls.getCdate2());
+            InsertPreparedStatement.setString(15, MyFcalls.getCtime2());
             InsertPreparedStatement.setString(16, MyFcalls.getCorp());
             InsertPreparedStatement.setString(17, MyFcalls.getCnumber5());
             InsertPreparedStatement.setInt(18, MyFcalls.getCseqno());
@@ -297,16 +310,156 @@ public class FcallsDAO extends PaternDAO {
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un appel dans " + MyTable);
             } else {
-                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
-                if (MyKeyResultSet.next()) {
-                    MyFcalls.setCnum((int) MyKeyResultSet.getInt(1));
-                }
-                MyKeyResultSet.close();
+//                Does not work with Informix IDS2000
+//                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
+//                if (MyKeyResultSet.next()) {
+//                    MyFcalls.setCnum((int) MyKeyResultSet.getInt(1));
+//                }
+//                MyKeyResultSet.close();
+                MyFcalls.setCnum(
+                        ((IfmxStatement) InsertPreparedStatement).getSerial());
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un appel dans "
                     + MyTable + " " + MyException.getMessage());
         }
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant.
+     *
+     * @param id l'identifiant à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterById(int id) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where cnum = ").append(id).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByGid(int gid) {
+        StringBuffer Stmt;
+
+        razDateFilter();
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" and cunum = ").append(gid).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(int gid, String Code) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par numéro
+     * d'appel.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param seqno à utiliser pour le filtrage.
+     */
+    public void filterByCode(int gid, int seqno) {
+        StringBuffer Stmt;
+
+        razDateFilter();
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" and cunum = ").append(gid);
+        if (seqno > 0) {
+            Stmt.append(" and cseqno = ").append(seqno);
+        }
+        Stmt.append(" order by cseqno;");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par dates.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param BegDate date de début d'extraction,
+     * @param EndDate date de fin d'extraction.
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void filterByDate(int gid, Timestamp BegDate, Timestamp EndDate) throws SQLException {
+        StringBuffer Stmt;
+        int idx = 0;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" and cunum = ").append(gid);
+        if (BegDate != null) {
+            Stmt.append(" and cdate >= ?");
+            idx++;
+            idxBegDate = idx;
+            this.BegDate = BegDate;
+        }
+        if (EndDate != null) {
+            Stmt.append(" and cdate < ?");
+            idx++;
+            idxEndDate = idx;
+            this.EndDate = EndDate;
+        }
+        Stmt.append(" order by cdate, ctime;");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour effacer le filtre sur les dates.
+     * 
+     * Cela permet d'éviter des conflits lors de l'invocation de la méthode
+     * setSelectPreparedStatement().
+     */
+    private void razDateFilter() {
+        idxBegDate = 0;
+        idxEndDate = 0;
+        BegDate = null;
+        EndDate = null;
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Name à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByName(int gid, String Name) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
+
+    /**
+     * Prepare la requête SQL pour sélectionner des données ainsi que le
+     * ResultSet associé.
+     *
+     * <p>
+     * <b>ATTENTION</b> : Nous avons ici une exception car les dates ne peuvent
+     * pas être inscrites en dur dans le texte de la requête SQL. Il faut les
+     * passer en paramètres après la préparation de la requête SQL.<p>
+     *
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    @Override
+    public void setSelectPreparedStatement() throws SQLException {
+        SelectPreparedStatement = MyConnection.prepareStatement(getSelectStatement());
+        if (idxBegDate > 0) {
+            SelectPreparedStatement.setTimestamp(idxBegDate, BegDate);
+        }
+        if (idxEndDate > 0) {
+            SelectPreparedStatement.setTimestamp(idxEndDate, EndDate);
+        }
+        setSelectResultSet();
     }
 
     @Override

@@ -1,58 +1,55 @@
 package bdd;
 
+import com.informix.jdbc.IfmxStatement;
 import java.sql.*;
 
 /**
  * Classe qui décrit les méthodes pour accéder à la table factivity avec JDBC.
  *
  * @author Thierry Baribaud.
- * @version Juin 2015
+ * @version Juin 2016
  */
-public class FactivityDAO extends PaternDAO {
+public class FactivityDAO extends PatternDAO {
 
     /**
      * Constructeur de la classe FactivityDAO.
      *
      * @param MyConnection connexion à la base de données courante.
-     * @param myA4num identifiant interne d'une activité,
      * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public FactivityDAO(Connection MyConnection, int myA4num)
+    public FactivityDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
-
-        StringBuffer Stmt;
 
         this.MyConnection = MyConnection;
 
-        Stmt = new StringBuffer("select a4num, a4abbname, a4name"
+        setInvariableSelectStatement("select a4num, a4abbname, a4name"
                 + " from factivity");
 
-        if (myA4num > 0) {
-            Stmt.append(" where a4num = ").append(myA4num);
-        } else {
-            Stmt.append(" where a4num >0");
-            Stmt.append(" order by a4num");
-        }
-        Stmt.append(";");
-
-        setReadStatement(Stmt.toString());
-        setReadPreparedStatement();
-        setReadResultSet();
-
+//        if (myA4num > 0) {
+//            Stmt.append(" where a4num = ").append(myA4num);
+//        } else {
+//            Stmt.append(" where a4num >0");
+//            Stmt.append(" order by a4num");
+//        }
+//        Stmt.append(";");
+//
+//        setSelectStatement(Stmt.toString());
+//        setSelectPreparedStatement();
+//        setSelectResultSet();
         setUpdateStatement("update factivity"
                 + " set a4abbname=?, a4name=?"
                 + " where a4num=?;");
-        setUpdatePreparedStatement();
+//        setUpdatePreparedStatement();
 
         setInsertStatement("insert into factivity"
                 + " (a4abbname, a4name)"
                 + " values(?, ?);");
-        setInsertPreparedStatement();
+//        setInsertPreparedStatement();
 
         setDeleteStatement("delete from factivity"
                 + " where a4num=?;");
-        setDeletePreparedStatement();
+//        setDeletePreparedStatement();
     }
 
     /**
@@ -65,11 +62,11 @@ public class FactivityDAO extends PaternDAO {
         Factivity MyFactivity = null;
 
         try {
-            if (ReadResultSet.next()) {
+            if (SelectResultSet.next()) {
                 MyFactivity = new Factivity();
-                MyFactivity.setA4num(ReadResultSet.getInt("a4num"));
-                MyFactivity.setA4abbname(ReadResultSet.getString("a4abbname"));
-                MyFactivity.setA4name(ReadResultSet.getString("a4name"));
+                MyFactivity.setA4num(SelectResultSet.getInt("a4num"));
+                MyFactivity.setA4abbname(SelectResultSet.getString("a4abbname"));
+                MyFactivity.setA4name(SelectResultSet.getString("a4name"));
             } else {
                 System.out.println("Lecture de factivity terminée");
             }
@@ -111,10 +108,10 @@ public class FactivityDAO extends PaternDAO {
             DeletePreparedStatement.setInt(1, a4num);
             setNbAffectedRow(DeletePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
-                System.out.println("Impossible de détruire un service d'urgence dans factivity");
+                System.out.println("Impossible de détruire une activité dans factivity");
             }
         } catch (SQLException e) {
-            System.out.println("Erreur lors de la suppression d'un service d'urgence dans factivity "
+            System.out.println("Erreur lors de la suppression d'une activité dans factivity "
                     + e.getMessage());
         }
     }
@@ -125,7 +122,7 @@ public class FactivityDAO extends PaternDAO {
      * @param MyFactivity activité à ajouter à la table factivity.
      */
     public void insert(Factivity MyFactivity) {
-        ResultSet MyKeyResultSet;
+//        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("a4name=" + MyFactivity.getA4name());
@@ -135,16 +132,65 @@ public class FactivityDAO extends PaternDAO {
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter une activité dans factivity");
             } else {
-                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
-                if (MyKeyResultSet.next()) {
-                    MyFactivity.setA4num((int) MyKeyResultSet.getInt(1));
-                }
-                MyKeyResultSet.close();
+//                Does not work with Informix IDS2000
+//                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
+//                if (MyKeyResultSet.next()) {
+//                    MyFactivity.setA4num((int) MyKeyResultSet.getInt(1));
+//                }
+//                MyKeyResultSet.close();
+                MyFactivity.setA4num(
+                        ((IfmxStatement) InsertPreparedStatement).getSerial());
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'une activité dans factivity "
                     + MyException.getMessage());
         }
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant.
+     *
+     * @param id l'identifiant à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterById(int id) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where a4num = ").append(id).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByGid(int gid) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(int gid, String Code) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Name à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByName(int gid, String Name) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
     }
 
     @Override

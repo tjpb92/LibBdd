@@ -1,72 +1,65 @@
 package bdd;
 
+import com.informix.jdbc.IfmxStatement;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Classe qui décrit les méthodes pour accéder à la table ftoubib au travers de
- * JDBC.
+ * Classe qui décrit les méthodes pour accéder à la table ftoubib avec JDBC.
  *
  * @author Thierry Baribaud
  * @version Juin 2016
  */
-public class FtoubibDAO extends PaternDAO {
+public class FtoubibDAO extends PatternDAO {
 
     /**
      * Constructeur de la classe FtoubibDAO.
      *
      * @param MyConnection connexion à la base de données courante.
-     * @param tnum identifiant de l'intervenant,
-     * @param tunum identifiant du service d'urgence,
      * @throws ClassNotFoundException en cas de classe non trouvée.
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
-    public FtoubibDAO(Connection MyConnection, int tnum, int tunum)
+    public FtoubibDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
-
-        StringBuffer Stmt;
 
         this.MyConnection = MyConnection;
 
-        Stmt = new StringBuffer("select tnum, tunum, ta6num, ta4num,"
+        setInvariableSelectStatement("select tnum, tunum, ta6num, ta4num,"
                 + " tlname, tfname, tabbname, tel,"
                 + " tel2, telper, tel4, tel5, tel6,"
                 + " telfax, temail, taddress, taddress2, tcomment"
-                + " from ftoubib"
-                + " where tnum > 0");
-        if (tunum > 0) {
-            Stmt.append(" and tunum = ").append(tunum);
-        }
-        if (tnum > 0) {
-            Stmt.append(" and tnum = ").append(tnum);
-        } else {
-            Stmt.append(" order by tnum");
-        }
-        Stmt.append(";");
-        
-//        System.out.println(Stmt);
-        setReadStatement(Stmt.toString());
-        setReadPreparedStatement();
-        setReadResultSet();
+                + " from ftoubib");
+//        if (tunum > 0) {
+//            Stmt.append(" and tunum = ").append(tunum);
+//        }
+//        if (tnum > 0) {
+//            Stmt.append(" and tnum = ").append(tnum);
+//        } else {
+//            Stmt.append(" order by tnum");
+//        }
+//        Stmt.append(";");
 
+//        System.out.println(Stmt);
+//        setSelectStatement(Stmt.toString());
+//        setSelectPreparedStatement();
+//        setSelectResultSet();
         setUpdateStatement("update ftoubib"
                 + " set tunum=?, ta6num=?, ta4num=?, tlname=?, tfname=?,"
                 + " tabbname=?, tel=?,"
                 + " tel2=?, telper=?, tel4=?, tel5=?, tel6=?,"
                 + " telfax=?, temail=?, taddress=?, taddress2=?, tcomment=?"
                 + " where tnum=?;");
-        setUpdatePreparedStatement();
+//        setUpdatePreparedStatement();
 
         setInsertStatement("insert into ftoubib"
                 + " (tunum, ta6num, ta4num, tlname, tfname, tabbname, tel,"
                 + " tel2, telper, tel4, tel5, tel6,"
                 + " telfax, temail, taddress, taddress2, tcomment)"
                 + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
-        setInsertPreparedStatement();
+//        setInsertPreparedStatement();
 
         setDeleteStatement("delete from ftoubib where tnum=?;");
-        setDeletePreparedStatement();
+//        setDeletePreparedStatement();
     }
 
     /**
@@ -79,26 +72,26 @@ public class FtoubibDAO extends PaternDAO {
         Ftoubib MyFtoubib = null;
 
         try {
-            if (ReadResultSet.next()) {
+            if (SelectResultSet.next()) {
                 MyFtoubib = new Ftoubib();
-                MyFtoubib.setTnum(ReadResultSet.getInt("tnum"));
-                MyFtoubib.setTunum(ReadResultSet.getInt("tunum"));
-                MyFtoubib.setTa6num(ReadResultSet.getInt("ta6num"));
-                MyFtoubib.setTa4num(ReadResultSet.getInt("ta4num"));
-                MyFtoubib.setTlname(ReadResultSet.getString("tlname"));
-                MyFtoubib.setTfname(ReadResultSet.getString("tfname"));
-                MyFtoubib.setTabbname(ReadResultSet.getString("tabbname"));
-                MyFtoubib.setTel(ReadResultSet.getString("tel"));
-                MyFtoubib.setTel2(ReadResultSet.getString("tel2"));
-                MyFtoubib.setTelper(ReadResultSet.getString("telper"));
-                MyFtoubib.setTel4(ReadResultSet.getString("tel4"));
-                MyFtoubib.setTel5(ReadResultSet.getString("tel5"));
-                MyFtoubib.setTel6(ReadResultSet.getString("tel6"));
-                MyFtoubib.setTelfax(ReadResultSet.getString("telfax"));
-                MyFtoubib.setTemail(ReadResultSet.getString("temail"));
-                MyFtoubib.setTaddress(ReadResultSet.getString("taddress"));
-                MyFtoubib.setTaddress2(ReadResultSet.getString("taddress2"));
-                MyFtoubib.setTcomment(ReadResultSet.getString("tcomment"));
+                MyFtoubib.setTnum(SelectResultSet.getInt("tnum"));
+                MyFtoubib.setTunum(SelectResultSet.getInt("tunum"));
+                MyFtoubib.setTa6num(SelectResultSet.getInt("ta6num"));
+                MyFtoubib.setTa4num(SelectResultSet.getInt("ta4num"));
+                MyFtoubib.setTlname(SelectResultSet.getString("tlname"));
+                MyFtoubib.setTfname(SelectResultSet.getString("tfname"));
+                MyFtoubib.setTabbname(SelectResultSet.getString("tabbname"));
+                MyFtoubib.setTel(SelectResultSet.getString("tel"));
+                MyFtoubib.setTel2(SelectResultSet.getString("tel2"));
+                MyFtoubib.setTelper(SelectResultSet.getString("telper"));
+                MyFtoubib.setTel4(SelectResultSet.getString("tel4"));
+                MyFtoubib.setTel5(SelectResultSet.getString("tel5"));
+                MyFtoubib.setTel6(SelectResultSet.getString("tel6"));
+                MyFtoubib.setTelfax(SelectResultSet.getString("telfax"));
+                MyFtoubib.setTemail(SelectResultSet.getString("temail"));
+                MyFtoubib.setTaddress(SelectResultSet.getString("taddress"));
+                MyFtoubib.setTaddress2(SelectResultSet.getString("taddress2"));
+                MyFtoubib.setTcomment(SelectResultSet.getString("tcomment"));
             } else {
                 System.out.println("Lecture de ftoubib terminée");
             }
@@ -169,7 +162,7 @@ public class FtoubibDAO extends PaternDAO {
      * @param MyFtoubib intervenant à ajouter à la table ftoubib.
      */
     public void insert(Ftoubib MyFtoubib) {
-        ResultSet MyKeyResultSet;
+//        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("tlname=" + MyFtoubib.getTlname());
@@ -181,7 +174,7 @@ public class FtoubibDAO extends PaternDAO {
             InsertPreparedStatement.setString(6, MyFtoubib.getTabbname());
             InsertPreparedStatement.setString(7, MyFtoubib.getTel());
             InsertPreparedStatement.setString(8, MyFtoubib.getTel2());
-            InsertPreparedStatement.setString(8, MyFtoubib.getTelper());
+            InsertPreparedStatement.setString(9, MyFtoubib.getTelper());
             InsertPreparedStatement.setString(10, MyFtoubib.getTel4());
             InsertPreparedStatement.setString(11, MyFtoubib.getTel5());
             InsertPreparedStatement.setString(12, MyFtoubib.getTel6());
@@ -194,16 +187,84 @@ public class FtoubibDAO extends PaternDAO {
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un intervenant dans ftoubib");
             } else {
-                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
-                if (MyKeyResultSet.next()) {
-                    MyFtoubib.setTnum((int) MyKeyResultSet.getInt(1));
-                }
-                MyKeyResultSet.close();
+//                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
+//                if (MyKeyResultSet.next()) {
+//                    MyFtoubib.setTnum((int) MyKeyResultSet.getInt(1));
+//                }
+//                MyKeyResultSet.close();
+                MyFtoubib.setTnum(
+                        ((IfmxStatement) InsertPreparedStatement).getSerial());
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un intervenant dans "
                     + "ftoubib " + MyException.getMessage());
         }
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant.
+     *
+     * @param id l'identifiant à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterById(int id) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where tnum = ").append(id).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByGid(int gid) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where tunum = ").append(gid).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(int gid, String Code) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where tunum = ").append(gid);
+        if (Code != null) {
+            Stmt.append(" and tabbname = '").append(Code.trim()).append("'");
+        }
+        Stmt.append(" order by tabbname;");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Name à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByName(int gid, String Name) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where tunum = ").append(gid);
+        if (Name != null) {
+            Stmt.append(" and tlname like '").append(Name.trim()).append("%'");
+        }
+        Stmt.append(" order by tlname;");
+        setSelectStatement(Stmt.toString());
     }
 
     @Override

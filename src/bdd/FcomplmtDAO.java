@@ -1,50 +1,42 @@
 package bdd;
 
-import java.io.IOException;
+import com.informix.jdbc.IfmxStatement;
 import java.sql.*;
-import utils.ApplicationProperties;
-import utils.DBManager;
-import utils.DBServer;
-import utils.DBServerException;
 
 /**
- * Classe qui décrit les méthodes pour accéder à la table fcomplmt au
- * travers de JDBC.
+ * Classe qui décrit les méthodes pour accéder à la table fcomplmt JDBC.
  *
- * @author Thierry Baribaud.
- * @version May 2016.
+ * @author Thierry Baribaud
+ * @version Juin 2016
  */
-public class FcomplmtDAO extends PaternDAO {
+public class FcomplmtDAO extends PatternDAO {
 
     /**
      * Class constructor.
      *
      * @param MyConnection an active connection to a database.
-     * @param myC6num identiant du complément d'appel.
      * @throws ClassNotFoundException classe non trouvée.
      * @throws java.sql.SQLException erreur SQL.
      */
-    public FcomplmtDAO(Connection MyConnection, int myC6num)
+    public FcomplmtDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
-
-        StringBuffer Stmt;
 
         this.MyConnection = MyConnection;
 
-        Stmt = new StringBuffer("select c6num, c6int2, c6alpha1, c6alpha2, c6name, c6access,"
+        setInvariableSelectStatement("select c6num, c6int2, c6alpha1, c6alpha2, c6name, c6access,"
                 + " c6city, c6tel, c6alpha3, c6alpha4,"
                 + " c6alpha5, c6alpha6, c6alpha7,"
                 + " c6int1, c6date, c6date1, c6int3, c6int4, c6onum,"
                 + " c6corp, c6address, c6address2, c6poscode"
                 + " from fcomplmt");
-        if (myC6num > 0) {
-            Stmt.append(" where c6num = ").append(myC6num);
-        }
-        Stmt.append(" order by c6num;");
-        setReadStatement(Stmt.toString());
-        setReadPreparedStatement();
-//        System.out.println(Stmt);
-        setReadResultSet();
+//        if (myC6num > 0) {
+//            Stmt.append(" where c6num = ").append(myC6num);
+//        }
+//        Stmt.append(" order by c6num;");
+//        setSelectStatement(Stmt.toString());
+//        setSelectPreparedStatement();
+////        System.out.println(Stmt);
+//        setSelectResultSet();
 
         setUpdateStatement("update fcomplmt"
                 + " set c6int2=?, c6alpha1=?, c6alpha2=?, c6name=?, c6access=?,"
@@ -53,7 +45,7 @@ public class FcomplmtDAO extends PaternDAO {
                 + " c6int1=?, c6date=?, c6date1=?, c6int3=?, c6int4=?, c6onum=?,"
                 + " c6corp=?, c6address=?, c6address2=?, c6poscode=?"
                 + " where c6num=?;");
-        setUpdatePreparedStatement();
+//        setUpdatePreparedStatement();
 
         setInsertStatement("insert into fcomplmt"
                 + " (c6int2, c6alpha1, c6alpha2, c6name, c6access,"
@@ -61,16 +53,16 @@ public class FcomplmtDAO extends PaternDAO {
                 + " c6alpha5, c6alpha6, c6alpha7,"
                 + " c6int1, c6date, c6date1, c6int3, c6int4, c6onum,"
                 + " c6corp, c6address, c6address2, c6poscode)"
-                + " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" 
+                + " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"
                 + ",?, ?, ?, ?, ?, ?, ?);");
-        setInsertPreparedStatement();
+//        setInsertPreparedStatement();
 
         setDeleteStatement("delete from fcomplmt where c6num=?;");
-        setDeletePreparedStatement();
+//        setDeletePreparedStatement();
     }
 
     /**
-   * Selectionne un complément d'appel.
+     * Selectionne un complément d'appel.
      *
      * @return le complément d'appel sélectionné.
      */
@@ -79,31 +71,31 @@ public class FcomplmtDAO extends PaternDAO {
         Fcomplmt MyFcomplmt = null;
 
         try {
-            if (ReadResultSet.next()) {
+            if (SelectResultSet.next()) {
                 MyFcomplmt = new Fcomplmt();
-                MyFcomplmt.setC6num(ReadResultSet.getInt("c6num"));
-                MyFcomplmt.setC6int2(ReadResultSet.getInt("c6int2"));
-                MyFcomplmt.setC6alpha1(ReadResultSet.getString("c6alpha1"));
-                MyFcomplmt.setC6alpha2(ReadResultSet.getString("c6alpha2"));
-                MyFcomplmt.setC6name(ReadResultSet.getString("c6name"));
-                MyFcomplmt.setC6access(ReadResultSet.getString("c6access"));
-                MyFcomplmt.setC6city(ReadResultSet.getString("c6city"));
-                MyFcomplmt.setC6tel(ReadResultSet.getString("c6tel"));
-                MyFcomplmt.setC6alpha3(ReadResultSet.getString("c6alpha3"));
-                MyFcomplmt.setC6alpha4(ReadResultSet.getString("c6alpha4"));
-                MyFcomplmt.setC6alpha5(ReadResultSet.getString("c6alpha5"));
-                MyFcomplmt.setC6alpha6(ReadResultSet.getString("c6alpha6"));
-                MyFcomplmt.setC6alpha7(ReadResultSet.getString("c6alpha7"));
-                MyFcomplmt.setC6int1(ReadResultSet.getInt("c6int1"));
-                MyFcomplmt.setC6date(ReadResultSet.getTimestamp("c6date"));
-                MyFcomplmt.setC6date1(ReadResultSet.getTimestamp("c6date1"));
-                MyFcomplmt.setC6int3(ReadResultSet.getInt("c6int3"));
-                MyFcomplmt.setC6int4(ReadResultSet.getInt("c6int4"));
-                MyFcomplmt.setC6onum(ReadResultSet.getInt("c6onum"));
-                MyFcomplmt.setC6corp(ReadResultSet.getString("c6corp"));
-                MyFcomplmt.setC6address(ReadResultSet.getString("c6address"));
-                MyFcomplmt.setC6address(ReadResultSet.getString("c6address2"));
-                MyFcomplmt.setC6poscode(ReadResultSet.getString("c6poscode"));
+                MyFcomplmt.setC6num(SelectResultSet.getInt("c6num"));
+                MyFcomplmt.setC6int2(SelectResultSet.getInt("c6int2"));
+                MyFcomplmt.setC6alpha1(SelectResultSet.getString("c6alpha1"));
+                MyFcomplmt.setC6alpha2(SelectResultSet.getString("c6alpha2"));
+                MyFcomplmt.setC6name(SelectResultSet.getString("c6name"));
+                MyFcomplmt.setC6access(SelectResultSet.getString("c6access"));
+                MyFcomplmt.setC6city(SelectResultSet.getString("c6city"));
+                MyFcomplmt.setC6tel(SelectResultSet.getString("c6tel"));
+                MyFcomplmt.setC6alpha3(SelectResultSet.getString("c6alpha3"));
+                MyFcomplmt.setC6alpha4(SelectResultSet.getString("c6alpha4"));
+                MyFcomplmt.setC6alpha5(SelectResultSet.getString("c6alpha5"));
+                MyFcomplmt.setC6alpha6(SelectResultSet.getString("c6alpha6"));
+                MyFcomplmt.setC6alpha7(SelectResultSet.getString("c6alpha7"));
+                MyFcomplmt.setC6int1(SelectResultSet.getInt("c6int1"));
+                MyFcomplmt.setC6date(SelectResultSet.getTimestamp("c6date"));
+                MyFcomplmt.setC6date1(SelectResultSet.getTimestamp("c6date1"));
+                MyFcomplmt.setC6int3(SelectResultSet.getInt("c6int3"));
+                MyFcomplmt.setC6int4(SelectResultSet.getInt("c6int4"));
+                MyFcomplmt.setC6onum(SelectResultSet.getInt("c6onum"));
+                MyFcomplmt.setC6corp(SelectResultSet.getString("c6corp"));
+                MyFcomplmt.setC6address(SelectResultSet.getString("c6address"));
+                MyFcomplmt.setC6address(SelectResultSet.getString("c6address2"));
+                MyFcomplmt.setC6poscode(SelectResultSet.getString("c6poscode"));
             } else {
                 System.out.println("Lecture de fcomplmt terminée");
             }
@@ -167,7 +159,7 @@ public class FcomplmtDAO extends PaternDAO {
                 System.out.println("Impossible de détruire un complément d'appel dans fcomplmt");
             }
         } catch (SQLException MyException) {
-            System.out.println("Erreur lors de la suppression d'un complément d'appel dans fcomplmt " 
+            System.out.println("Erreur lors de la suppression d'un complément d'appel dans fcomplmt "
                     + MyException.getMessage());
         }
     }
@@ -178,7 +170,7 @@ public class FcomplmtDAO extends PaternDAO {
      * @param MyFcomplmt complément d'appel à ajouter à la table fcomplmt.
      */
     public void insert(Fcomplmt MyFcomplmt) {
-        ResultSet MyKeyResultSet;
+//        ResultSet MyKeyResultSet;
 
         try {
             System.out.println("c6alpha2=" + MyFcomplmt.getC6alpha2());
@@ -208,11 +200,14 @@ public class FcomplmtDAO extends PaternDAO {
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un complément d'appel dans fcomplmt");
             } else {
-                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
-                if (MyKeyResultSet.next()) {
-                    MyFcomplmt.setC6num((int) MyKeyResultSet.getInt(1));
-                }
-                MyKeyResultSet.close();
+//                Does not work with Informix IDS2000
+//                MyKeyResultSet = InsertPreparedStatement.getGeneratedKeys();
+//                if (MyKeyResultSet.next()) {
+//                    MyFcomplmt.setC6num((int) MyKeyResultSet.getInt(1));
+//                }
+//                MyKeyResultSet.close();
+                MyFcomplmt.setC6num(
+                        ((IfmxStatement) InsertPreparedStatement).getSerial());
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur lors de l'insertion d'un complément d'appel dans fcomplmt " + MyException.getMessage());
@@ -220,115 +215,49 @@ public class FcomplmtDAO extends PaternDAO {
     }
 
     /**
-     * Main method to test FcomplmtDAO class.
+     * Méthode pour filter les résultats par identifiant.
      *
-     * @param Args command line arguments. First argument must be the type of
-     * Database server : dev/pre-prod/prod. Second argument must be the name of
-     * the application properties file to load.
+     * @param id l'identifiant à utiliser pour le filtrage.
      */
-    public static void main(String[] Args) {
-        ApplicationProperties MyApplicationProperties;
-        DBServer MyDBServer;
-        DBManager MyDBManager;
-        FcomplmtDAO MyFcomplmtDAO;
-        Fcomplmt MyFcomplmt1;
-        Fcomplmt MyFcomplmt;
-        long i;
-        int myC6num = 552;
+    @Override
+    public void filterById(int id) {
+        StringBuffer Stmt;
 
-        if (Args.length != 2) {
-            System.out.println("Usage : java FcomplmtDAO server-type filename");
-            System.exit(0);
-        }
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where c6num = ").append(id).append(";");
+        setSelectStatement(Stmt.toString());
+    }
 
-        try {
-            MyApplicationProperties = new ApplicationProperties(Args[1]);
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByGid(int gid) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
 
-            MyDBServer = new DBServer(Args[0], MyApplicationProperties);
-            MyDBManager = new DBManager(MyDBServer);
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par code.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Code à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByCode(int gid, String Code) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
 
-// Essai insertion
-            MyFcomplmtDAO = new FcomplmtDAO(MyDBManager.getConnection(), myC6num);
-            MyFcomplmt1 = new Fcomplmt();
-            MyFcomplmt1.setC6int2(99999);
-            MyFcomplmt1.setC6alpha1("terra incognita");
-            MyFcomplmt1.setC6alpha2("utopia");
-            MyFcomplmt1.setC6name("UTOPIA");
-            MyFcomplmt1.setC6access("porte B");
-            MyFcomplmt1.setC6city("12, rue des rèves");
-            MyFcomplmt1.setC6tel("bâtiment B");
-            MyFcomplmt1.setC6alpha3("92400");
-            MyFcomplmt1.setC6alpha4("UTOPIA CITY");
-            MyFcomplmt1.setC6alpha5("01.01.01.01.01");
-            MyFcomplmt1.setC6alpha6("02.02.02.02.02");
-            MyFcomplmt1.setC6alpha7("03.03.03.03.03");
-            MyFcomplmt1.setC6int1(1);
-            MyFcomplmt1.setC6date(new Timestamp(new java.util.Date().getTime()));
-            MyFcomplmt1.setC6date1(Timestamp.valueOf("2050-12-31 23:59:59.0"));
-            MyFcomplmt1.setC6int3(3);
-            MyFcomplmt1.setC6int4(4);
-            MyFcomplmt1.setC6onum(36);
-            MyFcomplmt1.setC6corp("UTOPIA DISTRIBUTION");
-            MyFcomplmt1.setC6address("14, rue de la réalité");
-            MyFcomplmt1.setC6address2("porte 1");
-            MyFcomplmt1.setC6poscode("92130");
-            System.out.println("Fcomplmt(before insert)=" + MyFcomplmt1);
-            MyFcomplmtDAO.insert(MyFcomplmt1);
-            System.out.println("Fcomplmt(after insert)=" + MyFcomplmt1);
-            System.out.println("Affected row(s)=" + MyFcomplmtDAO.getNbAffectedRow());
-
-// Essai mise à jour
-            MyFcomplmt1.setC6access(MyFcomplmt1.getC6access() + ", escalier 9");
-            MyFcomplmtDAO.update(MyFcomplmt1);
-            System.out.println("Fcomplmt(after update)=" + MyFcomplmt1);
-            System.out.println("Affected row(s)=" + MyFcomplmtDAO.getNbAffectedRow());
-            MyFcomplmtDAO.close();
-
-// Essai lecture
-            MyFcomplmtDAO = new FcomplmtDAO(MyDBManager.getConnection(), myC6num);
-            i = 0;
-            while ((MyFcomplmt = MyFcomplmtDAO.select()) != null) {
-                i++;
-                System.out.println("Fcomplmt(" + i + ")=" + MyFcomplmt);
-                System.out.println("  getC6num()=" + MyFcomplmt.getC6num());
-                System.out.println("  getC6int2()=" + MyFcomplmt.getC6int2());
-                System.out.println("  getC6alpha1()=" + MyFcomplmt.getC6alpha1());
-                System.out.println("  getC6alpha2()=" + MyFcomplmt.getC6alpha2());
-                System.out.println("  getC6name()=" + MyFcomplmt.getC6name());
-                System.out.println("  getC6access()=" + MyFcomplmt.getC6access());
-                System.out.println("  getC6city()=" + MyFcomplmt.getC6city());
-                System.out.println("  getC6tel()=" + MyFcomplmt.getC6tel());
-                System.out.println("  getC6alpha3()=" + MyFcomplmt.getC6alpha3());
-                System.out.println("  getC6alpha4()=" + MyFcomplmt.getC6alpha4());
-                System.out.println("  getC6alpha5()=" + MyFcomplmt.getC6alpha5());
-                System.out.println("  getC6alpha6()=" + MyFcomplmt.getC6alpha6());
-                System.out.println("  getC6alpha7()=" + MyFcomplmt.getC6alpha7());
-                System.out.println("  getC6int1()=" + MyFcomplmt.getC6int1());
-                System.out.println("  getC6date()=" + MyFcomplmt.getC6date());
-                System.out.println("  getC6date1()=" + MyFcomplmt.getC6date1());
-                System.out.println("  getC6int3()=" + MyFcomplmt.getC6int3());
-                System.out.println("  getC6int4()=" + MyFcomplmt.getC6int4());
-                System.out.println("  getC6onum()=" + MyFcomplmt.getC6onum());
-                System.out.println("  getC6corp()=" + MyFcomplmt.getC6corp());
-                System.out.println("  getC6address()=" + MyFcomplmt.getC6address());
-                System.out.println("  getC6address2()=" + MyFcomplmt.getC6address2());
-                System.out.println("  getC6poscode()=" + MyFcomplmt.getC6poscode());
-            }
-
-// Essai suppression
-            System.out.println("Deleting : " + MyFcomplmt1);
-            MyFcomplmtDAO.delete(MyFcomplmt1.getC6num());
-            System.out.println("Affected row(s)=" + MyFcomplmtDAO.getNbAffectedRow());
-
-        } catch (IOException MyException) {
-            System.out.println("Problem while reading database properties " + MyException);
-        } catch (DBServerException MyException) {
-            System.out.println("Problem while reading DBserver properties " + MyException);
-        } catch (ClassNotFoundException MyException) {
-            System.out.println("Problem while creating FcomplmtDAO " + MyException);
-        } catch (SQLException MyException) {
-            System.out.println("Problem while creating FcomplmtDAO " + MyException);
-        }
+    /**
+     * Méthode pour filter les résultats par identifiant de groupe et par nom.
+     *
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
+     * @param Name à utiliser pour le filtrage.
+     */
+    @Override
+    public void filterByName(int gid, String Name) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
     }
 
     @Override
