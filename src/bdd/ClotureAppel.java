@@ -1,6 +1,8 @@
 package bdd;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * ClotureAppel est une classe qui décrit une clôture d'appel standard. Les
@@ -10,6 +12,11 @@ import java.sql.Timestamp;
  * @author Thierry Baribaud
  */
 public class ClotureAppel {
+
+    /**
+     * Format de date "aaaa-mm-dd".
+     */
+    private static final DateFormat MyDateFormat = new SimpleDateFormat("yyyy-MM-dd ");
 
     /**
      * Date de début d'intervention.
@@ -74,6 +81,13 @@ public class ClotureAppel {
     }
 
     /**
+     * @param MyFessais définit la date de début d'intervention à partir d'un essai.
+     */
+    public void setBegDate(Fessais MyFessais) {
+        this.BegDate = calcDate(MyFessais);
+    }
+
+    /**
      * @return EndDate la date de fin d'intervention.
      */
     public Timestamp getEndDate() {
@@ -87,6 +101,37 @@ public class ClotureAppel {
         this.EndDate = EndDate;
     }
 
+    /**
+     * @param MyFessais définit la date de fin d'intervention à partir d'un essai.
+     */
+    public void setEndDate(Fessais MyFessais) {
+        this.EndDate = calcDate(MyFessais);
+    }
+
+    /**
+     * @param MyFessais définit la date de début/fin d'intervention à partir d'un essai.
+     * @return date de début/fin d'intervention.
+     */
+    private Timestamp calcDate(Fessais MyFessais) {
+        String Emessage;
+        char c;
+        String MyHour;
+        Timestamp MyDate;
+        
+        MyDate = null;
+        Emessage = MyFessais.getEmessage();
+        if (Emessage.length() > 0) {
+            c = Emessage.charAt(0);
+            if (c >= '0' && c <= '9') {
+                MyHour = Emessage + ":00";
+                MyDate = Timestamp.valueOf(MyDateFormat.format(MyFessais.getEdate()) + MyHour + ".0");
+                if (MyHour.compareTo(MyFessais.getEtime()) == 1) {
+                    MyDate.setTime(MyDate.getTime() - 86400000);
+                }
+            }
+        }
+        return(MyDate);
+    }
     /**
      * @return Rapport le rapport d'intervention.
      */

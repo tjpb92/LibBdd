@@ -7,7 +7,7 @@ import java.sql.*;
  * Cette classe remplace la classe PaternDAO.
  *
  * @author Thierry Baribaud
- * @version Juin 2016
+ * @version Juillet 2016
  */
 public abstract class PatternDAO {
 
@@ -327,4 +327,31 @@ public abstract class PatternDAO {
      * @param Name à utiliser pour le filtrage.
      */
     public abstract void filterByName(int gid, String Name);
+    
+    /**
+     * Méthode qui rajoute une clause ORDER BY à la requête SQL.
+     * @param FieldsList liste des champs servant à trier les résultats de la requête.
+     */
+    public void orderBy(String FieldsList) {
+        StringBuffer Stmt;
+        int len;
+        String OrderByClause;
+        
+        OrderByClause = " order by " + FieldsList;
+        if (SelectStatement != null) {
+            Stmt = new StringBuffer(SelectStatement);
+        }
+        else {
+            Stmt = new StringBuffer(InvariableSelectStatement);
+        }
+        len = Stmt.length();
+        System.out.println("Stmt=" + Stmt + ", len=" + len);
+        if (Stmt.charAt(len - 1) == ';') {
+            Stmt.insert(len - 1, OrderByClause);
+        }
+        else {
+            Stmt.append(OrderByClause).append(";");
+        }
+        setSelectStatement(Stmt.toString());
+    }
 }

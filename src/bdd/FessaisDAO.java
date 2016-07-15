@@ -161,7 +161,7 @@ public class FessaisDAO extends PatternDAO {
                 + " from " + MyTable + " a"
                 + " where a.enumabs = (select max(b.enumabs) from "
                 + MyTable + " b where b.ecnum = ?"
-                + " and b.eresult in (69,70,71,72,73,93));");
+                + " and b.eresult in (69,70,71,72,73,90,91,92,93));");
 //            System.out.println("  PartOfEOMStatement=" + getPartOfEOMStatement());
 //            setPartOfEOMPreparedStatement();
 //            setPartOfEOMResultSet();
