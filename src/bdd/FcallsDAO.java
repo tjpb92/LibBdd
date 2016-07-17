@@ -8,7 +8,7 @@ import java.sql.*;
  * travers de JDBC.
  *
  * @author Thierry Baribaud
- * @version Juin 2016
+ * @version Juillet 2016
  */
 public class FcallsDAO extends PatternDAO {
 
@@ -60,7 +60,7 @@ public class FcallsDAO extends PatternDAO {
                 + " ctnum, cnote,"
                 + " cdelay1, cdelay2, cduration, conum, ccallertype,"
                 + " cnumber6, cnumber7, cnumber8, cnumber9, cnumber10,"
-                + " csector1, csector2, cextnum"
+                + " csector1, csector2, cextnum, iso8601_weeknum(cdate) cweeknum"
                 + " from " + MyTable
                 + " where (cinternal = 0 or cinternal is null)"
                 + " and (ctest = 0 or ctest is null)");
@@ -173,6 +173,7 @@ public class FcallsDAO extends PatternDAO {
                 MyFcalls.setCsector1(SelectResultSet.getString("csector1"));
                 MyFcalls.setCsector2(SelectResultSet.getString("csector2"));
                 MyFcalls.setCextnum(SelectResultSet.getString("cextnum"));
+                MyFcalls.setCWeekNum(SelectResultSet.getString("cweeknum"));
             } else {
                 System.out.println("Lecture de " + MyTable + " terminée");
             }

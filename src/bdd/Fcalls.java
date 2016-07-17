@@ -1,385 +1,464 @@
 package bdd;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Fcalls est une classe décrivant un appel.
- * @version Juin 2016
+ *
+ * @version Juillet 2016
  * @author Thierry Baribaud
  */
 public class Fcalls {
 
-  /**
-   * Identifiant de l'appel. 
-   */
-  private int cnum;
+    /**
+     * Format de date "aaaa-mm-dd".
+     */
+    private static final DateFormat MyDateFormat = new SimpleDateFormat("yyyy-MM-dd ");
 
-  /**
-   * Identifiant du client (furgent). 
-   */
-  private int cunum;
+    /**
+     * Identifiant de l'appel.
+     */
+    private int cnum;
 
-  /**
-   * Nom de l'appelant. 
-   */
-  private String Cname;
+    /**
+     * Identifiant du client (furgent).
+     */
+    private int cunum;
 
-  /**
-   * Téléphone de l'appelant. 
-   */
-  private String Ctel;
+    /**
+     * Nom de l'appelant.
+     */
+    private String Cname;
 
-  /**
-   * Adresse de l'appelant. 
-   */
-  private String Caddress;
+    /**
+     * Téléphone de l'appelant.
+     */
+    private String Ctel;
 
-  /**
-   * Complément d'adresse de l'appelant. 
-   */
-  private String Caddress2;
+    /**
+     * Adresse de l'appelant.
+     */
+    private String Caddress;
 
-  /**
-   * Accès à l'adresse. 
-   */
-  private String Caccess;
+    /**
+     * Complément d'adresse de l'appelant.
+     */
+    private String Caddress2;
 
-  /**
-   * Code postal. 
-   */
-  private String Cposcode;
+    /**
+     * Accès à l'adresse.
+     */
+    private String Caccess;
 
-  /**
-   * Ville. 
-   */
-  private String City;
+    /**
+     * Code postal.
+     */
+    private String Cposcode;
 
-  /**
-   * Description de l'appel. 
-   */
-  private String Csympt;
+    /**
+     * Ville.
+     */
+    private String City;
 
-  /**
-   * ... 
-   */
-  private String Cnumber4;
+    /**
+     * Description de l'appel.
+     */
+    private String Csympt;
 
-  /**
-   * Identifiant du complément d'appel (fcomplmt). 
-   */
-  private int cc6num;
+    /**
+     * ...
+     */
+    private String Cnumber4;
 
-  /**
-   * Date de saisie d'appel. 
-   */
-  private Timestamp Cdate;
+    /**
+     * Identifiant du complément d'appel (fcomplmt).
+     */
+    private int cc6num;
 
-  /**
-   * Heure de saisie d'appel. 
-   */
-  private String Ctime;
+    /**
+     * Date de saisie d'appel.
+     */
+    private Timestamp Cdate;
 
-  /**
-   * Date de la dernière modification de l'appel. 
-   */
-  private Timestamp Cdate2;
+    /**
+     * Heure de saisie d'appel.
+     */
+    private String Ctime;
 
-  /**
-   * Heure de la dernière modification de l'appel. 
-   */
-  private String Ctime2;
+    /**
+     * Date de la dernière modification de l'appel.
+     */
+    private Timestamp Cdate2;
 
-  /**
-   * Raison sociale de l'appelant. 
-   */
-  private String Corp;
+    /**
+     * Heure de la dernière modification de l'appel.
+     */
+    private String Ctime2;
 
-  /**
-   * ... 
-   */
-  private String Cnumber5;
+    /**
+     * Raison sociale de l'appelant.
+     */
+    private String Corp;
 
-  /**
-   * Numéro de ticket/appel. 
-   */
-  private int cseqno;
+    /**
+     * ...
+     */
+    private String Cnumber5;
 
-  /**
-   * ... 
-   */
-  private int cquery1;
+    /**
+     * Numéro de ticket/appel.
+     */
+    private int cseqno;
 
-  /**
-   * ... 
-   */
-  private int cquery2;
+    /**
+     * ...
+     */
+    private int cquery1;
 
-  /**
-   * Zone d'astreinte ou identifiant de l'agence (fagency). 
-   */
-  private int czone;
+    /**
+     * ...
+     */
+    private int cquery2;
 
-  /**
-   * Age du patient. 
-   */
-  private int cage;
+    /**
+     * Zone d'astreinte ou identifiant de l'agence (fagency).
+     */
+    private int czone;
 
-  /**
-   * Identifiant ou indice du type d'appel (ftype). 
-   */
-  private int ctype;
+    /**
+     * Age du patient.
+     */
+    private int cage;
 
-  /**
-   * Identifiant de l'intervenant (ftoubib). 
-   */
-  private int ctnum;
+    /**
+     * Identifiant ou indice du type d'appel (ftype).
+     */
+    private int ctype;
 
-  /**
-   * Appel clôturé 1=OUI, 0=NON. 
-   */
-  private int cnote;
+    /**
+     * Identifiant de l'intervenant (ftoubib).
+     */
+    private int ctnum;
 
-  /**
-   * Délai d'intervention exprimé en minute. 
-   */
-  private int cdelay1;
+    /**
+     * Appel clôturé 1=OUI, 0=NON.
+     */
+    private int cnote;
 
-  /**
-   * Délai de remise en état exprimé en minute. 
-   */
-  private int cdelay2;
+    /**
+     * Délai d'intervention exprimé en minute.
+     */
+    private int cdelay1;
 
-  /**
-   * Durée de l'appel exprimée en seconde. 
-   */
-  private int cduration;
+    /**
+     * Délai de remise en état exprimé en minute.
+     */
+    private int cdelay2;
 
-  /**
-   * Identifiant de l'opérateur (foperat). 
-   */
-  private int conum;
+    /**
+     * Durée de l'appel exprimée en seconde.
+     */
+    private int cduration;
 
-  /**
-   * ... 
-   */
-  private int ccallertype;
+    /**
+     * Identifiant de l'opérateur (foperat).
+     */
+    private int conum;
 
-  /**
-   * ... 
-   */
-  private String Cnumber6;
+    /**
+     * ...
+     */
+    private int ccallertype;
 
-  /**
-   * ... 
-   */
-  private String Cnumber7;
+    /**
+     * ...
+     */
+    private String Cnumber6;
 
-  /**
-   * ... 
-   */
-  private String Cnumber8;
+    /**
+     * ...
+     */
+    private String Cnumber7;
 
-  /**
-   * ... 
-   */
-  private String Cnumber9;
+    /**
+     * ...
+     */
+    private String Cnumber8;
 
-  /**
-   * ... 
-   */
-  private String Cnumber10;
+    /**
+     * ...
+     */
+    private String Cnumber9;
 
-  /**
-   * Code secteur astreinte jour. 
-   */
-  private String Csector1;
+    /**
+     * ...
+     */
+    private String Cnumber10;
 
-  /**
-   * Code secteur astreinte nuit. 
-   */
-  private String Csector2;
+    /**
+     * Code secteur astreinte jour.
+     */
+    private String Csector1;
 
-  /**
-   * Numéro de ticket/appel chez le client. 
-   */
-  private String Cextnum;
-  
-  
-  public int getCnum() {
-    return cnum;
+    /**
+     * Code secteur astreinte nuit.
+     */
+    private String Csector2;
+
+    /**
+     * Numéro de ticket/appel chez le client.
+     */
+    private String Cextnum;
+
+    /**
+     * Numéro de semaine correspondant à la date de saisie.
+     */
+    private String CWeekNum;
+
+    public int getCnum() {
+        return cnum;
     }
 
-  public int getCunum() {
-    return cunum;
+    public int getCunum() {
+        return cunum;
     }
 
-  public Timestamp getCdate() {
-    return Cdate;
+    /**
+     * @return Cdate la date de saisie de l'appel.
+     */
+    public Timestamp getCdate() {
+        return Cdate;
     }
 
-  public String getCname() {
-    return Cname;
+    public String getCname() {
+        return Cname;
     }
 
-  public String getCtel() {
-    return Ctel;
+    public String getCtel() {
+        return Ctel;
     }
 
-  public String getCaddress() {
-    return Caddress;
+    public String getCaddress() {
+        return Caddress;
     }
 
-  public String getCaddress2() {
-    return Caddress2;
+    public String getCaddress2() {
+        return Caddress2;
     }
 
-  public String getCaccess() {
-    return Caccess;
+    public String getCaccess() {
+        return Caccess;
     }
 
-  public String getCposcode() {
-    return Cposcode;
+    public String getCposcode() {
+        return Cposcode;
     }
 
-  public String getCity() {
-    return City;
+    public String getCity() {
+        return City;
     }
 
-  public String getCsympt() {
-    return Csympt;
+    public String getCsympt() {
+        return Csympt;
     }
 
-  public String getCtime() {
-    return Ctime;
+    /**
+     * @return Ctime l'heure de saisie de l'appel (format hh:mm:ss).
+     */
+    public String getCtime() {
+        return Ctime;
     }
 
-  public String getCtime2() {
-    return Ctime2;
+    /**
+     * @return Ctime2 l'heure de dernière modification de l'appel (format hh:mm:ss).
+     */
+    public String getCtime2() {
+        return Ctime2;
     }
 
-  public String getCorp() {
-    return Corp;
+    public String getCorp() {
+        return Corp;
     }
 
-  public String getCnumber5() {
-    return Cnumber5;
+    public String getCnumber5() {
+        return Cnumber5;
     }
 
-  public String getCnumber4() {
-    return Cnumber4;
+    public String getCnumber4() {
+        return Cnumber4;
     }
 
-  public int getCc6num() {
-    return cc6num;
+    public int getCc6num() {
+        return cc6num;
     }
 
-  public Timestamp getCdate2() {
-    return Cdate2;
+    /**
+     * @return Cdate2 la date de dernière modification de l'appel.
+     */
+    public Timestamp getCdate2() {
+        return Cdate2;
     }
 
-  public void setCnum(int cnum) {
-    this.cnum = cnum;
+    public void setCnum(int cnum) {
+        this.cnum = cnum;
     }
 
-  public void setCunum(int cunum) {
-    this.cunum = cunum;
+    public void setCunum(int cunum) {
+        this.cunum = cunum;
     }
 
-  public void setCdate(Timestamp Cdate) {
-    this.Cdate = Cdate;
+    /**
+     * Définit la date de saisie de l'appel et la complète avec l'heure de saisie
+     * en conséquence.
+     * 
+     * @param Cdate date de saisie de l'appel.
+     */
+    public void setCdate(Timestamp Cdate) {
+        this.Cdate = assembleTimestamp(Cdate, getCtime());
     }
 
-  public void setCtel(String Ctel) {
-    this.Ctel = (Ctel != null)?Ctel.trim():null;
+    public void setCtel(String Ctel) {
+        this.Ctel = (Ctel != null) ? Ctel.trim() : null;
     }
 
-  public void setCname(String Cname) {
-    this.Cname = (Cname != null)?Cname.trim():null;
+    public void setCname(String Cname) {
+        this.Cname = (Cname != null) ? Cname.trim() : null;
     }
 
-  public void setCaddress(String Caddress) {
-    this.Caddress = (Caddress != null)?Caddress.trim():null;
+    public void setCaddress(String Caddress) {
+        this.Caddress = (Caddress != null) ? Caddress.trim() : null;
     }
 
-  public void setCaddress2(String Caddress2) {
-    this.Caddress2 = (Caddress2 != null)?Caddress2.trim():null;
+    public void setCaddress2(String Caddress2) {
+        this.Caddress2 = (Caddress2 != null) ? Caddress2.trim() : null;
     }
 
-  public void setCaccess(String Caccess) {
-    this.Caccess = (Caccess != null)?Caccess.trim():null;
+    public void setCaccess(String Caccess) {
+        this.Caccess = (Caccess != null) ? Caccess.trim() : null;
     }
 
-  public void setCposcode(String Cposcode) {
-    this.Cposcode = (Cposcode != null)?Cposcode.trim():null;
+    public void setCposcode(String Cposcode) {
+        this.Cposcode = (Cposcode != null) ? Cposcode.trim() : null;
     }
 
-  public void setCity(String City) {
-    this.City = (City != null)?City.trim():null;
+    public void setCity(String City) {
+        this.City = (City != null) ? City.trim() : null;
     }
 
-  public void setCsympt(String Csympt) {
-    this.Csympt = (Csympt != null)?Csympt.trim():null;
+    public void setCsympt(String Csympt) {
+        this.Csympt = (Csympt != null) ? Csympt.trim() : null;
     }
 
-  public void setCtime(String Ctime) {
-    this.Ctime = (Ctime != null)?Ctime.trim():null;
+    /**
+     * Définit l'heure de saisie de l'appel et met à jour la date de saisie en
+     * conséquence.
+     * 
+     * @param Ctime heure de saisie de l'appel (format hh:mm:ss).
+     */
+     public void setCtime(String Ctime) {
+        if (Ctime != null) {
+            this.Ctime = Ctime.trim();
+            setCdate(assembleTimestamp(getCdate(), getCtime()));
+        } else {
+            this.Ctime = null;
+        }
     }
 
-  public void setCtime2(String Ctime2) {
-    this.Ctime2 = (Ctime2 != null)?Ctime2.trim():null;
+    /**
+     * Définit l'heure de dernière modification de l'appel et met à jour la 
+     * date de modification en conséquence.
+     * 
+     * @param Ctime2 heure de modification de l'appel (format hh:mm:ss).
+     */
+    public void setCtime2(String Ctime2) {
+        if (Ctime2 != null) {
+            this.Ctime2 = Ctime2.trim();
+            setCdate2(assembleTimestamp(getCdate2(), getCtime2()));
+        } else {
+            this.Ctime2 = null;
+        }
     }
 
-  public void setCorp(String Corp) {
-    this.Corp = (Corp != null)?Corp.trim():null;
+    public void setCorp(String Corp) {
+        this.Corp = (Corp != null) ? Corp.trim() : null;
     }
 
-  public void setCnumber5(String Cnumber5) {
-    this.Cnumber5 = (Cnumber5 != null)?Cnumber5.trim():null;
+    public void setCnumber5(String Cnumber5) {
+        this.Cnumber5 = (Cnumber5 != null) ? Cnumber5.trim() : null;
     }
 
-  public void setCnumber4(String Cnumber4) {
-    this.Cnumber4 = (Cnumber4 != null)?Cnumber4.trim():null;
+    public void setCnumber4(String Cnumber4) {
+        this.Cnumber4 = (Cnumber4 != null) ? Cnumber4.trim() : null;
     }
 
-  public void setCc6num(int cc6num) {
-    this.cc6num = cc6num;
+    public void setCc6num(int cc6num) {
+        this.cc6num = cc6num;
     }
 
-  public void setCdate2(Timestamp Cdate2) {
-    this.Cdate2 = Cdate2;
+    /**
+     * Définit la date de dernière modification de l'appel et la complète avec 
+     * l'heure de dernière modification en conséquence.
+     * 
+     * @param Cdate2 date de dernière modification de l'appel.
+     */
+    public void setCdate2(Timestamp Cdate2) {
+        this.Cdate2 = assembleTimestamp(Cdate2, getCtime2());
     }
 
-  @Override
-  public String toString() {
-    return this.getClass().getName() +
-           " : {cnum=" + cnum + 
-           ", cseqno=" + cseqno +
-           ", cunum=" + cunum + 
-           ", Cdate=" + Cdate +
-           ", Ctime=" + Ctime + 
-           ", Cname=" + Cname +
-           ", Ctel=" + Ctel +
-           ", Csympt=" + Csympt + 
-           ", cc6num=" + cc6num +
-//           ", Caddress=" + Caddress +
-//           ", Caddress2=" + Caddress2 + 
-//           ", Caccess=" + Caccess + 
-//           ", Cposcode=" + Cposcode + 
-//           ", City=" + City + 
-//           ", Cnumber4=" + Cnumber4 + 
-//           ", Cdate2=" + Cdate2 +
-//           ", Ctime2=" + Ctime2 + 
-//           ", Corp=" + Corp + 
-//           ", Cnumber5=" + Cnumber5 + 
-//           ", cquery1=" + cseqno +
-//           ", cquery2=" + cseqno +
-//           ", czone=" + cseqno +
-//           ", cage=" + cseqno +
-//           ", ctype=" + cseqno +
-//           ", ctnum=" + cseqno +
-//           ", cnote=" + cseqno +
-           "}";
-  }
+    /**
+     * Assemble une date et une heure en Timestamp.
+     *
+     * @param MyDate date sans la partie heure, minute et seconde.
+     * @param MyTime heure (hh:mm:ss).
+     * @return la date complétée de l'heure.
+     */
+    public Timestamp assembleTimestamp(Timestamp MyDate, String MyTime) {
+        Timestamp MyTimestamp;
+
+        MyTimestamp = null;
+        if (MyDate != null) {
+            if (MyTime != null) {
+                MyTimestamp = Timestamp.valueOf(MyDateFormat.format(MyDate) + MyTime + ".0");
+            } else {
+                MyTimestamp = MyDate;
+            }
+        }
+        return (MyTimestamp);
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getName()
+                + " : {cnum=" + cnum
+                + ", cseqno=" + cseqno
+                + ", cunum=" + cunum
+                + ", Cdate=" + Cdate
+                + ", Ctime=" + Ctime
+                + ", Cname=" + Cname
+                + ", Ctel=" + Ctel
+                + ", Csympt=" + Csympt
+                + ", cc6num=" + cc6num
+                + //           ", Caddress=" + Caddress +
+                //           ", Caddress2=" + Caddress2 + 
+                //           ", Caccess=" + Caccess + 
+                //           ", Cposcode=" + Cposcode + 
+                //           ", City=" + City + 
+                //           ", Cnumber4=" + Cnumber4 + 
+                //           ", Cdate2=" + Cdate2 +
+                //           ", Ctime2=" + Ctime2 + 
+                //           ", Corp=" + Corp + 
+                //           ", Cnumber5=" + Cnumber5 + 
+                //           ", cquery1=" + cseqno +
+                //           ", cquery2=" + cseqno +
+                //           ", czone=" + cseqno +
+                //           ", cage=" + cseqno +
+                //           ", ctype=" + cseqno +
+                //           ", ctnum=" + cseqno +
+                //           ", cnote=" + cseqno +
+                "}";
+    }
 
     /**
      * @return cseqno numéro de ticket Anstel.
@@ -459,7 +538,7 @@ public class Fcalls {
     }
 
     /**
-     * @param ctype définit  la raison d'appel.
+     * @param ctype définit la raison d'appel.
      */
     public void setCtype(int ctype) {
         this.ctype = ctype;
@@ -473,7 +552,7 @@ public class Fcalls {
     }
 
     /**
-     * @param ctnum définit  la référence à l'intervenant courant.
+     * @param ctnum définit la référence à l'intervenant courant.
      */
     public void setCtnum(int ctnum) {
         this.ctnum = ctnum;
@@ -574,7 +653,7 @@ public class Fcalls {
      * @param Cnumber6 the Cnumber6 to set
      */
     public void setCnumber6(String Cnumber6) {
-        this.Cnumber6 = (Cnumber6 != null)?Cnumber6.trim():null;
+        this.Cnumber6 = (Cnumber6 != null) ? Cnumber6.trim() : null;
     }
 
     /**
@@ -588,7 +667,7 @@ public class Fcalls {
      * @param Cnumber7 the Cnumber7 to set
      */
     public void setCnumber7(String Cnumber7) {
-        this.Cnumber7 = (Cnumber7 != null)?Cnumber7.trim():null;
+        this.Cnumber7 = (Cnumber7 != null) ? Cnumber7.trim() : null;
     }
 
     /**
@@ -602,7 +681,7 @@ public class Fcalls {
      * @param Cnumber8 the Cnumber8 to set
      */
     public void setCnumber8(String Cnumber8) {
-        this.Cnumber8 = (Cnumber8 != null)?Cnumber8.trim():null;
+        this.Cnumber8 = (Cnumber8 != null) ? Cnumber8.trim() : null;
     }
 
     /**
@@ -616,7 +695,7 @@ public class Fcalls {
      * @param Cnumber9 the Cnumber9 to set
      */
     public void setCnumber9(String Cnumber9) {
-        this.Cnumber9 = (Cnumber9 != null)?Cnumber9.trim():null;
+        this.Cnumber9 = (Cnumber9 != null) ? Cnumber9.trim() : null;
     }
 
     /**
@@ -630,7 +709,7 @@ public class Fcalls {
      * @param Cnumber10 the Cnumber10 to set
      */
     public void setCnumber10(String Cnumber10) {
-        this.Cnumber10 = (Cnumber10 != null)?Cnumber10.trim():null;
+        this.Cnumber10 = (Cnumber10 != null) ? Cnumber10.trim() : null;
     }
 
     /**
@@ -644,7 +723,7 @@ public class Fcalls {
      * @param Csector1 the Csector1 to set
      */
     public void setCsector1(String Csector1) {
-        this.Csector1 = (Csector1 != null)?Csector1.trim():null;
+        this.Csector1 = (Csector1 != null) ? Csector1.trim() : null;
     }
 
     /**
@@ -658,7 +737,7 @@ public class Fcalls {
      * @param Csector2 the Csector2 to set
      */
     public void setCsector2(String Csector2) {
-        this.Csector2 = (Csector2 != null)?Csector2.trim():null;
+        this.Csector2 = (Csector2 != null) ? Csector2.trim() : null;
     }
 
     /**
@@ -672,6 +751,20 @@ public class Fcalls {
      * @param Cextnum the Cextnum to set
      */
     public void setCextnum(String Cextnum) {
-        this.Cextnum = (Cextnum != null)?Cextnum.trim():null;
+        this.Cextnum = (Cextnum != null) ? Cextnum.trim() : null;
+    }
+
+    /**
+     * @return le numéro de la semaine de la date de saisie.
+     */
+    public String getCWeekNum() {
+        return (CWeekNum);
+    }
+
+    /**
+     * @param CWeekNum définit le numéro de la semaine de la date de saisie.
+     */
+    public void setCWeekNum(String CWeekNum) {
+        this.CWeekNum = (CWeekNum != null) ? CWeekNum.trim() : null;
     }
 }
