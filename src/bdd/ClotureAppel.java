@@ -1,8 +1,11 @@
 package bdd;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * ClotureAppel est une classe qui décrit une clôture d'appel standard. Les
@@ -21,7 +24,7 @@ public class ClotureAppel {
     /**
      * Format d'heure "hh:mm".
      */
-    private static final DateFormat MyHourFormat = new SimpleDateFormat("hh:mm ");
+    private static final DateFormat MyHourFormat = new SimpleDateFormat("HH:mm");
 
     /**
      * Date de saisie de la demande d'intervetion.
@@ -59,7 +62,7 @@ public class ClotureAppel {
      * <LI> 98 : "Cloture admin - appel hors périmètre",</LI>
      * <LI> 99 : "Cloture infructueuse malgré relances ANSTEL".</LI></UL>
      */
-    private String Resultat = "#N/A";
+    private String Resultat;
 
     /**
      * Nature de l'intervention.
@@ -69,12 +72,12 @@ public class ClotureAppel {
      * <LI>2 : "Vandalisme",</LI>
      * <LI>3 : "Autre". </LI></UL>
      */
-    private String Nature = "#N/A";
+    private String Nature;
 
     /**
      * Rapport d'intervention.
      */
-    private String Rapport = "#N/A";
+    private String Rapport;
 
     /**
      * Le technicien est-il encore sur site ?
@@ -84,7 +87,7 @@ public class ClotureAppel {
      * <LI>2 : "Non",  </LI>
      * <LI>3 : "Ne sait pas". </LI></UL>
      */
-    private String OnSite = "#N/A";
+    private String OnSite;
 
     /**
      * Delai d'intervention exprimé en secondes.
@@ -103,13 +106,94 @@ public class ClotureAppel {
 
     /**
      * Constructeur de la classe clôture d'appel.
-     *
-     * @param DateSaisie date de saisie de la demande d'intervention.
+     * 
+     * @param MyConnection une connexion à la base de données locale.
+     * @param cnum référence à l'appel en cours.
+     * @param DateSaisie date de saisie de l'appel en cours.
+     * @param MyEtatTicket état du ticket.
+     * @throws SQLException en cas d'erreur SQL.
+     * @throws ClassNotFoundException en cas de classe non trouvée.
      */
-    public ClotureAppel(Timestamp DateSaisie) {
+    public ClotureAppel(Connection MyConnection, int cnum, Timestamp DateSaisie, EtatTicket MyEtatTicket) throws SQLException, ClassNotFoundException {
+        FessaisDAO MyFessaisDAO;
+        Fessais MyFessais;
+        int egid;
+        StringBuffer RapportIntervention;
+        int eresult;
+        String Emessage;
+        Timestamp MyBegDate;
+        Timestamp MyEndDate;
+        
         this.DateSaisie = DateSaisie;
-    }
 
+        MyFessaisDAO = new FessaisDAO(MyConnection, MyEtatTicket);
+        MyFessaisDAO.setPartOfEOMPreparedStatement(cnum);
+        MyFessais = MyFessaisDAO.getPartOfEOM();
+        MyFessaisDAO.closePartOfEOMPreparedStatement();
+        if (MyFessais != null) {
+            egid = MyFessais.getEgid();
+//            System.out.println("    Une clôture d'appel trouvée : egid=" + egid);
+
+            // For debug purpose only (begin)
+            RapportIntervention = new StringBuffer("egid=" + egid);
+            // For debug purpose only (end)
+
+//            MyFessaisDAO = new FessaisDAO(MyConnection, MyEtatTicket);
+            MyFessaisDAO.filterByGid(cnum, egid);
+            MyFessaisDAO.setSelectPreparedStatement();
+            while ((MyFessais = MyFessaisDAO.select()) != null) {
+                eresult = MyFessais.getEresult();
+                Emessage = MyFessais.getEmessage();
+//                System.out.println("      eresult=" + eresult + ", emessage=" + Emessage);
+                switch (eresult) {
+                    case 69:    // Heure de début d'intervention.
+                        setBegDate(MyFessais);
+                        break;
+                    case 70:    // Heure de fin d'intervention.
+                        setEndDate(MyFessais);
+                        break;
+                    case 71:    // Résultat de l'intervention.
+                        setResultat(Emessage);
+                        break;
+                    case 72:    // Rapport d'intervention.
+                        if (Emessage.length() > 0) {
+                            if (RapportIntervention.length() > 0) {
+                                RapportIntervention.append(" ").append(Emessage);
+                            } else {
+                                RapportIntervention.append(Emessage);
+                            }
+                        }
+                        break;
+                    case 73:    // Le technicien est-il encore sur site ?
+                        setOnSite(Emessage);
+                        break;
+                    case 93:    // Nature de la panne.
+                        setNature(Emessage);
+                        break;
+                }
+            }
+            MyFessaisDAO.closeSelectPreparedStatement();
+
+            // For debug purpose only (begin)
+            if ((MyBegDate = getBegDate()) != null) {
+                RapportIntervention.append(" début=").append(MyBegDate);
+            }
+            if ((MyEndDate = getEndDate()) != null) {
+                RapportIntervention.append(" fin=").append(MyEndDate);
+            }
+            // For debug purpose only (end)
+
+            if (RapportIntervention.length() > 0) {
+                setRapport(RapportIntervention.toString());
+            }
+//            System.out.println("  (avant validation) " + MyClotureAppel);
+
+        }
+        ValideLaCloture();
+//            System.out.println("  (après validation) " + MyClotureAppel);
+        
+    }
+    
     /**
      * @return BegDate la date de début d'intervention.
      */
@@ -174,19 +258,17 @@ public class ClotureAppel {
      */
     private Timestamp calcDate(Fessais MyFessais) {
         String Emessage;
-//        char c;
         String MyHour;
         Timestamp MyDate;
 
         MyDate = null;
         Emessage = MyFessais.getEmessage();
         if (Emessage.length() > 0) {
-//            c = Emessage.charAt(0);
-//            if (c >= '0' && c <= '9') {
             if (Emessage.matches("[0-2][0-9]:[0-5][0-9]")) {
                 MyHour = Emessage + ":00";
                 MyDate = Timestamp.valueOf(MyDateFormat.format(MyFessais.getEdate()) + MyHour + ".0");
-                if (MyHour.compareTo(MyFessais.getEtime()) == 1) {
+//                System.out.printf("    MyHOur="+MyHour+", Etime="+MyFessais.getEtime()+",compareTo="+MyHour.compareTo(MyFessais.getEtime()));
+                if (MyHour.compareTo(MyFessais.getEtime()) > 0) {
                     MyDate.setTime(MyDate.getTime() - 86400000);
                 }
             }
