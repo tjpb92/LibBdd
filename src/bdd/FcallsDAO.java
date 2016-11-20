@@ -8,7 +8,7 @@ import java.sql.*;
  * travers de JDBC.
  *
  * @author Thierry Baribaud
- * @version Juillet 2016
+ * @version 0.13
  */
 public class FcallsDAO extends PatternDAO {
 
@@ -60,7 +60,8 @@ public class FcallsDAO extends PatternDAO {
                 + " ctnum, cnote,"
                 + " cdelay1, cdelay2, cduration, conum, ccallertype,"
                 + " cnumber6, cnumber7, cnumber8, cnumber9, cnumber10,"
-                + " csector1, csector2, cextnum, iso8601_weeknum(cdate) cweeknum"
+                + " csector1, csector2, cextnum, iso8601_weeknum(cdate) cweeknum,"
+                + " curglevel, cuuid"
                 + " from " + MyTable
                 + " where (cinternal = 0 or cinternal is null)"
                 + " and (ctest = 0 or ctest is null)");
@@ -100,7 +101,8 @@ public class FcallsDAO extends PatternDAO {
                 + " czone=?, cage=?, ctype=?, ctnum=?, cnote=?,"
                 + " cdelay1=?, cdelay2=?, cduration=?, conum=?, ccallertype=?,"
                 + " cnumber6=?, cnumber7=?, cnumber8=?, cnumber9=?, cnumber10=?,"
-                + " csector1=?, csector2=?, cextnum=?"
+                + " csector1=?, csector2=?, cextnum=?,"
+                + " curglevel=?, cuuid=?"
                 + " where cnum=?;");
 //        setUpdatePreparedStatement();
 
@@ -112,9 +114,10 @@ public class FcallsDAO extends PatternDAO {
                 + " cage, ctype, ctnum, cnote,"
                 + " cdelay1, cdelay2, cduration, conum, ccallertype,"
                 + " cnumber6, cnumber7, cnumber8, cnumber9, cnumber10,"
-                + " csector1, csector2, cextnum"
+                + " csector1, csector2, cextnum,"
+                + " curglevel, cuuid"
                 + ")"
-                + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+                + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
                 + " ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 //        setInsertPreparedStatement();
 
@@ -174,6 +177,8 @@ public class FcallsDAO extends PatternDAO {
                 MyFcalls.setCsector2(SelectResultSet.getString("csector2"));
                 MyFcalls.setCextnum(SelectResultSet.getString("cextnum"));
                 MyFcalls.setCWeekNum(SelectResultSet.getString("cweeknum"));
+                MyFcalls.setCUrgLevel(SelectResultSet.getString("curglevel"));
+                MyFcalls.setCUuid(SelectResultSet.getString("cuuid"));
             } else {
                 System.out.println("Lecture de " + MyTable + " terminée");
             }
@@ -229,7 +234,9 @@ public class FcallsDAO extends PatternDAO {
             UpdatePreparedStatement.setString(36, MyFcalls.getCsector1());
             UpdatePreparedStatement.setString(37, MyFcalls.getCsector2());
             UpdatePreparedStatement.setString(38, MyFcalls.getCextnum());
-            UpdatePreparedStatement.setInt(39, MyFcalls.getCnum());
+            UpdatePreparedStatement.setString(39, MyFcalls.getCUrgLevel());
+            UpdatePreparedStatement.setString(40, MyFcalls.getCUuid());
+            UpdatePreparedStatement.setInt(41, MyFcalls.getCnum());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour " + MyTable);
@@ -307,6 +314,8 @@ public class FcallsDAO extends PatternDAO {
             InsertPreparedStatement.setString(36, MyFcalls.getCsector1());
             InsertPreparedStatement.setString(37, MyFcalls.getCsector2());
             InsertPreparedStatement.setString(38, MyFcalls.getCextnum());
+            InsertPreparedStatement.setString(39, MyFcalls.getCUrgLevel());
+            InsertPreparedStatement.setString(40, MyFcalls.getCUuid());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un appel dans " + MyTable);
@@ -367,6 +376,19 @@ public class FcallsDAO extends PatternDAO {
     }
 
     /**
+     * Méthode pour filter les résultats par identifiant Performance Immo.
+     *
+     * @param Uuid à utiliser pour le filtrage.
+     */
+    public void filterByUuid(String Uuid) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where cuuid = '").append(Uuid).append("';");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
      * Méthode pour filter les résultats par identifiant de groupe et par numéro
      * d'appel.
      *
@@ -418,7 +440,7 @@ public class FcallsDAO extends PatternDAO {
 
     /**
      * Méthode pour effacer le filtre sur les dates.
-     * 
+     *
      * Cela permet d'éviter des conflits lors de l'invocation de la méthode
      * setSelectPreparedStatement().
      */

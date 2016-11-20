@@ -3,8 +3,8 @@ package bdd;
 /**
  * Furgent est une classe décrivant un service d'urgence.
  *
- * @version Juin 2016
  * @author Thierry Baribaud
+ * @version 0.13
  */
 public class Furgent {
 
@@ -12,26 +12,38 @@ public class Furgent {
      * Identifiant unique du service d'urgence.
      */
     private int unum;
-    
+
     /**
      * Nom du service d'urgence.
      */
     private String Uname;
-    
+
     /**
      * Nom abrégé du service d'urgence.
      */
     private String Uabbname;
-    
+
     /**
      * Modèle de service d'urgence.
      * <ul>
-     * <li>0 : ancien service d'urgence à partir de 1990 (utilisant fmatrix),</li>
-     * <li>1 : nouveau service d'urgence à partir de 1991 (utilisant fsched),</li>
+     * <li>0 : ancien service d'urgence à partir de 1990 (utilisant
+     * fmatrix),</li>
+     * <li>1 : nouveau service d'urgence à partir de 1991 (utilisant
+     * fsched),</li>
      * <li>5 : bailleur social à partir de 1995 (utilisant fsched).
      * </ul>
      */
     private int unewurg;
+
+    /**
+     * Niveau d'urgence pour ce service
+     */
+    private String UrgLevel;
+
+    /**
+     * Identifiant Performance Immo
+     */
+    private String Uuid;
 
     /**
      * @return unum l'identifiant du service d'urgence.
@@ -89,13 +101,47 @@ public class Furgent {
         this.unewurg = unewurg;
     }
 
+    /**
+     * @return le niveau d'urgence pour ce service
+     */
+    public String getUrgLevel() {
+        return UrgLevel;
+    }
+
+    /**
+     * @param UrgLevel définit le niveau d'urgence pour ce service
+     */
+    public void setUrgLevel(String UrgLevel) {
+        this.UrgLevel = (UrgLevel != null) ? UrgLevel.trim() : null;
+    }
+
+    /**
+     * @return l'identifiant Performance Immo
+     */
+    public String getUuid() {
+        return Uuid;
+    }
+
+    /**
+     * @param Uuid définit l'identifiant Performance Immo
+     */
+    public void setUuid(String Uuid) {
+        this.Uuid = (Uuid != null) ? Uuid.trim() : null;
+    }
+
+    /**
+     * Retourne le service d'urgence sous forme textuelle
+     *
+     * @return le service d'urgence sous forme textuelle
+     */
     @Override
     public String toString() {
-        return this.getClass().getName()
-                + " : {unum=" + unum
+        return "Furgent:{unum=" + unum
+                + ", Uuid=" + Uuid
                 + ", Uname=" + Uname
                 + ", Uabbname=" + Uabbname
                 + ", unewurg=" + unewurg
                 + "}";
     }
+
 }

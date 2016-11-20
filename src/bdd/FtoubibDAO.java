@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * Classe qui décrit les méthodes pour accéder à la table ftoubib avec JDBC.
  *
  * @author Thierry Baribaud
- * @version Juin 2016
+ * @version 0.13
  */
 public class FtoubibDAO extends PatternDAO {
 
@@ -27,7 +27,7 @@ public class FtoubibDAO extends PatternDAO {
         setInvariableSelectStatement("select tnum, tunum, ta6num, ta4num,"
                 + " tlname, tfname, tabbname, tel,"
                 + " tel2, telper, tel4, tel5, tel6,"
-                + " telfax, temail, taddress, taddress2, tcomment"
+                + " telfax, temail, taddress, taddress2, tcomment, tuuid"
                 + " from ftoubib");
 //        if (tunum > 0) {
 //            Stmt.append(" and tunum = ").append(tunum);
@@ -47,15 +47,16 @@ public class FtoubibDAO extends PatternDAO {
                 + " set tunum=?, ta6num=?, ta4num=?, tlname=?, tfname=?,"
                 + " tabbname=?, tel=?,"
                 + " tel2=?, telper=?, tel4=?, tel5=?, tel6=?,"
-                + " telfax=?, temail=?, taddress=?, taddress2=?, tcomment=?"
+                + " telfax=?, temail=?, taddress=?, taddress2=?, tcomment=?,"
+                + " tuuid=?"
                 + " where tnum=?;");
 //        setUpdatePreparedStatement();
 
         setInsertStatement("insert into ftoubib"
                 + " (tunum, ta6num, ta4num, tlname, tfname, tabbname, tel,"
                 + " tel2, telper, tel4, tel5, tel6,"
-                + " telfax, temail, taddress, taddress2, tcomment)"
-                + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                + " telfax, temail, taddress, taddress2, tcomment, tuuid)"
+                + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 //        setInsertPreparedStatement();
 
         setDeleteStatement("delete from ftoubib where tnum=?;");
@@ -92,6 +93,7 @@ public class FtoubibDAO extends PatternDAO {
                 MyFtoubib.setTaddress(SelectResultSet.getString("taddress"));
                 MyFtoubib.setTaddress2(SelectResultSet.getString("taddress2"));
                 MyFtoubib.setTcomment(SelectResultSet.getString("tcomment"));
+                MyFtoubib.setTcomment(SelectResultSet.getString("tuuid"));
             } else {
                 System.out.println("Lecture de ftoubib terminée");
             }
@@ -126,7 +128,8 @@ public class FtoubibDAO extends PatternDAO {
             UpdatePreparedStatement.setString(15, MyFtoubib.getTaddress());
             UpdatePreparedStatement.setString(16, MyFtoubib.getTaddress2());
             UpdatePreparedStatement.setString(17, MyFtoubib.getTcomment());
-            UpdatePreparedStatement.setInt(18, MyFtoubib.getTnum());
+            UpdatePreparedStatement.setString(18, MyFtoubib.getTUuid());
+            UpdatePreparedStatement.setInt(19, MyFtoubib.getTnum());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour ftoubib");
@@ -183,6 +186,7 @@ public class FtoubibDAO extends PatternDAO {
             InsertPreparedStatement.setString(15, MyFtoubib.getTaddress());
             InsertPreparedStatement.setString(16, MyFtoubib.getTaddress2());
             InsertPreparedStatement.setString(17, MyFtoubib.getTcomment());
+            InsertPreparedStatement.setString(18, MyFtoubib.getTUuid());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un intervenant dans ftoubib");
@@ -226,6 +230,19 @@ public class FtoubibDAO extends PatternDAO {
 
         Stmt = new StringBuffer(InvariableSelectStatement);
         Stmt.append(" where tunum = ").append(gid).append(";");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant Performance Immo.
+     *
+     * @param Uuid à utiliser pour le filtrage.
+     */
+    public void filterByUuid(String Uuid) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where tuuid = '").append(Uuid).append("';");
         setSelectStatement(Stmt.toString());
     }
 

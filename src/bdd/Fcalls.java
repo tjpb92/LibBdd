@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 /**
  * Fcalls est une classe décrivant un appel.
  *
- * @version Juillet 2016
  * @author Thierry Baribaud
+ * @version 0.13
  */
 public class Fcalls {
 
@@ -217,6 +217,16 @@ public class Fcalls {
      */
     private String CWeekNum;
 
+    /**
+     * Niveau d'urgence de l'appel
+     */
+    private String CUrgLevel;
+
+    /**
+     * Référence Performance Immo
+     */
+    private String CUuid;
+
     public int getCnum() {
         return cnum;
     }
@@ -272,7 +282,8 @@ public class Fcalls {
     }
 
     /**
-     * @return Ctime2 l'heure de dernière modification de l'appel (format hh:mm:ss).
+     * @return Ctime2 l'heure de dernière modification de l'appel (format
+     * hh:mm:ss).
      */
     public String getCtime2() {
         return Ctime2;
@@ -310,9 +321,9 @@ public class Fcalls {
     }
 
     /**
-     * Définit la date de saisie de l'appel et la complète avec l'heure de saisie
-     * en conséquence.
-     * 
+     * Définit la date de saisie de l'appel et la complète avec l'heure de
+     * saisie en conséquence.
+     *
      * @param Cdate date de saisie de l'appel.
      */
     public void setCdate(Timestamp Cdate) {
@@ -354,10 +365,10 @@ public class Fcalls {
     /**
      * Définit l'heure de saisie de l'appel et met à jour la date de saisie en
      * conséquence.
-     * 
+     *
      * @param Ctime heure de saisie de l'appel (format hh:mm:ss).
      */
-     public void setCtime(String Ctime) {
+    public void setCtime(String Ctime) {
         if (Ctime != null) {
             this.Ctime = Ctime.trim();
             setCdate(assembleTimestamp(getCdate(), getCtime()));
@@ -367,9 +378,9 @@ public class Fcalls {
     }
 
     /**
-     * Définit l'heure de dernière modification de l'appel et met à jour la 
-     * date de modification en conséquence.
-     * 
+     * Définit l'heure de dernière modification de l'appel et met à jour la date
+     * de modification en conséquence.
+     *
      * @param Ctime2 heure de modification de l'appel (format hh:mm:ss).
      */
     public void setCtime2(String Ctime2) {
@@ -398,9 +409,9 @@ public class Fcalls {
     }
 
     /**
-     * Définit la date de dernière modification de l'appel et la complète avec 
+     * Définit la date de dernière modification de l'appel et la complète avec
      * l'heure de dernière modification en conséquence.
-     * 
+     *
      * @param Cdate2 date de dernière modification de l'appel.
      */
     public void setCdate2(Timestamp Cdate2) {
@@ -426,38 +437,6 @@ public class Fcalls {
             }
         }
         return (MyTimestamp);
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getName()
-                + " : {cnum=" + cnum
-                + ", cseqno=" + cseqno
-                + ", cunum=" + cunum
-                + ", Cdate=" + Cdate
-                + ", Ctime=" + Ctime
-                + ", Cname=" + Cname
-                + ", Ctel=" + Ctel
-                + ", Csympt=" + Csympt
-                + ", cc6num=" + cc6num
-                + //           ", Caddress=" + Caddress +
-                //           ", Caddress2=" + Caddress2 + 
-                //           ", Caccess=" + Caccess + 
-                //           ", Cposcode=" + Cposcode + 
-                //           ", City=" + City + 
-                //           ", Cnumber4=" + Cnumber4 + 
-                //           ", Cdate2=" + Cdate2 +
-                //           ", Ctime2=" + Ctime2 + 
-                //           ", Corp=" + Corp + 
-                //           ", Cnumber5=" + Cnumber5 + 
-                //           ", cquery1=" + cseqno +
-                //           ", cquery2=" + cseqno +
-                //           ", czone=" + cseqno +
-                //           ", cage=" + cseqno +
-                //           ", ctype=" + cseqno +
-                //           ", ctnum=" + cseqno +
-                //           ", cnote=" + cseqno +
-                "}";
     }
 
     /**
@@ -766,5 +745,71 @@ public class Fcalls {
      */
     public void setCWeekNum(String CWeekNum) {
         this.CWeekNum = (CWeekNum != null) ? CWeekNum.trim() : null;
+    }
+
+    /**
+     * @return le niveau d'urgence de l'appel
+     */
+    public String getCUrgLevel() {
+        return CUrgLevel;
+    }
+
+    /**
+     * @param CUrgLevel définit le niveau d'urgence de l'appel
+     */
+    public void setCUrgLevel(String CUrgLevel) {
+        this.CUrgLevel = (CUrgLevel != null) ? CUrgLevel.trim() : null;
+    }
+
+    /**
+     * @return l'identifiant Performance Immo
+     */
+    public String getCUuid() {
+        return CUuid;
+    }
+
+    /**
+     * @param CUuid définit l'identifiant Performance Immo
+     */
+    public void setCUuid(String CUuid) {
+        this.CUuid = (CUuid != null) ? CUuid.trim() : null;
+    }
+
+    /**
+     * Retourne l'appel sous forme textuelle
+     *
+     * @return l'appel sous forme textuelle
+     */
+    @Override
+    public String toString() {
+        return "Fcalls:{cnum=" + cnum
+                + ", cuuid=" + CUuid
+                + ", cseqno=" + cseqno
+                + ", cunum=" + cunum
+                + ", Cdate=" + Cdate
+                + ", Ctime=" + Ctime
+                + ", Cname=" + Cname
+                + ", Ctel=" + Ctel
+                + ", Csympt=" + Csympt
+                + ", cc6num=" + cc6num
+                //           ", Caddress=" + Caddress +
+                //           ", Caddress2=" + Caddress2 + 
+                //           ", Caccess=" + Caccess + 
+                //           ", Cposcode=" + Cposcode + 
+                //           ", City=" + City + 
+                //           ", Cnumber4=" + Cnumber4 + 
+                //           ", Cdate2=" + Cdate2 +
+                //           ", Ctime2=" + Ctime2 + 
+                //           ", Corp=" + Corp + 
+                //           ", Cnumber5=" + Cnumber5 + 
+                //           ", cquery1=" + cseqno +
+                //           ", cquery2=" + cseqno +
+                //           ", czone=" + cseqno +
+                //           ", cage=" + cseqno +
+                //           ", ctype=" + cseqno +
+                //           ", ctnum=" + cseqno +
+                //           ", cnote=" + cseqno +
+                //           ", CUrgLevel=" + CUrgLevel +
+                + "}";
     }
 }

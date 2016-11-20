@@ -7,7 +7,7 @@ import java.sql.*;
  * Classe qui décrit les méthodes pour accéder à la table fagency avec JDBC.
  *
  * @author Thierry Baribaud
- * @version Juin 2016
+ * @version 0.13
  */
 public class FagencyDAO extends PatternDAO {
 
@@ -26,7 +26,8 @@ public class FagencyDAO extends PatternDAO {
         setInvariableSelectStatement("select a6num, a6unum, a6extname, a6name, a6abbname, a6email,"
                 + " a6daddress, a6daddress2, a6dposcode, a6dcity,"
                 + " a6teloff, a6teldir, a6telfax,"
-                + " a6active, a6begactive, a6endactive"
+                + " a6active, a6begactive, a6endactive,"
+                + " a6urglevel, a6uuid"
                 + " from fagency");
 
 //        if (myA6num > 0) {
@@ -48,7 +49,8 @@ public class FagencyDAO extends PatternDAO {
                 + " set a6unum=?, a6extname=?, a6name=?, a6abbname=?, a6email=?,"
                 + " a6daddress=?, a6daddress2=?, a6dposcode=?, a6dcity=?,"
                 + " a6teloff=?, a6teldir=?, a6telfax=?,"
-                + " a6active=?, a6begactive=?, a6endactive=?"
+                + " a6active=?, a6begactive=?, a6endactive=?,"
+                + " a6urglevel=?, a6uuid=?"
                 + " where a6num=?;");
 //        setUpdatePreparedStatement();
 
@@ -57,7 +59,7 @@ public class FagencyDAO extends PatternDAO {
                 + " a6daddress, a6daddress2, a6dposcode, a6dcity,"
                 + " a6teloff, a6teldir, a6telfax,"
                 + " a6active, a6begactive, a6endactive)"
-                + " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                + " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 //        setInsertPreparedStatement();
 
         setDeleteStatement("delete from fagency"
@@ -93,6 +95,8 @@ public class FagencyDAO extends PatternDAO {
                 MyFagency.setA6active(SelectResultSet.getInt("a6active"));
                 MyFagency.setA6begactive(SelectResultSet.getTimestamp("a6begactive"));
                 MyFagency.setA6endactive(SelectResultSet.getTimestamp("a6endactive"));
+                MyFagency.setA6UrgLevel(SelectResultSet.getString("a6urglevel"));
+                MyFagency.setA6Uuid(SelectResultSet.getString("a6uuid"));
             } else {
                 System.out.println("Lecture de fagency terminée");
             }
@@ -125,7 +129,9 @@ public class FagencyDAO extends PatternDAO {
             UpdatePreparedStatement.setInt(13, MyFagency.getA6active());
             UpdatePreparedStatement.setTimestamp(14, MyFagency.getA6begactive());
             UpdatePreparedStatement.setTimestamp(15, MyFagency.getA6endactive());
-            UpdatePreparedStatement.setInt(16, MyFagency.getA6num());
+            UpdatePreparedStatement.setString(16, MyFagency.getA6UrgLevel());
+            UpdatePreparedStatement.setString(17, MyFagency.getA6Uuid());
+            UpdatePreparedStatement.setInt(1, MyFagency.getA6num());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour fagency");
@@ -180,6 +186,8 @@ public class FagencyDAO extends PatternDAO {
             InsertPreparedStatement.setInt(13, MyFagency.getA6active());
             InsertPreparedStatement.setTimestamp(14, MyFagency.getA6begactive());
             InsertPreparedStatement.setTimestamp(15, MyFagency.getA6endactive());
+            InsertPreparedStatement.setString(16, MyFagency.getA6UrgLevel());
+            InsertPreparedStatement.setString(17, MyFagency.getA6Uuid());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter une agence dans fagency");
@@ -228,6 +236,19 @@ public class FagencyDAO extends PatternDAO {
     }
 
     /**
+     * Méthode pour filter les résultats par identifiant Performance Immo.
+     *
+     * @param Uuid à utiliser pour le filtrage.
+     */
+    public void filterByUuid(String Uuid) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where a6uuid = '").append(Uuid).append("';");
+        setSelectStatement(Stmt.toString());
+    }
+
+    /**
      * Méthode pour filter les résultats par identifiant de groupe et par code.
      *
      * @param gid l'identifiant de groupe à utiliser pour le filtrage.
@@ -239,7 +260,9 @@ public class FagencyDAO extends PatternDAO {
 
         Stmt = new StringBuffer(InvariableSelectStatement);
         Stmt.append(" where a6unum = ").append(gid);
-        if (Code != null ) Stmt.append(" and a6abbname = '").append(Code.trim()).append("'");
+        if (Code != null) {
+            Stmt.append(" and a6abbname = '").append(Code.trim()).append("'");
+        }
         Stmt.append(" order by a6abbname;");
         setSelectStatement(Stmt.toString());
     }
@@ -256,7 +279,9 @@ public class FagencyDAO extends PatternDAO {
 
         Stmt = new StringBuffer(InvariableSelectStatement);
         Stmt.append(" where a6unum = ").append(gid);
-        if (Name != null )Stmt.append(" and a6name like '").append(Name.trim()).append("%'");
+        if (Name != null) {
+            Stmt.append(" and a6name like '").append(Name.trim()).append("%'");
+        }
         Stmt.append(" order by a6name;");
         setSelectStatement(Stmt.toString());
     }

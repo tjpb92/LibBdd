@@ -7,7 +7,7 @@ import java.sql.*;
  * Classe qui décrit les méthodes pour accéder à la table furgent avec JDBC.
  *
  * @author Thierry Baribaud
- * @version Juin 2016
+ * @version 0.13
  */
 public class FurgentDAO extends PatternDAO {
 
@@ -23,16 +23,17 @@ public class FurgentDAO extends PatternDAO {
 
         this.MyConnection = MyConnection;
 
-        setInvariableSelectStatement("select unum, uabbname, uname, unewurg"
+        setInvariableSelectStatement("select unum, uabbname, uname, unewurg,"
+                + " urglevel, uuid"
                 + " from furgent");
 
         setUpdateStatement("update furgent"
-                + " set uabbname=?, uname=?, unewurg=?"
+                + " set uabbname=?, uname=?, unewurg=?, urglevel=?, uuid=?"
                 + " where unum=?;");
 
         setInsertStatement("insert into furgent"
-                + " (uabbname, uname, unewurg)"
-                + " values(?, ?, ?);");
+                + " (uabbname, uname, unewurg, urglevel, uuid)"
+                + " values(?, ?, ?, ?, ?);");
 
         setDeleteStatement("delete from furgent"
                 + " where unum=?;");
@@ -54,6 +55,8 @@ public class FurgentDAO extends PatternDAO {
                 MyFurgent.setUabbname(SelectResultSet.getString("uabbname"));
                 MyFurgent.setUname(SelectResultSet.getString("uname"));
                 MyFurgent.setUnewurg(SelectResultSet.getInt("unewurg"));
+                MyFurgent.setUname(SelectResultSet.getString("urglevel"));
+                MyFurgent.setUname(SelectResultSet.getString("uuid"));
             } else {
                 System.out.println("Lecture de furgent terminée");
             }
@@ -74,7 +77,9 @@ public class FurgentDAO extends PatternDAO {
             UpdatePreparedStatement.setString(1, MyFurgent.getUabbname());
             UpdatePreparedStatement.setString(2, MyFurgent.getUname());
             UpdatePreparedStatement.setInt(3, MyFurgent.getUnewurg());
-            UpdatePreparedStatement.setInt(4, MyFurgent.getUnum());
+            UpdatePreparedStatement.setString(4, MyFurgent.getUrgLevel());
+            UpdatePreparedStatement.setString(5, MyFurgent.getUuid());
+            UpdatePreparedStatement.setInt(6, MyFurgent.getUnum());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour furgent");
@@ -117,6 +122,8 @@ public class FurgentDAO extends PatternDAO {
             InsertPreparedStatement.setString(1, MyFurgent.getUabbname());
             InsertPreparedStatement.setString(2, MyFurgent.getUname());
             InsertPreparedStatement.setInt(3, MyFurgent.getUnewurg());
+            InsertPreparedStatement.setString(4, MyFurgent.getUrgLevel());
+            InsertPreparedStatement.setString(5, MyFurgent.getUuid());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un service d'urgence dans furgent");
@@ -141,9 +148,9 @@ public class FurgentDAO extends PatternDAO {
      * @param id l'identifiant à utiliser pour le filtrage.
      */
     @Override
-    public void filterById(int id){
+    public void filterById(int id) {
         StringBuffer Stmt;
-        
+
         Stmt = new StringBuffer(InvariableSelectStatement);
         Stmt.append(" where unum = ").append(id).append(";");
         setSelectStatement(Stmt.toString());
@@ -155,8 +162,21 @@ public class FurgentDAO extends PatternDAO {
      * @param gid l'identifiant de groupe à utiliser pour le filtrage.
      */
     @Override
-    public void filterByGid(int gid){
-        throw new UnsupportedOperationException("Non supporté actuellement"); 
+    public void filterByGid(int gid) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
+    }
+
+    /**
+     * Méthode pour filter les résultats par identifiant Performance Immo.
+     *
+     * @param Uuid à utiliser pour le filtrage.
+     */
+    public void filterByUuid(String Uuid) {
+        StringBuffer Stmt;
+
+        Stmt = new StringBuffer(InvariableSelectStatement);
+        Stmt.append(" where uuid = '").append(Uuid).append("';");
+        setSelectStatement(Stmt.toString());
     }
 
     /**
@@ -164,9 +184,9 @@ public class FurgentDAO extends PatternDAO {
      *
      * @param Code à utiliser pour le filtrage.
      */
-    public void filterByCode(String Code){
+    public void filterByCode(String Code) {
         StringBuffer Stmt;
-        
+
         Stmt = new StringBuffer(InvariableSelectStatement);
         Stmt.append(" where uabbname = '").append(Code).append("';");
         setSelectStatement(Stmt.toString());
@@ -175,12 +195,12 @@ public class FurgentDAO extends PatternDAO {
     /**
      * Méthode pour filter les résultats par identifiant de groupe et par code.
      *
-     * @param gid l'identifiant de groupe  à utiliser pour le filtrage.
+     * @param gid l'identifiant de groupe à utiliser pour le filtrage.
      * @param Code à utiliser pour le filtrage.
      */
     @Override
-    public void filterByCode(int gid, String Code){
-        throw new UnsupportedOperationException("Non supporté actuellement"); 
+    public void filterByCode(int gid, String Code) {
+        throw new UnsupportedOperationException("Non supporté actuellement");
     }
 
     /**
@@ -191,9 +211,9 @@ public class FurgentDAO extends PatternDAO {
      */
     @Override
     public void filterByName(int gid, String Name) {
-        throw new UnsupportedOperationException("Non supporté actuellement"); 
+        throw new UnsupportedOperationException("Non supporté actuellement");
     }
-    
+
     /**
      * Méthode pour filter les résultats par nom.
      *
@@ -201,12 +221,12 @@ public class FurgentDAO extends PatternDAO {
      */
     public void filterByName(String Name) {
         StringBuffer Stmt;
-        
+
         Stmt = new StringBuffer(InvariableSelectStatement);
         Stmt.append(" where uname like '").append(Name).append("%';");
         setSelectStatement(Stmt.toString());
     }
-    
+
     @Override
     public void update(Object MyObject) {
         throw new UnsupportedOperationException("Non supporté actuellement"); //To change body of generated methods, choose Tools | Templates.

@@ -3,8 +3,8 @@ package bdd;
 /**
  * Ftoubib est une classe décrivant un intervenant.
  *
- * @version Juin 2016
  * @author Thierry Baribaud
+ * @version 0.13
  */
 public class Ftoubib {
 
@@ -97,6 +97,11 @@ public class Ftoubib {
      * Consigne temporaire de l'intervenant.
      */
     private String Tcomment;
+
+    /**
+     * Identifiant Performance Immo
+     */
+    private String TUuid;
 
     /**
      * @return tnum l'identifiant de l'intervenant.
@@ -350,11 +355,29 @@ public class Ftoubib {
         this.Tcomment = (Tcomment != null) ? Tcomment.trim() : null;
     }
 
-    @Override
+    /**
+     * @return l'identifiant Performance Immo
+     */
+    public String getTUuid() {
+        return TUuid;
+    }
 
+    /**
+     * @param TUuid définit l'identifiant Performance Immo
+     */
+    public void setTUuid(String TUuid) {
+        this.TUuid = (TUuid != null) ? TUuid.trim() : null;
+    }
+
+    /**
+     * Retourne l'intervenant sous forme textuelle
+     *
+     * @return l'intervenant sous forme textuelle
+     */
+    @Override
     public String toString() {
-        return this.getClass().getName()
-                + " : {tnum=" + tnum
+        return "Ftoubib:{tnum=" + tnum
+                + ", tuuid=" + TUuid
                 + ", tunum=" + tunum
                 + ", Tlname=" + Tlname
                 + ", Tfname=" + Tfname
