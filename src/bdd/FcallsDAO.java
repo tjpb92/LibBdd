@@ -8,7 +8,7 @@ import java.sql.*;
  * travers de JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.13
+ * @version 0.14
  */
 public class FcallsDAO extends PatternDAO {
 
@@ -384,7 +384,7 @@ public class FcallsDAO extends PatternDAO {
         StringBuffer Stmt;
 
         Stmt = new StringBuffer(InvariableSelectStatement);
-        Stmt.append(" where cuuid = '").append(Uuid).append("';");
+        Stmt.append(" and cuuid = '").append(Uuid).append("';");
         setSelectStatement(Stmt.toString());
     }
 
