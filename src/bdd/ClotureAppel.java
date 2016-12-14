@@ -5,26 +5,35 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 
 /**
  * ClotureAppel est une classe qui décrit une clôture d'appel standard. Les
  * clôtures d'appel spécifiques hériteront de cette classe.
  *
- * @version Juillet 2016
  * @author Thierry Baribaud
+ * @version 0.15
  */
 public class ClotureAppel {
 
     /**
-     * Format de date "aaaa-mm-dd".
+     * Format de date "aaaa-mm-jj".
      */
-    private static final DateFormat MyDateFormat = new SimpleDateFormat("yyyy-MM-dd ");
+    private static final DateFormat Y4MMDD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd ");
+
+    /**
+     * Format de date "jj/mm/aaaa".
+     */
+    private static final DateFormat DDMMY4_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy ");
 
     /**
      * Format d'heure "hh:mm".
      */
-    private static final DateFormat MyHourFormat = new SimpleDateFormat("HH:mm");
+    private static final DateFormat HHMM_HOUR_FORMAT = new SimpleDateFormat("HH:mm");
+
+    /**
+     * Format d'heure "hh:mm:ss".
+     */
+    private static final DateFormat HHMMSS_HOUR_FORMAT = new SimpleDateFormat("HH:mm:ss");
 
     /**
      * Date de saisie de la demande d'intervetion.
@@ -50,6 +59,21 @@ public class ClotureAppel {
      * Date de fin d'intervention.
      */
     private Timestamp EndDate;
+
+    /**
+     * Date d'intervention à défaut de début/fin.
+     */
+    private Timestamp interventionDate = null;
+ 
+    /**
+     * Date d'intervention relevée (format jj/mm/aaaa).
+     */
+    private String dateInterventionRelevee = null;
+ 
+    /**
+     * Heure d'intervention relevée (format hh:mm:ss).
+     */
+    private String heureInterventionRelevee = null;
 
     /**
      * Résultat de l'intervention.
@@ -135,7 +159,8 @@ public class ClotureAppel {
 //            System.out.println("    Une clôture d'appel trouvée : egid=" + egid);
 
             // For debug purpose only (begin)
-            RapportIntervention = new StringBuffer("egid=" + egid);
+//            RapportIntervention = new StringBuffer("egid=" + egid);
+            RapportIntervention = new StringBuffer();
             // For debug purpose only (end)
 
 //            MyFessaisDAO = new FessaisDAO(MyConnection, MyEtatTicket);
@@ -167,6 +192,12 @@ public class ClotureAppel {
                     case 73:    // Le technicien est-il encore sur site ?
                         setOnSite(Emessage);
                         break;
+                    case 90:    // Date d'intervention relevée
+                        setDateInterventionRelevee(Emessage);
+                        break;
+                    case 91:    // Heure d'intervention relevée
+                        setHeureInterventionRelevee(Emessage);
+                        break;
                     case 93:    // Nature de la panne.
                         setNature(Emessage);
                         break;
@@ -175,12 +206,12 @@ public class ClotureAppel {
             MyFessaisDAO.closeSelectPreparedStatement();
 
             // For debug purpose only (begin)
-            if ((MyBegDate = getBegDate()) != null) {
-                RapportIntervention.append(" début=").append(MyBegDate);
-            }
-            if ((MyEndDate = getEndDate()) != null) {
-                RapportIntervention.append(" fin=").append(MyEndDate);
-            }
+//            if ((MyBegDate = getBegDate()) != null) {
+//                RapportIntervention.append(" début=").append(MyBegDate);
+//            }
+//            if ((MyEndDate = getEndDate()) != null) {
+//                RapportIntervention.append(" fin=").append(MyEndDate);
+//            }
             // For debug purpose only (end)
 
             if (RapportIntervention.length() > 0) {
@@ -217,7 +248,7 @@ public class ClotureAppel {
         
         // ATTENTION : faire mieux plus tard, TB, le 17/07/2016.
         if (this.BegDate != null)
-            setHeureDebutRelevee(MyHourFormat.format(getBegDate()));
+            setHeureDebutRelevee(HHMM_HOUR_FORMAT.format(getBegDate()));
         else
             setHeureDebutRelevee(null);
     }
@@ -245,7 +276,7 @@ public class ClotureAppel {
         
         // ATTENTION : faire mieux plus tard, TB, le 17/07/2016.
         if (this.EndDate != null)
-            setHeureFinRelevee(MyHourFormat.format(getEndDate()));
+            setHeureFinRelevee(HHMM_HOUR_FORMAT.format(getEndDate()));
         else
             setHeureFinRelevee(null);
     }
@@ -266,7 +297,7 @@ public class ClotureAppel {
         if (Emessage.length() > 0) {
             if (Emessage.matches("[0-2][0-9]:[0-5][0-9]")) {
                 MyHour = Emessage + ":00";
-                MyDate = Timestamp.valueOf(MyDateFormat.format(MyFessais.getEdate()) + MyHour + ".0");
+                MyDate = Timestamp.valueOf(Y4MMDD_DATE_FORMAT.format(MyFessais.getEdate()) + MyHour + ".0");
 //                System.out.printf("    MyHOur="+MyHour+", Etime="+MyFessais.getEtime()+",compareTo="+MyHour.compareTo(MyFessais.getEtime()));
                 if (MyHour.compareTo(MyFessais.getEtime()) > 0) {
                     MyDate.setTime(MyDate.getTime() - 86400000);
@@ -390,14 +421,15 @@ public class ClotureAppel {
      */
     @Override
     public String toString() {
-        return (this.getClass().getName()
-                + ":{début=" + getBegDate()
+        return "Cloture:{"
+                + "début=" + getBegDate()
                 + ", fin=" + getEndDate()
+                + ", dateIntervention=" + getInterventionDate()
                 + ", nature=" + getNature()
                 + ", résultat=" + getResultat()
                 + ", rapport=" + getRapport()
                 + ", tech/site=" + getOnSite()
-                + "}");
+                + "}";
     }
 
     /**
@@ -478,6 +510,48 @@ public class ClotureAppel {
             myLongBegDate = MyBegDate.getTime();
         }
         setDelaiIntervention((int) Math.abs(myLongBegDate - myLongDateSaisie) / 1000);
+    }
+
+    /**
+     * @return la date d'intervention
+     */
+    public Timestamp getInterventionDate() {
+        return interventionDate;
+    }
+
+    /**
+     * @param interventionDate définit la date d'intervention
+     */
+    public void setInterventionDate(Timestamp interventionDate) {
+        this.interventionDate = interventionDate;
+    }
+
+    /**
+     * @return la date d'intervention relevée
+     */
+    public String getDateInterventionRelevee() {
+        return dateInterventionRelevee;
+    }
+
+    /**
+     * @param dateInterventionRelevee définit la date d'intervention relevée
+     */
+    public void setDateInterventionRelevee(String dateInterventionRelevee) {
+        this.dateInterventionRelevee = dateInterventionRelevee;
+    }
+
+    /**
+     * @return l'heure d'intervention relevée
+     */
+    public String getHeureInterventionRelevee() {
+        return heureInterventionRelevee;
+    }
+
+    /**
+     * @param heureInterventionRelevee définit l'heure d'intervention relevée
+     */
+    public void setHeureInterventionRelevee(String heureInterventionRelevee) {
+        this.heureInterventionRelevee = heureInterventionRelevee;
     }
 
 }

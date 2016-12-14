@@ -1,5 +1,8 @@
 # My .gitignore file
-
+.gitignore
 MyDatabases.prop
 
 
+/nbproject/private/
+/dist/
+/build/
