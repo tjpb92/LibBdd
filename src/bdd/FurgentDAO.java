@@ -7,7 +7,7 @@ import java.sql.*;
  * Classe qui décrit les méthodes pour accéder à la table furgent avec JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.13
+ * @version 0.16
  */
 public class FurgentDAO extends PatternDAO {
 
@@ -55,8 +55,8 @@ public class FurgentDAO extends PatternDAO {
                 MyFurgent.setUabbname(SelectResultSet.getString("uabbname"));
                 MyFurgent.setUname(SelectResultSet.getString("uname"));
                 MyFurgent.setUnewurg(SelectResultSet.getInt("unewurg"));
-                MyFurgent.setUname(SelectResultSet.getString("urglevel"));
-                MyFurgent.setUname(SelectResultSet.getString("uuid"));
+                MyFurgent.setUrgLevel(SelectResultSet.getString("urglevel"));
+                MyFurgent.setUuid(SelectResultSet.getString("uuid"));
             } else {
                 System.out.println("Lecture de furgent terminée");
             }

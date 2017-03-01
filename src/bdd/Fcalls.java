@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
  * Fcalls est une classe décrivant un appel.
  *
  * @author Thierry Baribaud
- * @version 0.13
+ * @version 0.16
  */
 public class Fcalls {
 
@@ -227,10 +227,16 @@ public class Fcalls {
      */
     private String CUuid;
 
+    /**
+     * @return l'identifiant unique de l'appel
+     */
     public int getCnum() {
         return cnum;
     }
 
+    /**
+     * @return l'identifiant unique du client
+     */
     public int getCunum() {
         return cunum;
     }

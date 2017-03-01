@@ -6,7 +6,7 @@ import java.sql.*;
  * Fagency est une classe décrivant une agence.
  *
  * @author Thierry Baribaud
- * @version 0.13
+ * @version 0.16
  */
 public class Fagency {
 
@@ -100,10 +100,16 @@ public class Fagency {
      */
     private String A6Uuid;
 
+    /**
+     * @return l'identifiant unique de l'agence
+     */
     public int getA6num() {
         return a6num;
     }
 
+    /**
+     * @return l'identifiant unique du client
+     */
     public int getA6unum() {
         return a6unum;
     }

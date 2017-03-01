@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * Classe qui décrit les méthodes pour accéder à la table ftoubib avec JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.13
+ * @version 0.16
  */
 public class FtoubibDAO extends PatternDAO {
 
@@ -27,7 +27,8 @@ public class FtoubibDAO extends PatternDAO {
         setInvariableSelectStatement("select tnum, tunum, ta6num, ta4num,"
                 + " tlname, tfname, tabbname, tel,"
                 + " tel2, telper, tel4, tel5, tel6,"
-                + " telfax, temail, taddress, taddress2, tcomment, tuuid"
+                + " telfax, temail, taddress, taddress2, tcomment, tuuid,"
+                + " tdelay1, tdelay2"
                 + " from ftoubib");
 //        if (tunum > 0) {
 //            Stmt.append(" and tunum = ").append(tunum);
@@ -48,15 +49,16 @@ public class FtoubibDAO extends PatternDAO {
                 + " tabbname=?, tel=?,"
                 + " tel2=?, telper=?, tel4=?, tel5=?, tel6=?,"
                 + " telfax=?, temail=?, taddress=?, taddress2=?, tcomment=?,"
-                + " tuuid=?"
+                + " tuuid=?, tdelay1=?, tdelay2=?"
                 + " where tnum=?;");
 //        setUpdatePreparedStatement();
 
         setInsertStatement("insert into ftoubib"
                 + " (tunum, ta6num, ta4num, tlname, tfname, tabbname, tel,"
                 + " tel2, telper, tel4, tel5, tel6,"
-                + " telfax, temail, taddress, taddress2, tcomment, tuuid)"
-                + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                + " telfax, temail, taddress, taddress2, tcomment, tuuid,"
+                + " tdelay1, tdelay2)"
+                + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 //        setInsertPreparedStatement();
 
         setDeleteStatement("delete from ftoubib where tnum=?;");
@@ -94,6 +96,8 @@ public class FtoubibDAO extends PatternDAO {
                 MyFtoubib.setTaddress2(SelectResultSet.getString("taddress2"));
                 MyFtoubib.setTcomment(SelectResultSet.getString("tcomment"));
                 MyFtoubib.setTcomment(SelectResultSet.getString("tuuid"));
+                MyFtoubib.setTdelay1(SelectResultSet.getInt("tdelay1"));
+                MyFtoubib.setTdelay2(SelectResultSet.getInt("tdelay2"));
             } else {
                 System.out.println("Lecture de ftoubib terminée");
             }
@@ -129,7 +133,9 @@ public class FtoubibDAO extends PatternDAO {
             UpdatePreparedStatement.setString(16, MyFtoubib.getTaddress2());
             UpdatePreparedStatement.setString(17, MyFtoubib.getTcomment());
             UpdatePreparedStatement.setString(18, MyFtoubib.getTUuid());
-            UpdatePreparedStatement.setInt(19, MyFtoubib.getTnum());
+            UpdatePreparedStatement.setInt(19, MyFtoubib.getTdelay1());
+            UpdatePreparedStatement.setInt(20, MyFtoubib.getTdelay2());
+            UpdatePreparedStatement.setInt(21, MyFtoubib.getTnum());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour ftoubib");
@@ -187,6 +193,8 @@ public class FtoubibDAO extends PatternDAO {
             InsertPreparedStatement.setString(16, MyFtoubib.getTaddress2());
             InsertPreparedStatement.setString(17, MyFtoubib.getTcomment());
             InsertPreparedStatement.setString(18, MyFtoubib.getTUuid());
+            InsertPreparedStatement.setInt(19, MyFtoubib.getTdelay1());
+            InsertPreparedStatement.setInt(20, MyFtoubib.getTdelay2());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un intervenant dans ftoubib");

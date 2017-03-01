@@ -4,7 +4,7 @@ package bdd;
  * Ftoubib est une classe décrivant un intervenant.
  *
  * @author Thierry Baribaud
- * @version 0.13
+ * @version 0.16
  */
 public class Ftoubib {
 
@@ -97,6 +97,16 @@ public class Ftoubib {
      * Consigne temporaire de l'intervenant.
      */
     private String Tcomment;
+
+    /**
+     * Délai d'intervention contractuel exprimé en minute
+     */
+    private int tdelay1;
+
+    /**
+     * Délai de remise en état contractuel exprimé en minute
+     */
+    private int tdelay2;
 
     /**
      * Identifiant Performance Immo
@@ -367,6 +377,36 @@ public class Ftoubib {
      */
     public void setTUuid(String TUuid) {
         this.TUuid = (TUuid != null) ? TUuid.trim() : null;
+    }
+
+    /**
+     * @return le délai d'intervention contractuel exprimé en minute
+     */
+    public int getTdelay1() {
+        return tdelay1;
+    }
+
+    /**
+     * @param tdelay1 définit le délai d'intervention contractuel exprimé en
+     * minute
+     */
+    public void setTdelay1(int tdelay1) {
+        this.tdelay1 = tdelay1;
+    }
+
+    /**
+     * @return le délai de remise en état contractuel exprimé en minute
+     */
+    public int getTdelay2() {
+        return tdelay2;
+    }
+
+    /**
+     * @param tdelay2 définit le délai de remise en état contractuel exprimé en
+     * minute
+     */
+    public void setTdelay2(int tdelay2) {
+        this.tdelay2 = tdelay2;
     }
 
     /**

@@ -5,13 +5,16 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * ClotureAppel est une classe qui décrit une clôture d'appel standard. Les
  * clôtures d'appel spécifiques hériteront de cette classe.
  *
  * @author Thierry Baribaud
- * @version 0.15
+ * @version 0.16
  */
 public class ClotureAppel {
 
@@ -34,6 +37,11 @@ public class ClotureAppel {
      * Format d'heure "hh:mm:ss".
      */
     private static final DateFormat HHMMSS_HOUR_FORMAT = new SimpleDateFormat("HH:mm:ss");
+
+    /**
+     * Format "jj/mm/aaaa hh:mm:ss".
+     */
+    private static final DateTimeFormatter DDMMY4_HHMMSS = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
 
     /**
      * Date de saisie de la demande d'intervetion.
@@ -64,16 +72,36 @@ public class ClotureAppel {
      * Date d'intervention à défaut de début/fin.
      */
     private Timestamp interventionDate = null;
- 
+
     /**
      * Date d'intervention relevée (format jj/mm/aaaa).
      */
     private String dateInterventionRelevee = null;
- 
+
     /**
      * Heure d'intervention relevée (format hh:mm:ss).
      */
     private String heureInterventionRelevee = null;
+
+    /**
+     * Date de la première transmission ou prise en charge
+     */
+    private String datePremiereTransmission = null;
+
+    /**
+     * Heure de la première transmission ou prise en charge
+     */
+    private String heurePremiereTransmission = null;
+
+    /**
+     * Date de la dernière transmission ou prise en charge
+     */
+    private String dateDerniereTransmission = null;
+
+    /**
+     * Heure de la dernière transmission ou prise en charge
+     */
+    private String heureDerniereTransmission = null;
 
     /**
      * Résultat de l'intervention.
@@ -122,6 +150,12 @@ public class ClotureAppel {
     private int delaiIntervention;
 
     /**
+     * Délai d'intervention pour le donneur d'ordre (exprimé en secondes). C'est
+     * l'écart entre la dernière prise en charge et la date des travaux.
+     */
+    private int delaiIntervention2;
+
+    /**
      * Durée d'intervention exprimé en secondes.
      *
      * C'est l'écart entre l'heure de fin et de début d'intervention.
@@ -129,81 +163,97 @@ public class ClotureAppel {
     private int dureeIntervention;
 
     /**
+     * Clôture technique ou non
+     */
+    private boolean clotureTechnique = false;
+
+    /**
      * Constructeur de la classe clôture d'appel.
-     * 
-     * @param MyConnection une connexion à la base de données locale.
+     *
+     * @param connection une connexion à la base de données locale.
      * @param cnum référence à l'appel en cours.
-     * @param DateSaisie date de saisie de l'appel en cours.
-     * @param MyEtatTicket état du ticket.
+     * @param dateSaisie date de saisie de l'appel en cours.
+     * @param datePremiereTransmission date de première transmission
+     * @param heurePremiereTransnmission heure de première transmission
+     * @param dateDerniereTransmission date de dernière transmission
+     * @param heureDerniereTransnmission heure de dernière transmission
+     * @param etatTicket état du ticket.
      * @throws SQLException en cas d'erreur SQL.
      * @throws ClassNotFoundException en cas de classe non trouvée.
      */
-    public ClotureAppel(Connection MyConnection, int cnum, Timestamp DateSaisie, EtatTicket MyEtatTicket) throws SQLException, ClassNotFoundException {
-        FessaisDAO MyFessaisDAO;
-        Fessais MyFessais;
+    public ClotureAppel(Connection connection, int cnum, Timestamp dateSaisie, 
+            String datePremiereTransmission, String heurePremiereTransnmission,
+            String dateDerniereTransmission, String heureDerniereTransnmission,
+            EtatTicket etatTicket) throws SQLException, ClassNotFoundException {
+        FessaisDAO fessaisDAO;
+        Fessais fessais;
         int egid;
-        StringBuffer RapportIntervention;
+        StringBuffer rapportIntervention;
         int eresult;
-        String Emessage;
-        Timestamp MyBegDate;
-        Timestamp MyEndDate;
-        
-        this.DateSaisie = DateSaisie;
+        String emessage;
+        Timestamp begDate;
+        Timestamp endDate;
 
-        MyFessaisDAO = new FessaisDAO(MyConnection, MyEtatTicket);
-        MyFessaisDAO.setPartOfEOMPreparedStatement(cnum);
-        MyFessais = MyFessaisDAO.getPartOfEOM();
-        MyFessaisDAO.closePartOfEOMPreparedStatement();
-        if (MyFessais != null) {
-            egid = MyFessais.getEgid();
+        this.DateSaisie = dateSaisie;
+        this.datePremiereTransmission = datePremiereTransmission;
+        this.heurePremiereTransmission = heurePremiereTransnmission;
+        this.dateDerniereTransmission = dateDerniereTransmission;
+        this.heureDerniereTransmission = heureDerniereTransnmission;
+
+        fessaisDAO = new FessaisDAO(connection, etatTicket);
+        fessaisDAO.setPartOfEOMPreparedStatement(cnum);
+        fessais = fessaisDAO.getPartOfEOM();
+        fessaisDAO.closePartOfEOMPreparedStatement();
+        if (fessais != null) {
+            egid = fessais.getEgid();
 //            System.out.println("    Une clôture d'appel trouvée : egid=" + egid);
 
             // For debug purpose only (begin)
 //            RapportIntervention = new StringBuffer("egid=" + egid);
-            RapportIntervention = new StringBuffer();
+            rapportIntervention = new StringBuffer();
             // For debug purpose only (end)
 
 //            MyFessaisDAO = new FessaisDAO(MyConnection, MyEtatTicket);
-            MyFessaisDAO.filterByGid(cnum, egid);
-            MyFessaisDAO.setSelectPreparedStatement();
-            while ((MyFessais = MyFessaisDAO.select()) != null) {
-                eresult = MyFessais.getEresult();
-                Emessage = MyFessais.getEmessage();
+            fessaisDAO.filterByGid(cnum, egid);
+            fessaisDAO.setSelectPreparedStatement();
+            while ((fessais = fessaisDAO.select()) != null) {
+                eresult = fessais.getEresult();
+                emessage = fessais.getEmessage();
 //                System.out.println("      eresult=" + eresult + ", emessage=" + Emessage);
                 switch (eresult) {
                     case 69:    // Heure de début d'intervention.
-                        setBegDate(MyFessais);
+                        setBegDate(fessais);
                         break;
                     case 70:    // Heure de fin d'intervention.
-                        setEndDate(MyFessais);
+                        setEndDate(fessais);
                         break;
                     case 71:    // Résultat de l'intervention.
-                        setResultat(Emessage);
+                        setResultat(emessage);
                         break;
                     case 72:    // Rapport d'intervention.
-                        if (Emessage.length() > 0) {
-                            if (RapportIntervention.length() > 0) {
-                                RapportIntervention.append(" ").append(Emessage);
+                        if (emessage.length() > 0) {
+                            if (rapportIntervention.length() > 0) {
+                                rapportIntervention.append(" ").append(emessage);
                             } else {
-                                RapportIntervention.append(Emessage);
+                                rapportIntervention.append(emessage);
                             }
                         }
                         break;
                     case 73:    // Le technicien est-il encore sur site ?
-                        setOnSite(Emessage);
+                        setOnSite(emessage);
                         break;
                     case 90:    // Date d'intervention relevée
-                        setDateInterventionRelevee(Emessage);
+                        setDateInterventionRelevee(emessage);
                         break;
                     case 91:    // Heure d'intervention relevée
-                        setHeureInterventionRelevee(Emessage);
+                        setHeureInterventionRelevee(emessage);
                         break;
                     case 93:    // Nature de la panne.
-                        setNature(Emessage);
+                        setNature(emessage);
                         break;
                 }
             }
-            MyFessaisDAO.closeSelectPreparedStatement();
+            fessaisDAO.closeSelectPreparedStatement();
 
             // For debug purpose only (begin)
 //            if ((MyBegDate = getBegDate()) != null) {
@@ -213,18 +263,17 @@ public class ClotureAppel {
 //                RapportIntervention.append(" fin=").append(MyEndDate);
 //            }
             // For debug purpose only (end)
-
-            if (RapportIntervention.length() > 0) {
-                setRapport(RapportIntervention.toString());
+            if (rapportIntervention.length() > 0) {
+                setRapport(rapportIntervention.toString());
             }
 //            System.out.println("  (avant validation) " + MyClotureAppel);
 
         }
         ValideLaCloture();
 //            System.out.println("  (après validation) " + MyClotureAppel);
-        
+
     }
-    
+
     /**
      * @return BegDate la date de début d'intervention.
      */
@@ -245,12 +294,13 @@ public class ClotureAppel {
      */
     public void setBegDate(Fessais MyFessais) {
         this.BegDate = calcDate(MyFessais);
-        
+
         // ATTENTION : faire mieux plus tard, TB, le 17/07/2016.
-        if (this.BegDate != null)
+        if (this.BegDate != null) {
             setHeureDebutRelevee(HHMM_HOUR_FORMAT.format(getBegDate()));
-        else
+        } else {
             setHeureDebutRelevee(null);
+        }
     }
 
     /**
@@ -273,18 +323,19 @@ public class ClotureAppel {
      */
     public void setEndDate(Fessais MyFessais) {
         this.EndDate = calcDate(MyFessais);
-        
+
         // ATTENTION : faire mieux plus tard, TB, le 17/07/2016.
-        if (this.EndDate != null)
+        if (this.EndDate != null) {
             setHeureFinRelevee(HHMM_HOUR_FORMAT.format(getEndDate()));
-        else
+        } else {
             setHeureFinRelevee(null);
+        }
     }
 
     /**
      * @param MyFessais définit la date de début/fin d'intervention à partir
      * d'un essai.
-     * 
+     *
      * @return date de début/fin d'intervention.
      */
     private Timestamp calcDate(Fessais MyFessais) {
@@ -329,10 +380,16 @@ public class ClotureAppel {
     }
 
     /**
-     * @param Resultat Définit le résultat de l'intervention.
+     * @param resultat Définit le résultat de l'intervention.
      */
-    public void setResultat(String Resultat) {
-        this.Resultat = Resultat;
+    public void setResultat(String resultat) {
+        this.Resultat = resultat;
+
+        setClotureTechnique("Réparation définitive".equals(resultat)
+                || "Réparation partielle".equals(resultat)
+                || "Réparation impossible".equals(resultat)
+                || "Réparation reportée en HO".equals(resultat)
+        );
     }
 
     /**
@@ -371,7 +428,8 @@ public class ClotureAppel {
     }
 
     /**
-     * @param HeureDebutRelevee définit l'heure de début d'intervention relevée..
+     * @param HeureDebutRelevee définit l'heure de début d'intervention
+     * relevée..
      */
     public void setHeureDebutRelevee(String HeureDebutRelevee) {
         this.HeureDebutRelevee = HeureDebutRelevee;
@@ -393,27 +451,28 @@ public class ClotureAppel {
 
     /**
      * Valide la clôture d'appel.
-     * 
-     * <OL><LI>Si la durée d'intervention est inférieure à une minute, alors
-     * les heures de début et de fin n'ont pas été mises à jour lors de la saisie 
-     * de la clôture. Dans ce cas, on les suppriment.</LI>
+     *
+     * <OL><LI>Si la durée d'intervention est inférieure à une minute, alors les
+     * heures de début et de fin n'ont pas été mises à jour lors de la saisie de
+     * la clôture. Dans ce cas, on les supprime.</LI>
      * <LI> à compléter ...</LI></OL>
      */
     public void ValideLaCloture() {
         calculeDelaiIntervention();
+        calculeDelaiIntervention2();
         calculeDureeIntervention();
-        
+
         // Règle n°1
         if (getDureeIntervention() < 60) {
             setHeureDebutRelevee(null);
-            setBegDate((Timestamp)null);
+            setBegDate((Timestamp) null);
             setHeureFinRelevee(null);
-            setEndDate((Timestamp)null);
+            setEndDate((Timestamp) null);
             calculeDelaiIntervention();
             calculeDureeIntervention();
         }
     }
-    
+
     /**
      * Renvoie la clôture d'appel sous forme de texte.
      *
@@ -429,6 +488,7 @@ public class ClotureAppel {
                 + ", résultat=" + getResultat()
                 + ", rapport=" + getRapport()
                 + ", tech/site=" + getOnSite()
+                + ", clotureTechnique=" + isClotureTechnique()
                 + "}";
     }
 
@@ -495,7 +555,7 @@ public class ClotureAppel {
     }
 
     /**
-     * Calcule le délai d'intervention exprimée en secondes.
+     * Calcule le délai d'intervention (exprimé en secondes)
      */
     public void calculeDelaiIntervention() {
         Timestamp MyDateSaisie;
@@ -510,6 +570,54 @@ public class ClotureAppel {
             myLongBegDate = MyBegDate.getTime();
         }
         setDelaiIntervention((int) Math.abs(myLongBegDate - myLongDateSaisie) / 1000);
+    }
+
+    /**
+     * Calcule le délai d'intervention pour le donneur d'ordre (exprimé en
+     * secondes)
+     */
+    public void calculeDelaiIntervention2() {
+        DateTime premiereTansmission = null;
+        DateTime derniereTransmission = null;
+        DateTime dateDesTravaux = null;
+        String hour;
+
+        if (isClotureTechnique()) {
+            if (datePremiereTransmission != null && heurePremiereTransmission != null) {
+                premiereTansmission = DDMMY4_HHMMSS.parseDateTime(datePremiereTransmission + " " + heurePremiereTransmission);
+            }
+
+            if (dateDerniereTransmission != null && heureDerniereTransmission != null) {
+                derniereTransmission = DDMMY4_HHMMSS.parseDateTime(dateDerniereTransmission + " " + heureDerniereTransmission);
+            } 
+
+            if (dateInterventionRelevee != null && heureInterventionRelevee != null) {
+                if (heureInterventionRelevee.matches("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]")) {
+                    hour = heureInterventionRelevee;
+                } else {
+                    hour = "12:00:00";
+                }
+                dateDesTravaux = DDMMY4_HHMMSS.parseDateTime(dateInterventionRelevee + " " + hour);
+            } else if (BegDate != null) {
+                dateDesTravaux = new DateTime(BegDate.getTime());
+            } else if (EndDate != null) {
+                dateDesTravaux = new DateTime(EndDate.getTime());
+            }
+
+            if (dateDesTravaux != null && premiereTansmission != null) {
+                if (dateDesTravaux.isAfter(premiereTansmission)) {
+                    setDelaiIntervention2((int) (dateDesTravaux.getMillis() - premiereTansmission.getMillis()) / 1000);
+                }
+            }
+
+            if (dateDesTravaux != null && derniereTransmission != null) {
+                if (dateDesTravaux.isAfter(derniereTransmission)) {
+                    setDelaiIntervention2((int) (dateDesTravaux.getMillis() - derniereTransmission.getMillis()) / 1000);
+                }
+            } 
+
+        }
+
     }
 
     /**
@@ -552,6 +660,97 @@ public class ClotureAppel {
      */
     public void setHeureInterventionRelevee(String heureInterventionRelevee) {
         this.heureInterventionRelevee = heureInterventionRelevee;
+    }
+
+    /**
+     * @return s'il s'agit d'une clôture technique ou non
+     */
+    public boolean isClotureTechnique() {
+        return clotureTechnique;
+    }
+
+    /**
+     * @param clotureTechnique définit s'il s'agit d'une clôture technique ou
+     * non
+     */
+    public void setClotureTechnique(boolean clotureTechnique) {
+        this.clotureTechnique = clotureTechnique;
+    }
+
+    /**
+     * @return la date de la première transmission ou prise en charge
+     */
+    public String getDatePremiereTransmission() {
+        return datePremiereTransmission;
+    }
+
+    /**
+     * @param datePremiereTransmission définit la date de la première
+     * transmission ou prise en charge
+     */
+    public void setDatePremiereTransmission(String datePremiereTransmission) {
+        this.datePremiereTransmission = datePremiereTransmission;
+    }
+
+    /**
+     * @return l'heure de la première transmission ou prise en charge
+     */
+    public String getHeurePremiereTransmission() {
+        return heurePremiereTransmission;
+    }
+
+    /**
+     * @param heurePremiereTransmission définit l'heure de la première
+     * transmission ou prise en charge
+     */
+    public void setHeurePremiereTransmission(String heurePremiereTransmission) {
+        this.heurePremiereTransmission = heurePremiereTransmission;
+    }
+
+    /**
+     * @return la date de la dernière transmission ou prise en charge
+     */
+    public String getDateDerniereTransmission() {
+        return dateDerniereTransmission;
+    }
+
+    /**
+     * @param dateDerniereTransmission définit la date de la dernière
+     * transmission ou prise en charge
+     */
+    public void setDateDerniereTransmission(String dateDerniereTransmission) {
+        this.dateDerniereTransmission = dateDerniereTransmission;
+    }
+
+    /**
+     * @return l'heure de la dernière transmission ou prise en charge
+     */
+    public String getHeureDerniereTransmission() {
+        return heureDerniereTransmission;
+    }
+
+    /**
+     * @param heureDerniereTransmission définit l'heure de la dernière
+     * transmission ou prise en charge
+     */
+    public void setHeureDerniereTransmission(String heureDerniereTransmission) {
+        this.heureDerniereTransmission = heureDerniereTransmission;
+    }
+
+    /**
+     * @return le délai d'intervention pour le donneur d'ordre (exprimé en
+     * secondes).
+     */
+    public int getDelaiIntervention2() {
+        return delaiIntervention2;
+    }
+
+    /**
+     * @param delaiIntervention2 définit le délai d'intervention pour le donneur
+     * d'ordre (exprimé en secondes).
+     */
+    public void setDelaiIntervention2(int delaiIntervention2) {
+        this.delaiIntervention2 = delaiIntervention2;
     }
 
 }

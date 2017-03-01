@@ -5,8 +5,8 @@ import java.sql.*;
 /**
  * Fcomplmt est une classe décrivant un complément d'appel.
  *
- * @version Juin 2016
  * @author Thierry Baribaud
+ * @version 0.16
  */
 public class Fcomplmt {
 
@@ -125,6 +125,9 @@ public class Fcomplmt {
    */
     private String C6poscode;
 
+    /**
+     * @return l'identifiant unique du complément d'appel
+     */
     public int getC6num() {
         return c6num;
     }
@@ -133,6 +136,9 @@ public class Fcomplmt {
         return c6int2;
     }
 
+    /**
+     * @return la date complémentaire
+     */
     public Timestamp getC6date() {
         return C6date;
     }
