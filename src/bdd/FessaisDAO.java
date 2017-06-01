@@ -8,7 +8,7 @@ import java.sql.*;
  * au travers de JDBC.
  *
  * @author Thierry Baribaud.
- * @version Juin 2015.
+ * @version 0.17
  */
 public class FessaisDAO extends PatternDAO {
 
@@ -66,6 +66,21 @@ public class FessaisDAO extends PatternDAO {
      * Requête SQL préparée pour récupérer un élément de clôture d'appel.
      */
     private PreparedStatement PartOfEOMPreparedStatement;
+
+    /**
+     * Requête SQL pour récupérer le dernier essai.
+     */
+    private String LastTrialStatement;
+
+    /**
+     * Requête SQL préparée pour récupérer le dernier essai.
+     */
+    private PreparedStatement LastTrialPreparedStatement;
+
+    /**
+     * ResultSet pour récupérer le dernier essai.
+     */
+    private ResultSet LastTrialResultSet;
 
     /**
      * Constructeur de la classe FessaisDAO.
@@ -165,6 +180,16 @@ public class FessaisDAO extends PatternDAO {
 //            System.out.println("  PartOfEOMStatement=" + getPartOfEOMStatement());
 //            setPartOfEOMPreparedStatement();
 //            setPartOfEOMResultSet();
+
+        // Préparation pour la récupération du dernier essai pour un résultat donné
+        setLastTrialStatement("select enumabs, "
+                + " ecnum, eptr, eunum, edate, etime,"
+                + " emessage, etnum, eonum, eresult, eduration,"
+                + " etest, einternal, em3num, egid"
+                + " from " + MyTable 
+                + " where ecnum = ?"
+                + " and eresult = ?"
+                + " order by edate desc, etime desc;");
     }
 
     /**
@@ -403,7 +428,7 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
-     * Prépare la requête SQL pour rechercher la première transmission.
+     * Prépare la requête SQL pour rechercher la dernière transmission.
      *
      * @param cnum identifiant de l'appel courant.
      * @throws java.sql.SQLException en cas d'erreur SQL.
@@ -427,6 +452,41 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
+     * @return the LastTrialStatement
+     */
+    public String getLastTrialStatement() {
+        return LastTrialStatement;
+    }
+
+    /**
+     * @param LastTrialStatement the LastTrialStatement to set
+     */
+    public void setLastTrialStatement(String LastTrialStatement) {
+        this.LastTrialStatement = LastTrialStatement;
+    }
+
+    /**
+     * @return the LastTrialPreparedStatement
+     */
+    public PreparedStatement getLastTrialPreparedStatement() {
+        return LastTrialPreparedStatement;
+    }
+
+    /**
+     * Prépare la requête SQL pour rechercher la dernière transmission.
+     *
+     * @param cnum identifiant de l'appel courant.
+     * @param eresult résultat associé à l'essai.
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void setLastTrialPreparedStatement(int cnum, int eresult) throws SQLException {
+        LastTrialPreparedStatement = MyConnection.prepareStatement(getLastTrialStatement());
+        LastTrialPreparedStatement.setInt(1, cnum);
+        LastTrialPreparedStatement.setInt(2, eresult);
+        setLastTrialResultSet();
+    }
+
+    /**
      * @return LastTransmissionResultSet 
      */
     public ResultSet getLastTransmissionResultSet() {
@@ -439,6 +499,14 @@ public class FessaisDAO extends PatternDAO {
     public ResultSet getPartOfEOMResultSet() {
         return PartOfEOMResultSet;
     }
+
+    /**
+     * @return LastTransmissionResultSet 
+     */
+    public ResultSet getLastTrialResultSet() {
+        return LastTrialResultSet;
+    }
+
     /**
      * Exécute la requête SQL pour rechercher la dernière transmission.
      *
@@ -474,6 +542,49 @@ public class FessaisDAO extends PatternDAO {
                 MyFessais.setEinternal(LastTransmissionResultSet.getInt("einternal"));
                 MyFessais.setEm3num(LastTransmissionResultSet.getInt("em3num"));
                 MyFessais.setEgid(LastTransmissionResultSet.getInt("egid"));
+            }
+        } catch (SQLException MyException) {
+            System.out.println("Erreur en lecture de " + MyTable + " "
+                    + MyException.getMessage());
+        }
+        return (MyFessais);
+    }
+
+    /**
+     * Exécute la requête SQL pour rechercher le dernier essai
+     *
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void setLastTrialResultSet() throws SQLException {
+        LastTrialResultSet = LastTrialPreparedStatement.executeQuery();
+    }
+
+    /**
+     * Récupère l'essai correspondant au dernier essai, s'il existe.
+     *
+     * @return l'essai correspondant au dernier essai, s'il existe.
+     */
+    public Fessais getLastTrial() {
+        Fessais MyFessais = null;
+
+        try {
+            if (LastTrialResultSet.next()) {
+                MyFessais = new Fessais();
+                MyFessais.setEnumabs(LastTrialResultSet.getInt("enumabs"));
+                MyFessais.setEcnum(LastTrialResultSet.getInt("ecnum"));
+                MyFessais.setEptr(LastTrialResultSet.getInt("eptr"));
+                MyFessais.setEunum(LastTrialResultSet.getInt("eunum"));
+                MyFessais.setEdate(LastTrialResultSet.getTimestamp("edate"));
+                MyFessais.setEtime(LastTrialResultSet.getString("etime"));
+                MyFessais.setEmessage(LastTrialResultSet.getString("emessage"));
+                MyFessais.setEtnum(LastTrialResultSet.getInt("etnum"));
+                MyFessais.setEonum(LastTrialResultSet.getInt("eonum"));
+                MyFessais.setEresult(LastTrialResultSet.getInt("eresult"));
+                MyFessais.setEduration(LastTrialResultSet.getInt("eduration"));
+                MyFessais.setEtest(LastTrialResultSet.getInt("etest"));
+                MyFessais.setEinternal(LastTrialResultSet.getInt("einternal"));
+                MyFessais.setEm3num(LastTrialResultSet.getInt("em3num"));
+                MyFessais.setEgid(LastTrialResultSet.getInt("egid"));
             }
         } catch (SQLException MyException) {
             System.out.println("Erreur en lecture de " + MyTable + " "
@@ -570,6 +681,17 @@ public class FessaisDAO extends PatternDAO {
         Stmt = new StringBuffer(InvariableSelectStatement);
         Stmt.append(" where enumabs = ").append(id).append(";");
         setSelectStatement(Stmt.toString());
+    }
+
+    /**
+     * Méthode pour fermer les ressources associées à la requête de sélection
+     * du dernier essai.
+     *
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void closeLastTrialPreparedStatement() throws SQLException {
+        LastTrialResultSet.close();
+        LastTrialPreparedStatement.close();
     }
 
     /**
