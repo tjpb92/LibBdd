@@ -14,7 +14,7 @@ import org.joda.time.format.DateTimeFormatter;
  * clôtures d'appel spécifiques hériteront de cette classe.
  *
  * @author Thierry Baribaud
- * @version 0.16
+ * @version 0.18
  */
 public class ClotureAppel {
 
@@ -181,7 +181,7 @@ public class ClotureAppel {
      * @throws SQLException en cas d'erreur SQL.
      * @throws ClassNotFoundException en cas de classe non trouvée.
      */
-    public ClotureAppel(Connection connection, int cnum, Timestamp dateSaisie, 
+    public ClotureAppel(Connection connection, int cnum, Timestamp dateSaisie,
             String datePremiereTransmission, String heurePremiereTransnmission,
             String dateDerniereTransmission, String heureDerniereTransnmission,
             EtatTicket etatTicket) throws SQLException, ClassNotFoundException {
@@ -584,12 +584,28 @@ public class ClotureAppel {
 
         if (isClotureTechnique()) {
             if (datePremiereTransmission != null && heurePremiereTransmission != null) {
+                try {
                 premiereTansmission = DDMMY4_HHMMSS.parseDateTime(datePremiereTransmission + " " + heurePremiereTransmission);
+                } catch (org.joda.time.IllegalFieldValueException MyException) {
+                    System.out.println("WARNING : date incorrecte PremiereTransmission="
+                            + datePremiereTransmission + " " + heurePremiereTransmission
+                            + ", raison : "
+                            + MyException.getMessage());
+                    premiereTansmission = null;
+                }
             }
 
             if (dateDerniereTransmission != null && heureDerniereTransmission != null) {
+                try {            
                 derniereTransmission = DDMMY4_HHMMSS.parseDateTime(dateDerniereTransmission + " " + heureDerniereTransmission);
-            } 
+                } catch (org.joda.time.IllegalFieldValueException MyException) {
+                    System.out.println("WARNING : date incorrecte DerniereTransmission="
+                            + dateDerniereTransmission + " " + heureDerniereTransmission
+                            + ", raison : "
+                            + MyException.getMessage());
+                    derniereTransmission = null;
+                }
+            }
 
             if (dateInterventionRelevee != null && heureInterventionRelevee != null) {
                 if (heureInterventionRelevee.matches("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]")) {
@@ -597,7 +613,15 @@ public class ClotureAppel {
                 } else {
                     hour = "12:00:00";
                 }
-                dateDesTravaux = DDMMY4_HHMMSS.parseDateTime(dateInterventionRelevee + " " + hour);
+                try {
+                    dateDesTravaux = DDMMY4_HHMMSS.parseDateTime(dateInterventionRelevee + " " + hour);
+                } catch (org.joda.time.IllegalFieldValueException MyException) {
+                    System.out.println("WARNING : date incorrecte InterventionRelevee="
+                            + dateInterventionRelevee + " " + hour
+                            + ", raison : "
+                            + MyException.getMessage());
+                    dateDesTravaux = null;
+                }
             } else if (BegDate != null) {
                 dateDesTravaux = new DateTime(BegDate.getTime());
             } else if (EndDate != null) {
@@ -614,7 +638,7 @@ public class ClotureAppel {
                 if (dateDesTravaux.isAfter(derniereTransmission)) {
                     setDelaiIntervention2((int) (dateDesTravaux.getMillis() - derniereTransmission.getMillis()) / 1000);
                 }
-            } 
+            }
 
         }
 

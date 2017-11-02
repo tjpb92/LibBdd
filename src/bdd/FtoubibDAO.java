@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * Classe qui décrit les méthodes pour accéder à la table ftoubib avec JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.16
+ * @version 0.18
  */
 public class FtoubibDAO extends PatternDAO {
 
@@ -95,7 +95,7 @@ public class FtoubibDAO extends PatternDAO {
                 MyFtoubib.setTaddress(SelectResultSet.getString("taddress"));
                 MyFtoubib.setTaddress2(SelectResultSet.getString("taddress2"));
                 MyFtoubib.setTcomment(SelectResultSet.getString("tcomment"));
-                MyFtoubib.setTcomment(SelectResultSet.getString("tuuid"));
+                MyFtoubib.setTUuid(SelectResultSet.getString("tuuid"));
                 MyFtoubib.setTdelay1(SelectResultSet.getInt("tdelay1"));
                 MyFtoubib.setTdelay2(SelectResultSet.getInt("tdelay2"));
             } else {
