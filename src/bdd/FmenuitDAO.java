@@ -1,18 +1,13 @@
 package bdd;
 
 import com.informix.jdbc.IfmxStatement;
-import java.io.IOException;
 import java.sql.*;
-import utils.ApplicationProperties;
-import utils.DBManager;
-import utils.DBServer;
-import utils.DBServerException;
 
 /**
  * Classe qui décrit les méthodes pour accéder à la table fmenuit avec JDBC.
  *
  * @author Thierry Baribaud
- * @version Juin 2016
+ * @version 0.20
  */
 public class FmenuitDAO extends PatternDAO {
 
@@ -40,7 +35,6 @@ public class FmenuitDAO extends PatternDAO {
 //        setSelectStatement(Stmt.toString());
 //        setSelectPreparedStatement();
 //        setSelectResultSet();
-
         setUpdateStatement("update fmenuit"
                 + " set m6extname=?, m6name=?"
                 + " where m6num=?;");
@@ -172,7 +166,7 @@ public class FmenuitDAO extends PatternDAO {
      */
     @Override
     public void filterByGid(int gid) {
-        throw new UnsupportedOperationException("Non supporté actuellement"); 
+        throw new UnsupportedOperationException("Non supporté actuellement");
     }
 
     /**
@@ -183,7 +177,7 @@ public class FmenuitDAO extends PatternDAO {
      */
     @Override
     public void filterByCode(int gid, String Code) {
-        throw new UnsupportedOperationException("Non supporté actuellement"); 
+        throw new UnsupportedOperationException("Non supporté actuellement");
     }
 
     /**
@@ -194,7 +188,7 @@ public class FmenuitDAO extends PatternDAO {
      */
     @Override
     public void filterByName(int gid, String Name) {
-        throw new UnsupportedOperationException("Non supporté actuellement"); 
+        throw new UnsupportedOperationException("Non supporté actuellement");
     }
 
     @Override

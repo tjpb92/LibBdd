@@ -14,7 +14,7 @@ import org.joda.time.format.DateTimeFormatter;
  * clôtures d'appel spécifiques hériteront de cette classe.
  *
  * @author Thierry Baribaud
- * @version 0.18
+ * @version 0.20
  */
 public class ClotureAppel {
 
@@ -74,14 +74,34 @@ public class ClotureAppel {
     private Timestamp interventionDate = null;
 
     /**
-     * Date d'intervention relevée (format jj/mm/aaaa).
+     * Date d'intervention relevée (format jj/mm/aaaa) (premier modèle).
      */
     private String dateInterventionRelevee = null;
 
     /**
-     * Heure d'intervention relevée (format hh:mm:ss).
+     * Heure d'intervention relevée (format hh:mm:ss) (premier modèle).
      */
     private String heureInterventionRelevee = null;
+
+    /**
+     * Date de début d'intervention relevée (format jj/mm/aaaa, second modèle).
+     */
+    private String dateDebutInterventionRelevee = null;
+
+    /**
+     * Heure de début d'intervention relevée (format hh:mm:ss, second modèle).
+     */
+    private String heureDebutInterventionRelevee = null;
+
+    /**
+     * Date de fin d'intervention relevée (format jj/mm/aaaa, second modèle).
+     */
+    private String dateFinInterventionRelevee = null;
+
+    /**
+     * Heure de fin d'intervention relevée (format hh:mm:ss, second modèle).
+     */
+    private String heureFinInterventionRelevee = null;
 
     /**
      * Date de la première transmission ou prise en charge
@@ -250,6 +270,18 @@ public class ClotureAppel {
                         break;
                     case 93:    // Nature de la panne.
                         setNature(emessage);
+                        break;
+                    case 101:    // Date de début d'intervention relevée (second modèle)
+                        setDateDebutInterventionRelevee(emessage);
+                        break;
+                    case 102:    // Heure de début d'intervention relevée (second modèle)
+                        setHeureDebutInterventionRelevee(emessage);
+                        break;
+                    case 103:    // Date de fin d'intervention relevée (second modèle)
+                        setDateFinInterventionRelevee(emessage);
+                        break;
+                    case 104:    // Heure de fin d'intervention relevée (second modèle)
+                        setHeureFinInterventionRelevee(emessage);
                         break;
                 }
             }
@@ -421,32 +453,67 @@ public class ClotureAppel {
     }
 
     /**
-     * @return HeureDebutRelevee l'heure de début d'intervention relevée.
+     * @return HeureDebutRelevee l'heure de début d'intervention relevée
+     * (premier modèle).
      */
     public String getHeureDebutRelevee() {
         return HeureDebutRelevee;
     }
 
     /**
-     * @param HeureDebutRelevee définit l'heure de début d'intervention
-     * relevée..
+     * @param HeureDebutRelevee définit l'heure de début d'intervention relevée
+     * (premier modèle).
      */
     public void setHeureDebutRelevee(String HeureDebutRelevee) {
         this.HeureDebutRelevee = HeureDebutRelevee;
     }
 
     /**
-     * @return HeureFinRelevee l'heure de début d'intervention relevée.
+     * @return HeureFinRelevee l'heure de début d'intervention relevée (premier
+     * modèle).
      */
     public String getHeureFinRelevee() {
         return HeureFinRelevee;
     }
 
     /**
-     * @param HeureFinRelevee définit l'heure de début d'intervention relevée.
+     * @param HeureFinRelevee définit l'heure de début d'intervention relevée
+     * (premier modèle).
      */
     public void setHeureFinRelevee(String HeureFinRelevee) {
         this.HeureFinRelevee = HeureFinRelevee;
+    }
+
+    /**
+     * @return heureDebutInterventionRelevee l'heure de début d'intervention
+     * relevée (second modèle).
+     */
+    public String getHeureDebutInterventionRelevee() {
+        return heureDebutInterventionRelevee;
+    }
+
+    /**
+     * @param heureDebutInterventionRelevee définit l'heure de début
+     * d'intervention relevée (second modèle).
+     */
+    public void setHeureDebutInterventionRelevee(String heureDebutInterventionRelevee) {
+        this.heureDebutInterventionRelevee = heureDebutInterventionRelevee;
+    }
+
+    /**
+     * @return heureFinInterventionRelevee l'heure de début d'intervention
+     * relevée (second modèle).
+     */
+    public String getHeureFinInterventionRelevee() {
+        return heureFinInterventionRelevee;
+    }
+
+    /**
+     * @param heureFinInterventionRelevee définit l'heure de début
+     * d'intervention relevée (second modèle).
+     */
+    public void setHeureFinInterventionRelevee(String heureFinInterventionRelevee) {
+        this.heureFinInterventionRelevee = heureFinInterventionRelevee;
     }
 
     /**
@@ -585,7 +652,7 @@ public class ClotureAppel {
         if (isClotureTechnique()) {
             if (datePremiereTransmission != null && heurePremiereTransmission != null) {
                 try {
-                premiereTansmission = DDMMY4_HHMMSS.parseDateTime(datePremiereTransmission + " " + heurePremiereTransmission);
+                    premiereTansmission = DDMMY4_HHMMSS.parseDateTime(datePremiereTransmission + " " + heurePremiereTransmission);
                 } catch (org.joda.time.IllegalFieldValueException MyException) {
                     System.out.println("WARNING : date incorrecte PremiereTransmission="
                             + datePremiereTransmission + " " + heurePremiereTransmission
@@ -596,8 +663,8 @@ public class ClotureAppel {
             }
 
             if (dateDerniereTransmission != null && heureDerniereTransmission != null) {
-                try {            
-                derniereTransmission = DDMMY4_HHMMSS.parseDateTime(dateDerniereTransmission + " " + heureDerniereTransmission);
+                try {
+                    derniereTransmission = DDMMY4_HHMMSS.parseDateTime(dateDerniereTransmission + " " + heureDerniereTransmission);
                 } catch (org.joda.time.IllegalFieldValueException MyException) {
                     System.out.println("WARNING : date incorrecte DerniereTransmission="
                             + dateDerniereTransmission + " " + heureDerniereTransmission
@@ -666,10 +733,42 @@ public class ClotureAppel {
     }
 
     /**
+     * @return la date de début d'intervention relevée
+     */
+    public String getDateDebutInterventionRelevee() {
+        return dateDebutInterventionRelevee;
+    }
+
+    /**
+     * @return la date de fin d'intervention relevée
+     */
+    public String getDateFinInterventionRelevee() {
+        return dateDebutInterventionRelevee;
+    }
+
+    /**
      * @param dateInterventionRelevee définit la date d'intervention relevée
      */
     public void setDateInterventionRelevee(String dateInterventionRelevee) {
         this.dateInterventionRelevee = dateInterventionRelevee;
+        setDateDebutInterventionRelevee(dateInterventionRelevee);
+        setDateFinInterventionRelevee(dateInterventionRelevee);
+    }
+
+    /**
+     * @param dateDebutInterventionRelevee définit la date de début
+     * d'intervention relevée
+     */
+    public void setDateDebutInterventionRelevee(String dateDebutInterventionRelevee) {
+        this.dateDebutInterventionRelevee = dateDebutInterventionRelevee;
+    }
+
+    /**
+     * @param dateFinInterventionRelevee définit la date de fin d'intervention
+     * relevée
+     */
+    public void setDateFinInterventionRelevee(String dateFinInterventionRelevee) {
+        this.dateFinInterventionRelevee = dateFinInterventionRelevee;
     }
 
     /**
@@ -684,6 +783,8 @@ public class ClotureAppel {
      */
     public void setHeureInterventionRelevee(String heureInterventionRelevee) {
         this.heureInterventionRelevee = heureInterventionRelevee;
+        setHeureDebutInterventionRelevee(heureInterventionRelevee);
+        setHeureFinInterventionRelevee(heureInterventionRelevee);
     }
 
     /**

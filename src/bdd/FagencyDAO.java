@@ -7,7 +7,7 @@ import java.sql.*;
  * Classe qui décrit les méthodes pour accéder à la table fagency avec JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.13
+ * @version 0.20
  */
 public class FagencyDAO extends PatternDAO {
 
@@ -131,7 +131,7 @@ public class FagencyDAO extends PatternDAO {
             UpdatePreparedStatement.setTimestamp(15, MyFagency.getA6endactive());
             UpdatePreparedStatement.setString(16, MyFagency.getA6UrgLevel());
             UpdatePreparedStatement.setString(17, MyFagency.getA6Uuid());
-            UpdatePreparedStatement.setInt(1, MyFagency.getA6num());
+            UpdatePreparedStatement.setInt(18, MyFagency.getA6num());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour fagency");
