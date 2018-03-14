@@ -8,7 +8,7 @@ import java.sql.*;
  * au travers de JDBC.
  *
  * @author Thierry Baribaud.
- * @version 0.17
+ * @version 0.21
  */
 public class FessaisDAO extends PatternDAO {
 
@@ -26,7 +26,7 @@ public class FessaisDAO extends PatternDAO {
      * Requête SQL pour récupérer un élement de clôture d'appel.
      */
     private String PartOfEOMStatement;
-    
+
     /**
      * Requête SQL pour récupérer la première transmission.
      */
@@ -81,6 +81,21 @@ public class FessaisDAO extends PatternDAO {
      * ResultSet pour récupérer le dernier essai.
      */
     private ResultSet LastTrialResultSet;
+
+    /**
+     * Requête SQL pour récupérer un essai.
+     */
+    private String trialStatement;
+
+    /**
+     * Requête SQL préparée pour récupérer un essai.
+     */
+    private PreparedStatement trialPreparedStatement;
+
+    /**
+     * ResultSet pour récupérer un essai.
+     */
+    private ResultSet trialResultSet;
 
     /**
      * Constructeur de la classe FessaisDAO.
@@ -144,7 +159,7 @@ public class FessaisDAO extends PatternDAO {
                 + " ecnum, eptr, eunum, edate, etime,"
                 + " emessage, etnum, eonum, eresult, eduration,"
                 + " etest, einternal, em3num, egid"
-                + " from " + MyTable 
+                + " from " + MyTable
                 + " where ecnum = ?"
                 + " and eresult = 1"
                 + " order by edate, etime;");
@@ -161,13 +176,13 @@ public class FessaisDAO extends PatternDAO {
                 + " ecnum, eptr, eunum, edate, etime,"
                 + " emessage, etnum, eonum, eresult, eduration,"
                 + " etest, einternal, em3num, egid"
-                + " from " + MyTable 
+                + " from " + MyTable
                 + " where ecnum = ?"
                 + " and eresult = 1"
                 + " order by edate desc, etime desc;");
 //            setLastTransmissionPreparedStatement();
 //            setLastTransmissionResultSet();
-        
+
 //        // Préparation pour la récupération d'un élément de clôture d'appel.
         setPartOfEOMStatement("select a.enumabs, "
                 + " a.ecnum, a.eptr, a.eunum, a.edate, a.etime,"
@@ -176,7 +191,7 @@ public class FessaisDAO extends PatternDAO {
                 + " from " + MyTable + " a"
                 + " where a.enumabs = (select max(b.enumabs) from "
                 + MyTable + " b where b.ecnum = ?"
-                + " and b.eresult in (69,70,71,72,73,90,91,92,93));");
+                + " and b.eresult in (69,70,71,72,73,90,91,92,93,101,102,103,104));");
 //            System.out.println("  PartOfEOMStatement=" + getPartOfEOMStatement());
 //            setPartOfEOMPreparedStatement();
 //            setPartOfEOMResultSet();
@@ -186,10 +201,20 @@ public class FessaisDAO extends PatternDAO {
                 + " ecnum, eptr, eunum, edate, etime,"
                 + " emessage, etnum, eonum, eresult, eduration,"
                 + " etest, einternal, em3num, egid"
-                + " from " + MyTable 
+                + " from " + MyTable
                 + " where ecnum = ?"
                 + " and eresult = ?"
                 + " order by edate desc, etime desc;");
+
+        // Préparation pour la récupération d'un essai pour un résultat donné
+        setTrialStatement("select enumabs, "
+                + " ecnum, eptr, eunum, edate, etime,"
+                + " emessage, etnum, eonum, eresult, eduration,"
+                + " etest, einternal, em3num, egid"
+                + " from " + MyTable
+                + " where ecnum = ?"
+                + " and eresult = ?;");
+//                + " order by edate desc, etime desc;");
     }
 
     /**
@@ -459,6 +484,13 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
+     * @return the trialStatement
+     */
+    public String getTrialStatement() {
+        return trialStatement;
+    }
+
+    /**
      * @param LastTrialStatement the LastTrialStatement to set
      */
     public void setLastTrialStatement(String LastTrialStatement) {
@@ -466,10 +498,40 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
+     * @param trialStatement the trialStatement to set
+     */
+    public void setTrialStatement(String trialStatement) {
+        this.trialStatement = trialStatement;
+    }
+
+    /**
+     * @param orderByClause the order by clause
+     */
+    public void setTrialStatementOrderby(String orderByClause) {
+        StringBuffer statement;
+        if (trialStatement != null && orderByClause != null) {
+            if (!trialStatement.contains("order  by")) {
+                statement = new StringBuffer(trialStatement);
+                if (statement.indexOf(";") == -1) {
+                    statement.append(";");
+                }
+                setTrialStatement(statement.insert(statement.indexOf(";"), orderByClause).toString());
+            }
+        }
+    }
+
+    /**
      * @return the LastTrialPreparedStatement
      */
     public PreparedStatement getLastTrialPreparedStatement() {
         return LastTrialPreparedStatement;
+    }
+
+    /**
+     * @return the trialPreparedStatement
+     */
+    public PreparedStatement getTrialPreparedStatement() {
+        return trialPreparedStatement;
     }
 
     /**
@@ -487,24 +549,45 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
-     * @return LastTransmissionResultSet 
+     * Prépare la requête SQL pour rechercher un essai
+     *
+     * @param cnum identifiant de l'appel courant.
+     * @param eresult résultat associé à l'essai.
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void setTrialPreparedStatement(int cnum, int eresult) throws SQLException {
+        trialPreparedStatement = MyConnection.prepareStatement(getTrialStatement());
+        trialPreparedStatement.setInt(1, cnum);
+        trialPreparedStatement.setInt(2, eresult);
+        setTrialResultSet();
+    }
+
+    /**
+     * @return LastTransmissionResultSet
      */
     public ResultSet getLastTransmissionResultSet() {
         return LastTransmissionResultSet;
     }
 
     /**
-     * @return PartOfEOMResultSet 
+     * @return PartOfEOMResultSet
      */
     public ResultSet getPartOfEOMResultSet() {
         return PartOfEOMResultSet;
     }
 
     /**
-     * @return LastTransmissionResultSet 
+     * @return LastTransmissionResultSet
      */
     public ResultSet getLastTrialResultSet() {
         return LastTrialResultSet;
+    }
+
+    /**
+     * @return transmissionResultSet
+     */
+    public ResultSet getTrialResultSet() {
+        return trialResultSet;
     }
 
     /**
@@ -560,6 +643,15 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
+     * Exécute la requête SQL pour rechercher un essai
+     *
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void setTrialResultSet() throws SQLException {
+        trialResultSet = trialPreparedStatement.executeQuery();
+    }
+
+    /**
      * Récupère l'essai correspondant au dernier essai, s'il existe.
      *
      * @return l'essai correspondant au dernier essai, s'il existe.
@@ -594,9 +686,45 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
-     * Récupère l'essai correspondant à un élément de clôture d'appel, s'il existe.
+     * Récupère un essai
      *
-     * @return l'essai correspondant à un élément de clôture d'appel, s'il existe.
+     * @return un essai
+     */
+    public Fessais getTrial() {
+        Fessais MyFessais = null;
+
+        try {
+            if (trialResultSet.next()) {
+                MyFessais = new Fessais();
+                MyFessais.setEnumabs(trialResultSet.getInt("enumabs"));
+                MyFessais.setEcnum(trialResultSet.getInt("ecnum"));
+                MyFessais.setEptr(trialResultSet.getInt("eptr"));
+                MyFessais.setEunum(trialResultSet.getInt("eunum"));
+                MyFessais.setEdate(trialResultSet.getTimestamp("edate"));
+                MyFessais.setEtime(trialResultSet.getString("etime"));
+                MyFessais.setEmessage(trialResultSet.getString("emessage"));
+                MyFessais.setEtnum(trialResultSet.getInt("etnum"));
+                MyFessais.setEonum(trialResultSet.getInt("eonum"));
+                MyFessais.setEresult(trialResultSet.getInt("eresult"));
+                MyFessais.setEduration(trialResultSet.getInt("eduration"));
+                MyFessais.setEtest(trialResultSet.getInt("etest"));
+                MyFessais.setEinternal(trialResultSet.getInt("einternal"));
+                MyFessais.setEm3num(trialResultSet.getInt("em3num"));
+                MyFessais.setEgid(trialResultSet.getInt("egid"));
+            }
+        } catch (SQLException MyException) {
+            System.out.println("Erreur en lecture de " + MyTable + " "
+                    + MyException.getMessage());
+        }
+        return (MyFessais);
+    }
+
+    /**
+     * Récupère l'essai correspondant à un élément de clôture d'appel, s'il
+     * existe.
+     *
+     * @return l'essai correspondant à un élément de clôture d'appel, s'il
+     * existe.
      */
     public Fessais getPartOfEOM() {
         Fessais MyFessais = null;
@@ -637,8 +765,8 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
-     * Méthode pour fermer les ressources associées à la requête de sélection
-     * de la première transmission.
+     * Méthode pour fermer les ressources associées à la requête de sélection de
+     * la première transmission.
      *
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
@@ -648,8 +776,8 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
-     * Méthode pour fermer les ressources associées à la requête de sélection
-     * de la dernière transmission.
+     * Méthode pour fermer les ressources associées à la requête de sélection de
+     * la dernière transmission.
      *
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
@@ -659,8 +787,8 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
-     * Méthode pour fermer les ressources associées à la requête de sélection
-     * de la dernière transmission.
+     * Méthode pour fermer les ressources associées à la requête de sélection de
+     * la dernière transmission.
      *
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
@@ -684,14 +812,25 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
-     * Méthode pour fermer les ressources associées à la requête de sélection
-     * du dernier essai.
+     * Méthode pour fermer les ressources associées à la requête de sélection du
+     * dernier essai.
      *
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void closeLastTrialPreparedStatement() throws SQLException {
         LastTrialResultSet.close();
         LastTrialPreparedStatement.close();
+    }
+
+    /**
+     * Méthode pour fermer les ressources associées à la requête de sélection
+     * d'un essai.
+     *
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void closeTrialPreparedStatement() throws SQLException {
+        trialResultSet.close();
+        trialPreparedStatement.close();
     }
 
     /**
@@ -744,6 +883,7 @@ public class FessaisDAO extends PatternDAO {
     public void filterByName(int gid, String Name) {
         throw new UnsupportedOperationException("Non supporté actuellement");
     }
+
     @Override
     public void update(Object MyObject) {
         throw new UnsupportedOperationException("Non supporté actuellement"); //To change body of generated methods, choose Tools | Templates.
@@ -755,14 +895,16 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
-     * @return PartOfEOMStatement requête SQL qui retourne un élément de clôture d'appel.
+     * @return PartOfEOMStatement requête SQL qui retourne un élément de clôture
+     * d'appel.
      */
     public String getPartOfEOMStatement() {
         return PartOfEOMStatement;
     }
 
     /**
-     * @param PartOfEOMStatement définit la requête SQL qui retourne un élément de clôture d'appel.
+     * @param PartOfEOMStatement définit la requête SQL qui retourne un élément
+     * de clôture d'appel.
      */
     public void setPartOfEOMStatement(String PartOfEOMStatement) {
         this.PartOfEOMStatement = PartOfEOMStatement;
