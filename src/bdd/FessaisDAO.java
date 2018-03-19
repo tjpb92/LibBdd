@@ -7,8 +7,10 @@ import java.sql.*;
  * Classe qui décrit les méthodes pour accéder aux tables fessais ou f99essais
  * au travers de JDBC.
  *
+ * ATTENTION : Classe à réécrire totalement car trop rigide.
+ * 
  * @author Thierry Baribaud.
- * @version 0.21
+ * @version 0.22
  */
 public class FessaisDAO extends PatternDAO {
 
@@ -96,6 +98,21 @@ public class FessaisDAO extends PatternDAO {
      * ResultSet pour récupérer un essai.
      */
     private ResultSet trialResultSet;
+
+    /**
+     * Requête SQL pour rechercher les essais d'annulation.
+     */
+    private String ticketCanceledStatement;
+
+    /**
+     * Requête SQL préparée pour rechercher les essais d'annulation.
+     */
+    private PreparedStatement ticketCanceledPreparedStatement;
+
+    /**
+     * ResultSet pour rechercher les essais d'annulation.
+     */
+    private ResultSet ticketCanceledResultSet;
 
     /**
      * Constructeur de la classe FessaisDAO.
@@ -214,7 +231,15 @@ public class FessaisDAO extends PatternDAO {
                 + " from " + MyTable
                 + " where ecnum = ?"
                 + " and eresult = ?;");
-//                + " order by edate desc, etime desc;");
+
+        // Préparation pour la recherche d'un essai d'annulation de ticket
+        setTicketCanceledStatement("select enumabs, "
+                + " ecnum, eptr, eunum, edate, etime,"
+                + " emessage, etnum, eonum, eresult, eduration,"
+                + " etest, einternal, em3num, egid"
+                + " from " + MyTable
+                + " where ecnum = ?"
+                + " and eresult in (6, 7, 8, 10, 14);");
     }
 
     /**
@@ -381,6 +406,18 @@ public class FessaisDAO extends PatternDAO {
         setFirstTransmissionResultSet();
     }
 
+    /**
+     * Prépare la requête SQL pour rechercher l'annulation d'un ticket.
+     *
+     * @param cnum identifiant de l'appel courant.
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void prepareTicketCanceledStatement(int cnum) throws SQLException {
+        ticketCanceledPreparedStatement = MyConnection.prepareStatement(getTicketCanceledStatement());
+        ticketCanceledPreparedStatement.setInt(1, cnum);
+        ticketCanceledResultSet = ticketCanceledPreparedStatement.executeQuery();
+    }
+    
     /**
      * @return the FirstTransmissionResultSet
      */
@@ -719,6 +756,41 @@ public class FessaisDAO extends PatternDAO {
         return (MyFessais);
     }
 
+
+    /**
+     * Récupère un essai
+     *
+     * @return un essai
+     */
+    public Fessais getTicketCanceled() {
+        Fessais MyFessais = null;
+
+        try {
+            if (ticketCanceledResultSet.next()) {
+                MyFessais = new Fessais();
+                MyFessais.setEnumabs(ticketCanceledResultSet.getInt("enumabs"));
+                MyFessais.setEcnum(ticketCanceledResultSet.getInt("ecnum"));
+                MyFessais.setEptr(ticketCanceledResultSet.getInt("eptr"));
+                MyFessais.setEunum(ticketCanceledResultSet.getInt("eunum"));
+                MyFessais.setEdate(ticketCanceledResultSet.getTimestamp("edate"));
+                MyFessais.setEtime(ticketCanceledResultSet.getString("etime"));
+                MyFessais.setEmessage(ticketCanceledResultSet.getString("emessage"));
+                MyFessais.setEtnum(ticketCanceledResultSet.getInt("etnum"));
+                MyFessais.setEonum(ticketCanceledResultSet.getInt("eonum"));
+                MyFessais.setEresult(ticketCanceledResultSet.getInt("eresult"));
+                MyFessais.setEduration(ticketCanceledResultSet.getInt("eduration"));
+                MyFessais.setEtest(ticketCanceledResultSet.getInt("etest"));
+                MyFessais.setEinternal(ticketCanceledResultSet.getInt("einternal"));
+                MyFessais.setEm3num(ticketCanceledResultSet.getInt("em3num"));
+                MyFessais.setEgid(ticketCanceledResultSet.getInt("egid"));
+            }
+        } catch (SQLException MyException) {
+            System.out.println("Erreur en lecture de " + MyTable + " "
+                    + MyException.getMessage());
+        }
+        return (MyFessais);
+    }
+
     /**
      * Récupère l'essai correspondant à un élément de clôture d'appel, s'il
      * existe.
@@ -834,6 +906,16 @@ public class FessaisDAO extends PatternDAO {
     }
 
     /**
+     * Méthode pour fermer les ressources associées à la requête de recherche
+     * d'essais d'annulation.
+     *
+     * @throws java.sql.SQLException en cas d'erreur SQL.
+     */
+    public void closeTicketCanceledPreparedStatement() throws SQLException {
+        ticketCanceledResultSet.close();
+        ticketCanceledPreparedStatement.close();
+    }
+    /**
      * Méthode pour filter les résultats par identifiant de groupe.
      *
      * @param gid l'identifiant de groupe à utiliser pour le filtrage.
@@ -908,5 +990,47 @@ public class FessaisDAO extends PatternDAO {
      */
     public void setPartOfEOMStatement(String PartOfEOMStatement) {
         this.PartOfEOMStatement = PartOfEOMStatement;
+    }
+
+    /**
+     * @return the ticketCanceledStatement
+     */
+    public String getTicketCanceledStatement() {
+        return ticketCanceledStatement;
+    }
+
+    /**
+     * @param ticketCanceledStatement the ticketCanceledStatement to set
+     */
+    public void setTicketCanceledStatement(String ticketCanceledStatement) {
+        this.ticketCanceledStatement = ticketCanceledStatement;
+    }
+
+    /**
+     * @return the ticketCanceledPreparedStatement
+     */
+    public PreparedStatement getTicketCanceledPreparedStatement() {
+        return ticketCanceledPreparedStatement;
+    }
+
+    /**
+     * @param ticketCanceledPreparedStatement the ticketCanceledPreparedStatement to set
+     */
+    public void setTicketCanceledPreparedStatement(PreparedStatement ticketCanceledPreparedStatement) {
+        this.ticketCanceledPreparedStatement = ticketCanceledPreparedStatement;
+    }
+
+    /**
+     * @return the ticketCanceledResultSet
+     */
+    public ResultSet getTicketCanceledResultSet() {
+        return ticketCanceledResultSet;
+    }
+
+    /**
+     * @param ticketCanceledResultSet the ticketCanceledResultSet to set
+     */
+    public void setTicketCanceledResultSet(ResultSet ticketCanceledResultSet) {
+        this.ticketCanceledResultSet = ticketCanceledResultSet;
     }
 }
