@@ -21,7 +21,7 @@ public class FurgentDAO extends PatternDAO {
     public FurgentDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select unum, uabbname, uname, unewurg,"
                 + " urglevel, uuid"

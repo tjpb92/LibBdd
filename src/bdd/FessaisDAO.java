@@ -128,7 +128,7 @@ public class FessaisDAO extends PatternDAO {
 
         MyTable = EtatTicket.EN_COURS.equals(MyEtatTicket) ? "fessais" : "f99essais";
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select enumabs, ecnum, eptr, eunum, edate, etime,"
                 + " emessage, etnum, eonum, eresult, eduration, etest, einternal,"
@@ -401,7 +401,7 @@ public class FessaisDAO extends PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void setFirstTransmissionPreparedStatement(int cnum) throws SQLException {
-        FirstTransmissionPreparedStatement = MyConnection.prepareStatement(getFirstTransmissionStatement());
+        FirstTransmissionPreparedStatement = connection.prepareStatement(getFirstTransmissionStatement());
         FirstTransmissionPreparedStatement.setInt(1, cnum);
         setFirstTransmissionResultSet();
     }
@@ -413,7 +413,7 @@ public class FessaisDAO extends PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void prepareTicketCanceledStatement(int cnum) throws SQLException {
-        ticketCanceledPreparedStatement = MyConnection.prepareStatement(getTicketCanceledStatement());
+        ticketCanceledPreparedStatement = connection.prepareStatement(getTicketCanceledStatement());
         ticketCanceledPreparedStatement.setInt(1, cnum);
         ticketCanceledResultSet = ticketCanceledPreparedStatement.executeQuery();
     }
@@ -496,7 +496,7 @@ public class FessaisDAO extends PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void setLastTransmissionPreparedStatement(int cnum) throws SQLException {
-        LastTransmissionPreparedStatement = MyConnection.prepareStatement(getLastTransmissionStatement());
+        LastTransmissionPreparedStatement = connection.prepareStatement(getLastTransmissionStatement());
         LastTransmissionPreparedStatement.setInt(1, cnum);
         setLastTransmissionResultSet();
     }
@@ -508,7 +508,7 @@ public class FessaisDAO extends PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void setPartOfEOMPreparedStatement(int cnum) throws SQLException {
-        PartOfEOMPreparedStatement = MyConnection.prepareStatement(getPartOfEOMStatement());
+        PartOfEOMPreparedStatement = connection.prepareStatement(getPartOfEOMStatement());
         PartOfEOMPreparedStatement.setInt(1, cnum);
         setPartOfEOMResultSet();
     }
@@ -579,7 +579,7 @@ public class FessaisDAO extends PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void setLastTrialPreparedStatement(int cnum, int eresult) throws SQLException {
-        LastTrialPreparedStatement = MyConnection.prepareStatement(getLastTrialStatement());
+        LastTrialPreparedStatement = connection.prepareStatement(getLastTrialStatement());
         LastTrialPreparedStatement.setInt(1, cnum);
         LastTrialPreparedStatement.setInt(2, eresult);
         setLastTrialResultSet();
@@ -593,7 +593,7 @@ public class FessaisDAO extends PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void setTrialPreparedStatement(int cnum, int eresult) throws SQLException {
-        trialPreparedStatement = MyConnection.prepareStatement(getTrialStatement());
+        trialPreparedStatement = connection.prepareStatement(getTrialStatement());
         trialPreparedStatement.setInt(1, cnum);
         trialPreparedStatement.setInt(2, eresult);
         setTrialResultSet();

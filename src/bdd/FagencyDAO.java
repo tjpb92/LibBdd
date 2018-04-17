@@ -21,7 +21,7 @@ public class FagencyDAO extends PatternDAO {
     public FagencyDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select a6num, a6unum, a6extname, a6name, a6abbname, a6email,"
                 + " a6daddress, a6daddress2, a6dposcode, a6dcity,"

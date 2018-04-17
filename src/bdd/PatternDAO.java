@@ -14,7 +14,7 @@ public abstract class PatternDAO {
     /**
      * Connexion à la base de données.
      */
-    protected Connection MyConnection;
+    protected Connection connection;
 
     /**
      * Nombre de rangées affectées par une opération du type
@@ -167,7 +167,7 @@ public abstract class PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void setSelectPreparedStatement() throws SQLException {
-        SelectPreparedStatement = MyConnection.prepareStatement(getSelectStatement());
+        SelectPreparedStatement = connection.prepareStatement(getSelectStatement());
         setSelectResultSet();
     }
 
@@ -177,7 +177,7 @@ public abstract class PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void setUpdatePreparedStatement() throws SQLException {
-        UpdatePreparedStatement = MyConnection.prepareStatement(getUpdateStatement());
+        UpdatePreparedStatement = connection.prepareStatement(getUpdateStatement());
     }
 
     /**
@@ -187,11 +187,11 @@ public abstract class PatternDAO {
      */
     public void setInsertPreparedStatement() throws SQLException {
 //        System.out.println("  InsertStatement=" + getInsertStatement());
-        InsertPreparedStatement = MyConnection.prepareStatement(getInsertStatement());
+        InsertPreparedStatement = connection.prepareStatement(getInsertStatement());
 
 //  Does not work with Informix IDS2000
 //  public void setInsertPreparedStatement() throws SQLException {
-//    InsertPreparedStatement = MyConnection.prepareStatement(getInsertStatement(),
+//    InsertPreparedStatement = connection.prepareStatement(getInsertStatement(),
 //      PreparedStatement.RETURN_GENERATED_KEYS);
     }
 
@@ -201,7 +201,7 @@ public abstract class PatternDAO {
      * @throws java.sql.SQLException en cas d'erreur SQL.
      */
     public void setDeletePreparedStatement() throws SQLException {
-        DeletePreparedStatement = MyConnection.prepareStatement(getDeleteStatement());
+        DeletePreparedStatement = connection.prepareStatement(getDeleteStatement());
     }
 
     /**

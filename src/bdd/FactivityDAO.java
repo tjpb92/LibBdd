@@ -21,7 +21,7 @@ public class FactivityDAO extends PatternDAO {
     public FactivityDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select a4num, a4abbname, a4name"
                 + " from factivity");

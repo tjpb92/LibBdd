@@ -21,7 +21,7 @@ public class FoperatDAO extends PatternDAO {
     public FoperatDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select onum, oabbname, oname, onumpabx"
                 + " from foperat");

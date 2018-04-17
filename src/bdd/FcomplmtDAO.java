@@ -21,7 +21,7 @@ public class FcomplmtDAO extends PatternDAO {
     public FcomplmtDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select c6num, c6int2, c6alpha1, c6alpha2, c6name, c6access,"
                 + " c6city, c6tel, c6alpha3, c6alpha4,"

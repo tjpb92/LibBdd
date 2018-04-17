@@ -22,7 +22,7 @@ public class FtoubibDAO extends PatternDAO {
     public FtoubibDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select tnum, tunum, ta6num, ta4num,"
                 + " tlname, tfname, tabbname, tel,"

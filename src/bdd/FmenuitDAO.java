@@ -21,7 +21,7 @@ public class FmenuitDAO extends PatternDAO {
     public FmenuitDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select m6num, m6extname, m6name"
                 + " from fmenuit");

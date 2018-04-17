@@ -21,7 +21,7 @@ public class FtypeDAO extends PatternDAO {
     public FtypeDAO(Connection MyConnection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = MyConnection;
+        this.connection = MyConnection;
 
         setInvariableSelectStatement("select ttnum, ttunum, ttextname,"
                 + " ttypename, ttype"

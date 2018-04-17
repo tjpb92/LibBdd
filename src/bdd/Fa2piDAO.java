@@ -21,7 +21,7 @@ public class Fa2piDAO extends PatternDAO {
     public Fa2piDAO(Connection connection)
             throws ClassNotFoundException, SQLException {
 
-        this.MyConnection = connection;
+        this.connection = connection;
 
         setInvariableSelectStatement("select a10num, a10unum, a10onum0, a10laguid, a10a6num, a10tnum,"
                 + " a10onum, a10s3num, a10evttype, a10data,"
