@@ -8,7 +8,7 @@ import java.sql.*;
  * travers de JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.23
+ * @version 0.24
  */
 public class FcallsDAO extends PatternDAO {
 
@@ -422,8 +422,7 @@ public class FcallsDAO extends PatternDAO {
 
         if (SelectStatement != null) {
             stmt = new StringBuffer(SelectStatement);
-        }
-        else {
+        } else {
             stmt = new StringBuffer(InvariableSelectStatement);
         }
         stmt.append(" and cunum = ").append(gid);
@@ -475,12 +474,30 @@ public class FcallsDAO extends PatternDAO {
 
         if (SelectStatement != null) {
             stmt = new StringBuffer(SelectStatement);
-        }
-        else {
+        } else {
             stmt = new StringBuffer(InvariableSelectStatement);
         }
         stmt.append(" and cnote = 0");
         setSelectStatement(stmt.toString());
+    }
+
+    /**
+     * Méthode pour filtrer par intervenant
+     * ATTENTION : A réécrire en passant par un paramètre x.setInt(p, tnum)
+     * @param tnum référence à l'intervenant à filter
+     */
+    public void filterByProvider(int tnum) {
+        StringBuffer stmt;
+
+        if (tnum > 0) {
+            if (SelectStatement != null) {
+                stmt = new StringBuffer(SelectStatement);
+            } else {
+                stmt = new StringBuffer(InvariableSelectStatement);
+            }
+            stmt.append(" and ctnum = ").append(tnum);
+            setSelectStatement(stmt.toString());
+        }
     }
 
     /**
