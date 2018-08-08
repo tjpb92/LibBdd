@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
  * Fcalls est une classe décrivant un appel.
  *
  * @author Thierry Baribaud
- * @version 0.16
+ * @version 0.25
  */
 public class Fcalls {
 
@@ -226,6 +226,11 @@ public class Fcalls {
      * Référence Performance Immo
      */
     private String CUuid;
+
+    /**
+     * Nom de la table d'où proviennent les donénes
+     */
+    private String table;
 
     /**
      * @return l'identifiant unique de l'appel
@@ -788,7 +793,8 @@ public class Fcalls {
      */
     @Override
     public String toString() {
-        return "Fcalls:{cnum=" + cnum
+        return table
+                + ":{cnum=" + cnum
                 + ", cuuid=" + CUuid
                 + ", cseqno=" + cseqno
                 + ", cunum=" + cunum
@@ -817,5 +823,19 @@ public class Fcalls {
                 //           ", cnote=" + cseqno +
                 //           ", CUrgLevel=" + CUrgLevel +
                 + "}";
+    }
+
+    /**
+     * @return le nom de la table d'où proviennent les données
+     */
+    public String getTable() {
+        return table;
+    }
+
+    /**
+     * @param table définit le nom de la table d'où proviennent les données
+     */
+    public void setTable(String table) {
+        this.table = table;
     }
 }

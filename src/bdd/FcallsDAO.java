@@ -8,7 +8,7 @@ import java.sql.*;
  * travers de JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.24
+ * @version 0.25
  */
 public class FcallsDAO extends PatternDAO {
 
@@ -179,6 +179,8 @@ public class FcallsDAO extends PatternDAO {
                 fcalls.setCWeekNum(SelectResultSet.getString("cweeknum"));
                 fcalls.setCUrgLevel(SelectResultSet.getString("curglevel"));
                 fcalls.setCUuid(SelectResultSet.getString("cuuid"));
+                
+                fcalls.setTable(table);
             } else {
                 System.out.println("Lecture de " + table + " terminée");
             }
