@@ -8,7 +8,7 @@ import java.sql.*;
  * travers de JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.25
+ * @version 0.26
  */
 public class FcallsDAO extends PatternDAO {
 
@@ -179,7 +179,7 @@ public class FcallsDAO extends PatternDAO {
                 fcalls.setCWeekNum(SelectResultSet.getString("cweeknum"));
                 fcalls.setCUrgLevel(SelectResultSet.getString("curglevel"));
                 fcalls.setCUuid(SelectResultSet.getString("cuuid"));
-                
+
                 fcalls.setTable(table);
             } else {
                 System.out.println("Lecture de " + table + " terminée");
@@ -484,8 +484,9 @@ public class FcallsDAO extends PatternDAO {
     }
 
     /**
-     * Méthode pour filtrer par intervenant
-     * ATTENTION : A réécrire en passant par un paramètre x.setInt(p, tnum)
+     * Méthode pour filtrer par intervenant ATTENTION : A réécrire en passant
+     * par un paramètre x.setInt(p, tnum)
+     *
      * @param tnum référence à l'intervenant à filter
      */
     public void filterByProvider(int tnum) {
@@ -498,6 +499,26 @@ public class FcallsDAO extends PatternDAO {
                 stmt = new StringBuffer(InvariableSelectStatement);
             }
             stmt.append(" and ctnum = ").append(tnum);
+            setSelectStatement(stmt.toString());
+        }
+    }
+
+    /**
+     * Méthode pour filtrer par agence ATTENTION : A réécrire en passant par un
+     * paramètre x.setInt(p, a6num)
+     *
+     * @param a6num référence à l'agence à filter
+     */
+    public void filterByAgencyId(int a6num) {
+        StringBuffer stmt;
+
+        if (a6num > 0) {
+            if (SelectStatement != null) {
+                stmt = new StringBuffer(SelectStatement);
+            } else {
+                stmt = new StringBuffer(InvariableSelectStatement);
+            }
+            stmt.append(" and czone = ").append(a6num);
             setSelectStatement(stmt.toString());
         }
     }
