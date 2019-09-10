@@ -7,7 +7,7 @@ import java.sql.*;
  * Classe qui décrit les méthodes pour accéder à la table fa2pi avec JDBC.
  *
  * @author Thierry Baribaud
- * @version 0.20
+ * @version 0.29
  */
 public class Fa2piDAO extends PatternDAO {
 
@@ -220,6 +220,19 @@ public class Fa2piDAO extends PatternDAO {
 
         stmt = new StringBuffer(InvariableSelectStatement);
         stmt.append(" where a10laguid = \"").append(laguid).append("\";");
+        setSelectStatement(stmt.toString());
+    }
+    
+    /**
+     * Méthode pour filter les résultats par status.
+     *
+     * @param status status à utiliser pour le filtrage.
+     */
+    public void filterByStatus(int status) {
+        StringBuffer stmt;
+
+        stmt = new StringBuffer(InvariableSelectStatement);
+        stmt.append(" where a10status = ").append(status).append(";");
         setSelectStatement(stmt.toString());
     }
 
