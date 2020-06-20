@@ -6,123 +6,128 @@ import java.sql.*;
  * Fcomplmt est une classe décrivant un complément d'appel.
  *
  * @author Thierry Baribaud
- * @version 0.16
+ * @version 0.30
  */
 public class Fcomplmt {
 
-  /**
-   * Identifiant du complément d'appel. 
-   */
+    /**
+     * Identifiant du complément d'appel.
+     */
     private int c6num;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private int c6int2;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private String C6alpha1;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private String C6alpha2;
 
-  /**
-   * Nom de la personne à rappeler. 
-   */
+    /**
+     * Nom de la personne à rappeler.
+     */
     private String C6name;
 
-  /**
-   * Accès du lieu d'intervention. 
-   */
+    /**
+     * Accès du lieu d'intervention.
+     */
     private String C6access;
 
-  /**
-   * Ville du lieu d'intervention. 
-   */
+    /**
+     * Ville du lieu d'intervention.
+     */
     private String C6city;
 
-  /**
-   * Téléphone de la personne à rappeler. 
-   */
+    /**
+     * Téléphone de la personne à rappeler.
+     */
     private String C6tel;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private String C6alpha3;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private String C6alpha4;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private String C6alpha5;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private String C6alpha6;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private String C6alpha7;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
+    private String C6alpha10;
+
+    /**
+     * ...
+     */
     private int c6int1;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private Timestamp C6date;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private Timestamp C6date1;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private int c6int3;
 
-  /**
-   * ... 
-   */
+    /**
+     * ...
+     */
     private int c6int4;
 
-  /**
-   * Identifiant de l'opérateur (foperat). 
-   */
+    /**
+     * Identifiant de l'opérateur (foperat).
+     */
     private int c6onum;
 
-  /**
-   * Raison sociale du lieu d'intervention. 
-   */
+    /**
+     * Raison sociale du lieu d'intervention.
+     */
     private String C6corp;
 
-  /**
-   * Adresse du lieu d'intervention. 
-   */
+    /**
+     * Adresse du lieu d'intervention.
+     */
     private String C6address;
 
-  /**
-   * Complément d'adresse du lieu d'intervention. 
-   */
+    /**
+     * Complément d'adresse du lieu d'intervention.
+     */
     private String C6address2;
 
-  /**
-   * Code postal du lieu d'intervention. 
-   */
+    /**
+     * Code postal du lieu d'intervention.
+     */
     private String C6poscode;
 
     /**
@@ -185,6 +190,10 @@ public class Fcomplmt {
 
     public String getC6alpha7() {
         return C6alpha7;
+    }
+
+    public String getC6alpha10() {
+        return C6alpha10;
     }
 
     public int getC6int1() {
@@ -263,6 +272,10 @@ public class Fcomplmt {
         this.C6alpha7 = (C6alpha7 != null) ? C6alpha7.trim() : null;
     }
 
+    public void setC6alpha10(String C6alpha10) {
+        this.C6alpha10 = (C6alpha10 != null) ? C6alpha10.trim() : null;
+    }
+
     public void setC6int1(int c6int1) {
         this.c6int1 = c6int1;
     }
@@ -291,24 +304,25 @@ public class Fcomplmt {
                 + ", C6tel=" + C6tel
                 + ", c6int2=" + c6int2
                 + ", C6alpha1=" + C6alpha1
-//                + ", C6alpha2=" + C6alpha2
-//                + ", C6access=" + C6access
-//                + ", C6city=" + C6city
-//                + ", C6alpha3=" + C6alpha3
-//                + ", C6alpha4=" + C6alpha4
-//                + ", C6alpha5=" + C6alpha5
-//                + ", C6alpha6=" + C6alpha6
-//                + ", C6alpha7=" + C6alpha7
-//                + ", c6int1=" + c6int1
-//                + ", C6date=" + C6date
-//                + ", C6date1=" + C6date1
-//                + ", c6int3=" + c6int3
-//                + ", c6int4=" + c6int4
-//                + ", c6onum=" + c6onum
-//                + ", C6corp=" + C6corp
-//                + ", C6address=" + C6address
-//                + ", C6address2=" + C6address2
-//                + ", C6poscode=" + C6poscode
+                //                + ", C6alpha2=" + C6alpha2
+                //                + ", C6access=" + C6access
+                //                + ", C6city=" + C6city
+                //                + ", C6alpha3=" + C6alpha3
+                //                + ", C6alpha4=" + C6alpha4
+                //                + ", C6alpha5=" + C6alpha5
+                //                + ", C6alpha6=" + C6alpha6
+                //                + ", C6alpha7=" + C6alpha7
+                //                + ", C6alpha10=" + C6alpha10
+                //                + ", c6int1=" + c6int1
+                //                + ", C6date=" + C6date
+                //                + ", C6date1=" + C6date1
+                //                + ", c6int3=" + c6int3
+                //                + ", c6int4=" + c6int4
+                //                + ", c6onum=" + c6onum
+                //                + ", C6corp=" + C6corp
+                //                + ", C6address=" + C6address
+                //                + ", C6address2=" + C6address2
+                //                + ", C6poscode=" + C6poscode
                 + "}";
     }
 

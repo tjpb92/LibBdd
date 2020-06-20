@@ -7,7 +7,7 @@ import java.sql.*;
  * Classe qui décrit les méthodes pour accéder à la table fcomplmt JDBC.
  *
  * @author Thierry Baribaud
- * @version Juin 2016
+ * @version 0.30
  */
 public class FcomplmtDAO extends PatternDAO {
 
@@ -25,7 +25,7 @@ public class FcomplmtDAO extends PatternDAO {
 
         setInvariableSelectStatement("select c6num, c6int2, c6alpha1, c6alpha2, c6name, c6access,"
                 + " c6city, c6tel, c6alpha3, c6alpha4,"
-                + " c6alpha5, c6alpha6, c6alpha7,"
+                + " c6alpha5, c6alpha6, c6alpha7, c6alpha10,"
                 + " c6int1, c6date, c6date1, c6int3, c6int4, c6onum,"
                 + " c6corp, c6address, c6address2, c6poscode"
                 + " from fcomplmt");
@@ -41,7 +41,7 @@ public class FcomplmtDAO extends PatternDAO {
         setUpdateStatement("update fcomplmt"
                 + " set c6int2=?, c6alpha1=?, c6alpha2=?, c6name=?, c6access=?,"
                 + " c6city=?, c6tel=?, c6alpha3=?, c6alpha4=?,"
-                + " c6alpha5=?, c6alpha6=?, c6alpha7=?,"
+                + " c6alpha5=?, c6alpha6=?, c6alpha7=?, c6alpha10=?,"
                 + " c6int1=?, c6date=?, c6date1=?, c6int3=?, c6int4=?, c6onum=?,"
                 + " c6corp=?, c6address=?, c6address2=?, c6poscode=?"
                 + " where c6num=?;");
@@ -50,10 +50,10 @@ public class FcomplmtDAO extends PatternDAO {
         setInsertStatement("insert into fcomplmt"
                 + " (c6int2, c6alpha1, c6alpha2, c6name, c6access,"
                 + " c6city, c6tel, c6alpha3, c6alpha4,"
-                + " c6alpha5, c6alpha6, c6alpha7,"
+                + " c6alpha5, c6alpha6, c6alpha7, c7alpha10,"
                 + " c6int1, c6date, c6date1, c6int3, c6int4, c6onum,"
                 + " c6corp, c6address, c6address2, c6poscode)"
-                + " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"
+                + " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"
                 + ",?, ?, ?, ?, ?, ?, ?);");
 //        setInsertPreparedStatement();
 
@@ -86,6 +86,7 @@ public class FcomplmtDAO extends PatternDAO {
                 MyFcomplmt.setC6alpha5(SelectResultSet.getString("c6alpha5"));
                 MyFcomplmt.setC6alpha6(SelectResultSet.getString("c6alpha6"));
                 MyFcomplmt.setC6alpha7(SelectResultSet.getString("c6alpha7"));
+                MyFcomplmt.setC6alpha10(SelectResultSet.getString("c6alpha10"));
                 MyFcomplmt.setC6int1(SelectResultSet.getInt("c6int1"));
                 MyFcomplmt.setC6date(SelectResultSet.getTimestamp("c6date"));
                 MyFcomplmt.setC6date1(SelectResultSet.getTimestamp("c6date1"));
@@ -124,17 +125,18 @@ public class FcomplmtDAO extends PatternDAO {
             UpdatePreparedStatement.setString(10, MyFcomplmt.getC6alpha5());
             UpdatePreparedStatement.setString(11, MyFcomplmt.getC6alpha6());
             UpdatePreparedStatement.setString(12, MyFcomplmt.getC6alpha7());
-            UpdatePreparedStatement.setInt(13, MyFcomplmt.getC6int1());
-            UpdatePreparedStatement.setTimestamp(14, MyFcomplmt.getC6date());
-            UpdatePreparedStatement.setTimestamp(15, MyFcomplmt.getC6date1());
-            UpdatePreparedStatement.setInt(16, MyFcomplmt.getC6int3());
-            UpdatePreparedStatement.setInt(17, MyFcomplmt.getC6int4());
-            UpdatePreparedStatement.setInt(18, MyFcomplmt.getC6onum());
-            UpdatePreparedStatement.setString(19, MyFcomplmt.getC6corp());
-            UpdatePreparedStatement.setString(20, MyFcomplmt.getC6address());
-            UpdatePreparedStatement.setString(21, MyFcomplmt.getC6address2());
-            UpdatePreparedStatement.setString(22, MyFcomplmt.getC6poscode());
-            UpdatePreparedStatement.setInt(23, MyFcomplmt.getC6num());
+            UpdatePreparedStatement.setString(13, MyFcomplmt.getC6alpha10());
+            UpdatePreparedStatement.setInt(14, MyFcomplmt.getC6int1());
+            UpdatePreparedStatement.setTimestamp(15, MyFcomplmt.getC6date());
+            UpdatePreparedStatement.setTimestamp(16, MyFcomplmt.getC6date1());
+            UpdatePreparedStatement.setInt(17, MyFcomplmt.getC6int3());
+            UpdatePreparedStatement.setInt(18, MyFcomplmt.getC6int4());
+            UpdatePreparedStatement.setInt(19, MyFcomplmt.getC6onum());
+            UpdatePreparedStatement.setString(20, MyFcomplmt.getC6corp());
+            UpdatePreparedStatement.setString(21, MyFcomplmt.getC6address());
+            UpdatePreparedStatement.setString(22, MyFcomplmt.getC6address2());
+            UpdatePreparedStatement.setString(23, MyFcomplmt.getC6poscode());
+            UpdatePreparedStatement.setInt(24, MyFcomplmt.getC6num());
             setNbAffectedRow(UpdatePreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible de mettre à jour fcomplmt");
@@ -186,16 +188,17 @@ public class FcomplmtDAO extends PatternDAO {
             InsertPreparedStatement.setString(10, MyFcomplmt.getC6alpha5());
             InsertPreparedStatement.setString(11, MyFcomplmt.getC6alpha6());
             InsertPreparedStatement.setString(12, MyFcomplmt.getC6alpha7());
-            InsertPreparedStatement.setInt(13, MyFcomplmt.getC6int1());
-            InsertPreparedStatement.setTimestamp(14, MyFcomplmt.getC6date());
-            InsertPreparedStatement.setTimestamp(15, MyFcomplmt.getC6date1());
-            InsertPreparedStatement.setInt(16, MyFcomplmt.getC6int3());
-            InsertPreparedStatement.setInt(17, MyFcomplmt.getC6int4());
-            InsertPreparedStatement.setInt(18, MyFcomplmt.getC6onum());
-            InsertPreparedStatement.setString(19, MyFcomplmt.getC6corp());
-            InsertPreparedStatement.setString(20, MyFcomplmt.getC6address());
-            InsertPreparedStatement.setString(21, MyFcomplmt.getC6address2());
-            InsertPreparedStatement.setString(22, MyFcomplmt.getC6poscode());
+            InsertPreparedStatement.setString(13, MyFcomplmt.getC6alpha10());
+            InsertPreparedStatement.setInt(14, MyFcomplmt.getC6int1());
+            InsertPreparedStatement.setTimestamp(15, MyFcomplmt.getC6date());
+            InsertPreparedStatement.setTimestamp(16, MyFcomplmt.getC6date1());
+            InsertPreparedStatement.setInt(17, MyFcomplmt.getC6int3());
+            InsertPreparedStatement.setInt(18, MyFcomplmt.getC6int4());
+            InsertPreparedStatement.setInt(19, MyFcomplmt.getC6onum());
+            InsertPreparedStatement.setString(20, MyFcomplmt.getC6corp());
+            InsertPreparedStatement.setString(21, MyFcomplmt.getC6address());
+            InsertPreparedStatement.setString(22, MyFcomplmt.getC6address2());
+            InsertPreparedStatement.setString(23, MyFcomplmt.getC6poscode());
             setNbAffectedRow(InsertPreparedStatement.executeUpdate());
             if (getNbAffectedRow() == 0) {
                 System.out.println("Impossible d'ajouter un complément d'appel dans fcomplmt");
