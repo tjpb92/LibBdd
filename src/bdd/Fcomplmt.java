@@ -6,7 +6,7 @@ import java.sql.*;
  * Fcomplmt est une classe décrivant un complément d'appel.
  *
  * @author Thierry Baribaud
- * @version 0.30
+ * @version 0.31
  */
 public class Fcomplmt {
 
@@ -74,6 +74,16 @@ public class Fcomplmt {
      * ...
      */
     private String C6alpha7;
+
+    /**
+     * ...
+     */
+    private String C6alpha8;
+
+    /**
+     * ...
+     */
+    private String C6alpha9;
 
     /**
      * ...
@@ -192,6 +202,14 @@ public class Fcomplmt {
         return C6alpha7;
     }
 
+    public String getC6alpha8() {
+        return C6alpha8;
+    }
+
+    public String getC6alpha9() {
+        return C6alpha9;
+    }
+
     public String getC6alpha10() {
         return C6alpha10;
     }
@@ -272,6 +290,14 @@ public class Fcomplmt {
         this.C6alpha7 = (C6alpha7 != null) ? C6alpha7.trim() : null;
     }
 
+    public void setC6alpha8(String C6alpha8) {
+        this.C6alpha8 = (C6alpha8 != null) ? C6alpha8.trim() : null;
+    }
+
+    public void setC6alpha9(String C6alpha9) {
+        this.C6alpha9 = (C6alpha9 != null) ? C6alpha9.trim() : null;
+    }
+
     public void setC6alpha10(String C6alpha10) {
         this.C6alpha10 = (C6alpha10 != null) ? C6alpha10.trim() : null;
     }
@@ -312,6 +338,8 @@ public class Fcomplmt {
                 //                + ", C6alpha5=" + C6alpha5
                 //                + ", C6alpha6=" + C6alpha6
                 //                + ", C6alpha7=" + C6alpha7
+                //                + ", C6alpha8=" + C6alpha8
+                //                + ", C6alpha9=" + C6alpha9
                 //                + ", C6alpha10=" + C6alpha10
                 //                + ", c6int1=" + c6int1
                 //                + ", C6date=" + C6date
